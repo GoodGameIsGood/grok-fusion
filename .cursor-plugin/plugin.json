@@ -1,7 +1,7 @@
 {
   "name": "grok-fusion",
   "version": "0.2.0",
-  "description": "High-compute same-model deliberation for Grok in Cursor with independent framing, evidence grounding, bias-resistant selection, falsification, and verification.",
+  "description": "One Grok, council-grade judgment — adaptive deliberation in Cursor for architecture, debugging, and resumable MVP builds.",
   "author": {
     "name": "GoodGameIsGood"
   },

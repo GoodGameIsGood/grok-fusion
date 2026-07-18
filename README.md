@@ -1,5 +1,7 @@
 # Grok Fusion
 
+> **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor — from quick fixes to architecture and resumable MVPs.
+
 **A Cursor plugin that turns one Grok into a careful council:** independent framing, live evidence checks, competing proposals, judges, self-critique, and verification — then adaptive compute so simple edits stay fast and large builds stay resumable.
 
 Use it when you want stronger architecture judgment, fewer hallucinations, and a safer path from idea → MVP → working product.
