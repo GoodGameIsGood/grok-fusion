@@ -5,13 +5,18 @@ One-page parent path. Deep contracts stay linked; do not invent a parallel pipel
 ```text
 P0  Load project-config.md + .grok-fusion/config.json (or defaults)
     → adaptive-router.md (tier from quality_profile)
-    → task-packs.md (visual UI → pack visual-ui; may load grok-design + grok-web-ui)
+    → task-packs.md (visual UI → pack visual-ui; may load grok-design + grok-web-ui;
+      AppSec-primary → pack appsec-review; load grok-security + security-playbook.md)
     → Task probe when Standard/Heavy/MVP
 
 P1+ Answer track: SKILL Heavy/Standard/Quick spine as selected
+    P2a: gf-researcher-repo + gf-researcher-web; P2b: gf-worker freshness_critic
     Plan needed? → planning-contract.md until plan_quality + multi_pass PASS
     Debug pack? → debugging-playbook.md (Repair Card before any edit)
+    AppSec pack? → security-playbook.md (Finding Cards; Remediation Card before any edit)
     Mutating? → implementation-track.md (parent edits only)
+    Provocation: dual-provocation lens + provocation-contract.md (Δtasks=0);
+      WHEN tier is Quick, do not launch a dedicated provocation Task; parent-inline DA only
 
 Verify  Run verify_cmd; record verification_runs (verify hard gate)
         Debug: characterization + blast-radius suite before multi-pass
@@ -44,11 +49,14 @@ Epic split  Tripwires (>80% epic Task budget, >5 waves, G4) → child epic inher
 | Freshness | [freshness-contract.md](freshness-contract.md) |
 | Planning | [planning-contract.md](planning-contract.md) |
 | Debugging | [debugging-playbook.md](debugging-playbook.md) |
+| AppSec | [security-playbook.md](security-playbook.md); sibling skill `grok-security` |
 | Implementation | [implementation-track.md](implementation-track.md) |
 | Multi-pass / Phase E | [multi-pass-verification.md](multi-pass-verification.md) |
 | Answer closure | [verification-gate.md](verification-gate.md) |
+| Provocation / dual-provocation | [provocation-contract.md](provocation-contract.md), [candidate-lenses.md](candidate-lenses.md) |
 | Specialists | [specialist-roster.md](specialist-roster.md), [specialist-evidence-packs.md](specialist-evidence-packs.md) |
 | Visual UI craft | sibling skills `grok-design`, `grok-web-ui` (not Fusion contracts) |
+| AppSec craft | sibling skill `grok-security` (not Fusion contracts; Option B copy) |
 | Discovery | [discovery-track.md](discovery-track.md) |
 | Durable MVP | [long-horizon-contract.md](long-horizon-contract.md) |
 | Recovery | [recovery-track.md](recovery-track.md) |

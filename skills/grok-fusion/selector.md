@@ -20,6 +20,8 @@ Normalized candidate cards only. Strip:
 
 Present every card with identical field order.
 
+Keep `provocation_challenges` substance (kinds, questions, `decision_delta`) when present. For cards from lens `dual-provocation`, empty or missing required kinds / empty `decision_delta` is a `must_pass_failures` item on correctness or risk axes — do not ignore the field as stylistic padding. Novelty-only challenges without a decision change do not raise scores.
+
 ## Absolute judges
 
 Launch parallel `gf-worker` Task calls. Each judge scores every candidate independently with absolute rubric scores. Judges do not rank and do not see other judges.

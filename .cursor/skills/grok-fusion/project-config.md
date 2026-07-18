@@ -56,6 +56,14 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
     "discovery_max_files_debug": 80,
     "preferred_specialists": ["test_strategist", "concurrency", "observability"]
   },
+  "security": {
+    "require_finding_card_on_audit": true,
+    "require_remediation_card": true,
+    "min_fix_confidence": "high",
+    "forbid_exploit_poc": true,
+    "asvs_level_default": "L1",
+    "preferred_specialists": ["authz_tenancy", "threat_abuse", "privacy_compliance"]
+  },
   "closure": {
     "require_final_confirmation": true,
     "require_done_evidence": true,
@@ -89,6 +97,12 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
 | `debugging.blast_radius_discovery` | bool | Discover blast radius before edit |
 | `debugging.discovery_max_files_debug` | int | Raised discovery budget for debug |
 | `debugging.preferred_specialists` | role ids | Pin optional roles for debugging pack |
+| `security.require_finding_card_on_audit` | bool | Audit answers need Finding Cards or limited_coverage |
+| `security.require_remediation_card` | bool | AppSec mutate needs Remediation Card |
+| `security.min_fix_confidence` | `high` \| `medium` \| `low` | Minimum Remediation Card confidence to edit |
+| `security.forbid_exploit_poc` | bool | PoC/payload evidence ⇒ multi-pass FAIL |
+| `security.asvs_level_default` | `L1` \| `L2` | Default ASVS depth (L2 only on High/authz when L1) |
+| `security.preferred_specialists` | role ids | Pin optional roles for appsec-review pack |
 | `closure.require_final_confirmation` | bool | Phase E / answer final confirmation required |
 | `closure.require_done_evidence` | bool | Require done_evidence pack before Phase E |
 | `closure.require_must_not_break_walkthrough` | bool | Walkthrough before mutating done |

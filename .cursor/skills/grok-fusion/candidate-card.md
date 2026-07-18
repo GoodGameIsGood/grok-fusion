@@ -25,6 +25,16 @@ validation_or_falsification:
 symbol_grounding:
 ```
 
+When the lens is `dual-provocation`, also require:
+
+```yaml
+provocation_challenges:
+  - kind: assumption_attack  # or lateral_analogy
+    question: ""
+    decision_delta: ""
+    operator_id: INVERT  # optional: INVERT | NAIVE_CUT | PREMORTEM_SEED
+```
+
 ## Field rules
 
 - `thesis`: one coherent claim answering the user query
@@ -37,6 +47,7 @@ symbol_grounding:
 - `failure_modes`: at least one specific way the proposal can fail
 - `validation_or_falsification`: a test, measurement, counterexample, or experiment that could prove the proposal wrong
 - `symbol_grounding`: list of `{symbol, evidence_id}` for every referenced API/path/command; use the literal value `SPECULATIVE` instead of an evidence_id when unverified
+- `provocation_challenges`: required only for lens `dual-provocation`; MUST include ≥1 `assumption_attack` and ≥1 `lateral_analogy`, each with nonempty `decision_delta` (see [provocation-contract.md](provocation-contract.md)); total words across items ≤180; do not use role-name keys
 
 ## Normalization before judging
 
@@ -46,5 +57,7 @@ Parent must strip or ignore:
 - stylistic padding
 - duplicated verbosity
 - self-assigned confidence percentages
+
+Keep `provocation_challenges` content for judges (kinds and decision deltas); strip only identity labels, not the challenge substance.
 
 All cards must be presented to judges in the same field order.

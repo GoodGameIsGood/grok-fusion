@@ -40,5 +40,12 @@
     "prompt": "Build an MVP waitlist app with signup, confirmation email hook, and admin export over multiple waves.",
     "max_calls": null,
     "notes": "Multi-wave product build"
+  },
+  {
+    "id": "ad-appsec",
+    "expected_tier": "Heavy",
+    "prompt": "Security review our auth middleware for IDOR and missing tenant checks. Do not change code.",
+    "max_calls": 30,
+    "notes": "AppSec-primary audit → pack appsec-review; Finding Cards only"
   }
 ]

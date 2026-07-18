@@ -2,6 +2,8 @@
 
 Optional narrow specialists for Grok Fusion multi-pass Phase D. All roles run as `gf-reviewer` with `mode=specialist_panel` plus `role` and `scenario`. Do not create separate agent files per role.
 
+Evidence-phase researchers (`gf-researcher-repo`, `gf-researcher-web`) are **not** Phase D specialists — they are dedicated P2a Task agents for live repo/web evidence. Do not add per-role agent files for this roster.
+
 **Max 3** optional specialists per Phase D round (plus the core 5). See [multi-pass-verification.md](multi-pass-verification.md).
 
 ## Core panel (always on — not optional)

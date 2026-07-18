@@ -61,12 +61,12 @@ Use when (and profile is not `max`):
 Pipeline:
 
 1. One framing call
-2. One evidence scout
+2. P2a `gf-researcher-*` by claim-surface: codebase-only → repo; external-only → web; **mixed** → both (do not drop a surface). Optional P2b `gf-worker` freshness_critic when C2+ or web/registry/docs/changelog/lockfile records
 3. Three isolated candidates from the selected task pack
 4. Two absolute-score judges
 5. One verifier/revision pass
 
-Target: 7–8 subagent calls.
+Target: **8–10** subagent calls (worst case mixed+critic = 10).
 
 Output: Verdict, Evidence, Risks, then `Fusion tier: Standard`.
 
@@ -114,6 +114,17 @@ When the user intent is primarily visual/web UI (not architecture-only), select 
 - RU triggers: лендинг, макет, вёрстка, интерфейс, дизайн страницы, визуальный редизайн, сделай красиво…
 - Parent should load craft skills `grok-design` then `grok-web-ui` (max two design skill bodies per turn)
 - Do **not** select `visual-ui` for Fusion-only, backend-only, or planning-without-visual requests
+
+## Pack hints (AppSec)
+
+When the user intent is primarily AppSec (security audit, threat model, OWASP/ASVS, vuln harden) — not a pure UI redesign — select task pack `appsec-review` after tier choice:
+
+- EN triggers: security review, threat model, OWASP, ASVS, vuln, authz, harden, close vulnerability
+- RU triggers: аудит безопасности, угрозы, уязвимост, права доступа, закрыть дыры; remediate: исправь / закрой уязвимость / устрани дыру (AppSec-scoped)
+- Parent should load craft skill `grok-security` and follow [security-playbook.md](security-playbook.md)
+- Precedence: AppSec-primary → `appsec-review`; bug/flake without AppSec-primary → `debugging` (MAY consult `grok-security`); visual-ui / planning / architecture primary → those packs (**MUST NOT** force `appsec-review`)
+- Pack id is `appsec-review` (not Cursor Task `security-review`)
+- Audit without explicit fix ask → Finding Cards only; no edits
 
 ## Escalation
 

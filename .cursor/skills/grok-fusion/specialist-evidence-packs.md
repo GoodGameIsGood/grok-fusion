@@ -58,15 +58,17 @@ Evidence focus for optional `gf-reviewer` roles. Load the matching section for `
 
 ## authz_tenancy
 
-- Read: authn/z middleware, tenancy filters, IDOR-prone IDs
-- Check: every read/write scoped to tenant/user
-- Red flags: IDOR by object id, missing auth on new route
+- Read: authn/z middleware, tenancy filters, IDOR-prone IDs, oauth/rbac/permission modules
+- Check: every read/write scoped to tenant/user; deny-by-default on new routes
+- Red flags: IDOR by object id, missing auth on new route, cross-tenant query without filter
+- AppSec map: OWASP A01:2025, CWE-639 / CWE-284 when applicable
 
 ## privacy_compliance
 
 - Read: user data fields, exports, analytics events
 - Check: retention, redaction, consent boundaries
 - Red flags: secrets/PII in logs, unbounded exports
+- AppSec map: sensitive data disclosure; align with security-canon logging rules
 
 ## network_resilience
 
@@ -120,7 +122,8 @@ Evidence focus for optional `gf-reviewer` roles. Load the matching section for `
 
 - Read: public endpoints, uploads, auth flows
 - Check: rate limits, size limits, abuse cases beyond baseline authz
-- Red flags: open upload, missing rate limit, user-controlled redirects
+- Red flags: open upload, missing rate limit, user-controlled redirects, unbounded body size
+- AppSec map: align with grok-security abuse checklist (rate/size/upload/redirect)
 
 ## data_model_integrity
 

@@ -18,6 +18,8 @@ REQUIRED_PATHS = [
     "agents/gf-worker.md",
     "agents/gf-reviewer.md",
     "agents/gf-auditor.md",
+    "agents/gf-researcher-repo.md",
+    "agents/gf-researcher-web.md",
     "skills/grok-fusion/SKILL.md",
     "skills/grok-design/SKILL.md",
     "skills/grok-web-ui/SKILL.md",

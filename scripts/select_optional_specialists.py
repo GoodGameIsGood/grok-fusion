@@ -18,6 +18,7 @@ PACK_SUGGESTIONS: dict[str, list[str]] = {
     "professional-planning": ["test_strategist", "api_compat", "data_migration"],
     "writing-explanation": ["docs_accuracy"],
     "visual-ui": ["visual_design_critique", "ux_accessibility", "frontend_state"],
+    "appsec-review": ["authz_tenancy", "threat_abuse", "privacy_compliance"],
 }
 
 SEVERITY_RANK = {
@@ -57,12 +58,18 @@ PATH_TRIGGERS: list[tuple[str, str]] = [
     ("cache_consistency", "redis"),
     ("search_indexing", "search"),
     ("mobile_offline", "offline"),
+    ("authz_tenancy", "auth/"),
+    ("authz_tenancy", "oauth"),
+    ("authz_tenancy", "rbac"),
+    ("authz_tenancy", "permission"),
+    ("authz_tenancy", "/middleware"),
 ]
 
-GATE_ROLES = {
-    "G1": "data_migration",
-    "G2": "api_compat",
-    "G3": "release_rollback",
+# Values are list[str]; select() iterates each role for a matched gate.
+GATE_ROLES: dict[str, list[str]] = {
+    "G1": ["data_migration"],
+    "G2": ["api_compat", "authz_tenancy"],
+    "G3": ["release_rollback"],
 }
 
 
@@ -94,7 +101,8 @@ def select(
     for gate in gates:
         gate = gate.strip().upper()
         if gate in GATE_ROLES:
-            add(GATE_ROLES[gate], gate)
+            for role in GATE_ROLES[gate]:
+                add(role, gate)
 
     # Debugging pack: pin preferred debug specialists ahead of generic severity
     # when no G1/G2/security-class gate is forcing higher-priority roles alone.

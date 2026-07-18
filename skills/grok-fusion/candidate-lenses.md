@@ -64,11 +64,11 @@ Every lens must:
 - Stance: exploratory
 - Forbidden: accepting the user's framing as given without challenge
 
-### 8. Persona-free wildcard
+### 8. Dual-provocation
 
-- Objective: alternate solution without professional role priming
-- Stance: exploratory
-- Forbidden: copying any standard enterprise pattern as the default
+- Objective: emit one coherent candidate that includes both unconventional challenge kinds (`assumption_attack` and `lateral_analogy`) per [provocation-contract.md](provocation-contract.md), plus a unified thesis judges can score
+- Stance: exploratory / adversarial-constructive
+- Forbidden: emitting only one challenge kind; empty `decision_delta`; novelty theater; treating operators as a second role; new Cursor agent files
 
 ## Prompt construction
 
@@ -80,3 +80,5 @@ Each worker prompt must begin with:
 4. original query
 5. canonical brief
 6. evidence pack
+
+For lens `dual-provocation`, also load [provocation-contract.md](provocation-contract.md) and require `provocation_challenges` per the emit rule.

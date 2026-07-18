@@ -1,6 +1,6 @@
 ---
 name: grok-fusion
-description: Adaptive same-model Grok council for simple tasks, architecture, research, debugging, MVP builds, and expensive decisions. Auto-routed by grok-fusion-auto; also invokable as /grok-fusion.
+description: Adaptive same-model Grok council for simple tasks, architecture, research, debugging, AppSec review, MVP builds, and expensive decisions. Auto-routed by grok-fusion-auto; also invokable as /grok-fusion.
 ---
 
 # Grok Fusion
@@ -9,7 +9,7 @@ Adaptive deliberation skill. Do not redesign this pipeline.
 
 ## Before any phase
 
-Read [project-config.md](project-config.md) and load `.grok-fusion/config.json` (or defaults). Then read [orchestration-checklist.md](orchestration-checklist.md) for the P0→done path. Deep contracts: [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md) and [specialist-roster.md](specialist-roster.md).
+Read [project-config.md](project-config.md) and load `.grok-fusion/config.json` (or defaults). Then read [orchestration-checklist.md](orchestration-checklist.md) for the P0→done path. Deep contracts: [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md) and [specialist-roster.md](specialist-roster.md). Unconventional challenges use [provocation-contract.md](provocation-contract.md) with lens `dual-provocation` (Δtasks=0; WHEN tier is Quick, do not launch a dedicated provocation Task; parent-inline DA only).
 
 ## Five Iron Rules
 
@@ -21,7 +21,7 @@ Read [project-config.md](project-config.md) and load `.grok-fusion/config.json` 
 
 ## Orchestration
 
-Use the Cursor Task tool targeting custom agent `gf-worker` for isolated phase work. Use `gf-reviewer` and `gf-auditor` for [multi-pass-verification.md](multi-pass-verification.md) on plans and mutating work. Launch all calls for one phase in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline.
+Use the Cursor Task tool targeting custom agent `gf-worker` for framing, candidates, judges, and `mode=freshness_critic`. Use `gf-researcher-repo` and `gf-researcher-web` for P2a evidence. Use `gf-reviewer` and `gf-auditor` for [multi-pass-verification.md](multi-pass-verification.md) on plans and mutating work. Launch all calls for one phase (or P2a/P2b sub-step) in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline. If `gf-researcher-*` is unresolved after reload, fail closed.
 
 For Standard, Heavy, and MVP: run one Task probe first. If the subagent model badge is not Grok, fail closed.
 
@@ -31,7 +31,7 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 
 - Preserve the original query verbatim.
 - Read project config before tier ([project-config.md](project-config.md)); choose tier from [adaptive-router.md](adaptive-router.md).
-- Classify task pack from [task-packs.md](task-packs.md). If pack is `debugging`, read [debugging-playbook.md](debugging-playbook.md) before any edit.
+- Classify task pack from [task-packs.md](task-packs.md). If pack is `debugging`, read [debugging-playbook.md](debugging-playbook.md) before any edit. If pack is `appsec-review`, read [security-playbook.md](security-playbook.md) and load craft `grok-security` (Finding Cards on audit; Remediation Card before any edit).
 - If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate and multi-pass consensus are `PASS`.
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
@@ -44,7 +44,7 @@ Parent solves. One optional `gf-worker` verifier. Direct answer. Footer: `Fusion
 ### Standard
 
 1. One framing call
-2. One scout
+2. P2a researcher(s) by claim-surface (1 or both if mixed); optional P2b `gf-worker` freshness_critic
 3. Three pack lenses as candidates
 4. Two judges
 5. One verifier
@@ -57,13 +57,14 @@ Output: Verdict, Evidence, Risks. Footer: `Fusion tier: Standard`.
 
 Read [framing-and-evidence.md](framing-and-evidence.md). Three parallel framers. Build the `canonical brief`.
 
-#### P2 — Evidence x2
+#### P2 — Evidence (P2a + P2b)
 
-Two parallel scouts. Atomic evidence records only. Never invent unread APIs or paths. Apply [freshness-contract.md](freshness-contract.md): live verification, dated records.
+P2a: `gf-researcher-repo` + `gf-researcher-web` in one parallel batch. Atomic evidence records only. Never invent unread APIs or paths. Apply [freshness-contract.md](freshness-contract.md): live verification, dated records, C0–C3.
+P2b: sequential `gf-worker` `mode=freshness_critic` on the merged pack (`ACCEPT` / `REJECT_WITH_GAPS`) before P3.
 
 #### P3 — Candidates
 
-Read [candidate-lenses.md](candidate-lenses.md) and [candidate-card.md](candidate-card.md). Architecture tasks also read [architecture-playbook.md](architecture-playbook.md). Launch pack-selected isolated candidates. Quorum: at least 6 of 8 after one retry when using eight lenses; for narrower packs require at least 2 of 3.
+Read [candidate-lenses.md](candidate-lenses.md) and [candidate-card.md](candidate-card.md). Architecture tasks also read [architecture-playbook.md](architecture-playbook.md). When pack selects `dual-provocation`, also load [provocation-contract.md](provocation-contract.md). Launch pack-selected isolated candidates. Quorum: at least 6 of 8 after one retry when using eight lenses; for narrower packs require at least 2 of 3.
 
 #### P4 — Selection
 

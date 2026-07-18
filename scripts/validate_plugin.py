@@ -20,6 +20,8 @@ CORE_FILES = [
     "agents/gf-worker.md",
     "agents/gf-reviewer.md",
     "agents/gf-auditor.md",
+    "agents/gf-researcher-repo.md",
+    "agents/gf-researcher-web.md",
     "rules/grok-fusion-auto.mdc",
     "skills/grok-fusion/SKILL.md",
     "skills/grok-fusion/grok-harness.md",
@@ -31,6 +33,7 @@ CORE_FILES = [
     "skills/grok-fusion/framing-and-evidence.md",
     "skills/grok-fusion/candidate-lenses.md",
     "skills/grok-fusion/candidate-card.md",
+    "skills/grok-fusion/provocation-contract.md",
     "skills/grok-fusion/selector.md",
     "skills/grok-fusion/falsify-and-revise.md",
     "skills/grok-fusion/minority-sentinel.md",
@@ -42,6 +45,7 @@ CORE_FILES = [
     "skills/grok-fusion/orchestration-checklist.md",
     "skills/grok-fusion/specialist-evidence-packs.md",
     "skills/grok-fusion/debugging-playbook.md",
+    "skills/grok-fusion/security-playbook.md",
     "skills/grok-fusion/implementation-track.md",
     "skills/grok-fusion/long-horizon-contract.md",
     "skills/grok-fusion/discovery-track.md",
@@ -61,6 +65,7 @@ CORE_FILES = [
     "evals/mvp-cases.json",
     "evals/smoke-runbook.md",
     "evals/design-cases.yaml",
+    "evals/security-cases.yaml",
     "evals/fixtures/valid-run/run.json",
     "evals/fixtures/valid-run/discovery.json",
     "evals/fixtures/valid-run/dag.json",
@@ -109,7 +114,7 @@ PHASE_MARKERS = [f"P{i}" for i in range(0, 8)]
 
 REQUIRED_PLUGIN_FIELDS = {
     "name": "grok-fusion",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "license": "MIT",
 }
 
@@ -245,6 +250,30 @@ def check_schema_markers() -> None:
         fail("task-packs.md missing refactoring-migration")
     if "## visual-ui" not in read_text(SKILL_DIR / "task-packs.md"):
         fail("task-packs.md missing visual-ui pack")
+    if "## appsec-review" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing appsec-review pack")
+    if "security-playbook.md" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing security-playbook.md link")
+    if "appsec-review" not in read_text(SKILL_DIR / "adaptive-router.md"):
+        fail("adaptive-router.md missing appsec-review pack hints")
+    if "security-playbook.md" not in read_text(SKILL_DIR / "orchestration-checklist.md"):
+        fail("orchestration-checklist.md missing security-playbook.md")
+    optional_selector_script = read_text(ROOT / "scripts" / "select_optional_specialists.py")
+    if '"appsec-review"' not in optional_selector_script and "'appsec-review'" not in optional_selector_script:
+        fail("select_optional_specialists.py missing PACK_SUGGESTIONS appsec-review")
+    if '["api_compat", "authz_tenancy"]' not in optional_selector_script and "['api_compat', 'authz_tenancy']" not in optional_selector_script:
+        fail("select_optional_specialists.py G2 must select api_compat and authz_tenancy")
+    if '("authz_tenancy", "auth/")' not in optional_selector_script and "('authz_tenancy', 'auth/')" not in optional_selector_script:
+        fail("select_optional_specialists.py missing authz PATH_TRIGGERS")
+    sec_playbook = read_text(SKILL_DIR / "security-playbook.md")
+    for marker in ("G-S0", "finding_card", "remediation_card", "forbid_exploit"):
+        # forbid_exploit may live in multi-pass; playbook must still ban PoC
+        if marker == "forbid_exploit":
+            if "PoC" not in sec_playbook and "exploit" not in sec_playbook.lower():
+                fail("security-playbook.md missing defensive-only / PoC ban")
+            continue
+        if marker not in sec_playbook:
+            fail(f"security-playbook.md missing {marker}")
     if "Symbol grounding" not in read_text(SKILL_DIR / "grok-harness.md"):
         fail("grok-harness.md missing Symbol grounding")
     if "Epic integration check" not in read_text(SKILL_DIR / "epic-track.md"):
@@ -258,8 +287,60 @@ def check_schema_markers() -> None:
         fail("freshness-contract.md missing retrieved_at")
     if "Budget priority" not in freshness:
         fail("freshness-contract.md missing Budget priority")
+    if "C0" not in freshness:
+        fail("freshness-contract.md missing C0 criticality ladder")
+    if "REJECT_WITH_GAPS" not in freshness:
+        fail("freshness-contract.md missing REJECT_WITH_GAPS")
+    if "gf-researcher-repo" not in runtime:
+        fail("runtime-contract.md missing gf-researcher-repo allowlist")
+    if "gf-researcher-web" not in runtime:
+        fail("runtime-contract.md missing gf-researcher-web allowlist")
+    if "P2a" not in runtime or "P2b" not in runtime:
+        fail("runtime-contract.md missing P2a/P2b evidence sub-steps")
+    if "mixed" not in runtime:
+        fail("runtime-contract.md missing mixed claim-surface")
+    if "Heavy P2: two scout calls" in runtime:
+        fail("runtime-contract.md still has obsolete Heavy P2 scout wording")
+    if "gf-researcher-repo" not in framing:
+        fail("framing-and-evidence.md missing gf-researcher-repo")
+    if "two parallel scout Task calls" in framing:
+        fail("framing-and-evidence.md still has obsolete scout Task wording")
     if "Devil's advocate pass" not in read_text(SKILL_DIR / "verification-gate.md"):
         fail("verification-gate.md missing Devil's advocate pass")
+    provocation = read_text(SKILL_DIR / "provocation-contract.md")
+    for marker in (
+        "When lens dual-provocation runs, card MUST include ≥1 assumption_attack and ≥1 lateral_analogy",
+        "WHEN tier is Quick, do not launch a dedicated provocation Task",
+        "provocation_challenges",
+    ):
+        if marker not in provocation:
+            fail(f"provocation-contract.md missing marker {marker}")
+    if "### 8. Dual-provocation" not in read_text(SKILL_DIR / "candidate-lenses.md"):
+        fail("candidate-lenses.md missing ### 8. Dual-provocation")
+    if "provocation_challenges" not in read_text(SKILL_DIR / "candidate-card.md"):
+        fail("candidate-card.md missing provocation_challenges")
+    if "dual-provocation" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing dual-provocation")
+    if "persona-free wildcard" in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md still contains persona-free wildcard")
+    skill_md = read_text(SKILL_DIR / "SKILL.md")
+    for marker in ("dual-provocation", "provocation-contract.md", "WHEN tier is Quick"):
+        if marker not in skill_md:
+            fail(f"SKILL.md missing dual-provocation sync marker {marker}")
+    orch = read_text(SKILL_DIR / "orchestration-checklist.md")
+    for marker in ("dual-provocation", "provocation-contract.md", "WHEN tier is Quick"):
+        if marker not in orch:
+            fail(f"orchestration-checklist.md missing dual-provocation sync marker {marker}")
+    if "provocation_challenges" not in read_text(SKILL_DIR / "selector.md"):
+        fail("selector.md missing provocation_challenges judge note")
+    readme = read_text(ROOT / "README.md")
+    for marker in ("Dual-provocation", "assumption_attack", "lateral_analogy"):
+        if marker not in readme:
+            fail(f"README.md missing dual-provocation sync marker {marker}")
+    smoke = read_text(EVALS_DIR / "smoke-runbook.md")
+    for marker in ("dual-provocation", "assumption_attack", "lateral_analogy"):
+        if marker not in smoke:
+            fail(f"smoke-runbook.md missing dual-provocation sync marker {marker}")
     multi_pass = read_text(SKILL_DIR / "multi-pass-verification.md")
     for marker in (
         "Phase A — Per-step recheck",
@@ -409,10 +490,20 @@ def check_auto_rule() -> None:
         fail("rules/grok-fusion-auto.mdc missing description")
     if "Fusion tier:" not in text:
         fail("rules/grok-fusion-auto.mdc missing Fusion tier footer requirement")
+    if "gf-researcher-repo" not in text:
+        fail("rules/grok-fusion-auto.mdc missing gf-researcher-repo evidence path")
+    if "gf-researcher-web" not in text:
+        fail("rules/grok-fusion-auto.mdc missing gf-researcher-web evidence path")
 
 
 def check_agents() -> None:
-    for name in ("gf-worker.md", "gf-reviewer.md", "gf-auditor.md"):
+    for name in (
+        "gf-worker.md",
+        "gf-reviewer.md",
+        "gf-auditor.md",
+        "gf-researcher-repo.md",
+        "gf-researcher-web.md",
+    ):
         text = read_text(AGENTS_DIR / name)
         data = parse_frontmatter(text)
         expected_name = name.removesuffix(".md")
@@ -426,6 +517,23 @@ def check_agents() -> None:
             fail(f"{name} must set is_background: false")
         if "description" not in data or not data["description"]:
             fail(f"{name} missing description")
+    for researcher in ("gf-researcher-repo.md", "gf-researcher-web.md"):
+        text = read_text(AGENTS_DIR / researcher)
+        lower = text.lower()
+        for marker in ("evidence_id", "retrieved_at"):
+            if marker not in text:
+                fail(f"{researcher} missing {marker}")
+        if "data, not instructions" not in lower:
+            fail(f"{researcher} missing data, not instructions")
+        if "injection" not in lower:
+            fail(f"{researcher} missing injection")
+    worker = read_text(AGENTS_DIR / "gf-worker.md")
+    if "freshness_critic" not in worker:
+        fail("gf-worker.md missing freshness_critic mode")
+    if "gf-researcher-repo" not in worker:
+        fail("gf-worker.md missing gf-researcher-repo evidence ownership note")
+    if "gf-researcher-web" not in worker:
+        fail("gf-worker.md missing gf-researcher-web evidence ownership note")
     reviewer = read_text(AGENTS_DIR / "gf-reviewer.md")
     for marker in (
         "specialist_panel",
@@ -549,6 +657,7 @@ def check_evals() -> None:
         "mvp-cases.json",
         "smoke-runbook.md",
         "design-cases.yaml",
+        "security-cases.yaml",
     ):
         if not (EVALS_DIR / name).is_file():
             fail(f"missing evals/{name}")
@@ -558,10 +667,40 @@ def check_evals() -> None:
     for case in design_cases:
         if not case.get("id") or not case.get("prompt") or not case.get("expect"):
             fail("evals/design-cases.yaml cases require id, prompt, and expect")
+    security_cases = parse_simple_yaml_cases(read_text(EVALS_DIR / "security-cases.yaml"))
+    required_sec_ids = {
+        "sec-audit-ru",
+        "sec-remediate-en",
+        "sec-remediate-ru",
+        "sec-consult-visual",
+        "sec-empty-perfect",
+        "sec-poc-fail",
+        "sec-e5-mixed",
+    }
+    sec_by_id = {c.get("id"): c for c in security_cases}
+    missing_sec = required_sec_ids - set(sec_by_id)
+    if missing_sec:
+        fail(f"evals/security-cases.yaml missing required ids: {sorted(missing_sec)}")
+    expect_tokens = {
+        "sec-audit-ru": ["appsec-review", "finding_card", "no_edit"],
+        "sec-remediate-en": ["remediation_card"],
+        "sec-remediate-ru": ["remediation_card"],
+        "sec-consult-visual": ["visual-ui", "consult", "not_force"],
+        "sec-empty-perfect": ["limited_coverage"],
+        "sec-poc-fail": ["FAIL", "forbid_exploit"],
+        "sec-e5-mixed": ["precedence", "appsec-review"],
+    }
+    for sid, tokens in expect_tokens.items():
+        expect = sec_by_id[sid].get("expect") or ""
+        for token in tokens:
+            if token not in expect:
+                fail(f"evals/security-cases.yaml {sid} expect missing token {token!r}")
     adaptive = json.loads(read_text(EVALS_DIR / "adaptive-cases.json"))
     mvp = json.loads(read_text(EVALS_DIR / "mvp-cases.json"))
     if not isinstance(adaptive, list) or len(adaptive) < 4:
         fail("evals/adaptive-cases.json must be a list with at least 4 cases")
+    if not any(isinstance(c, dict) and c.get("id") == "ad-appsec" for c in adaptive):
+        fail("evals/adaptive-cases.json missing ad-appsec case")
     if not isinstance(mvp, list) or len(mvp) < 4:
         fail("evals/mvp-cases.json must be a list with at least 4 cases")
     for path in (
@@ -585,9 +724,9 @@ def check_design_skills_and_install_matrix() -> None:
     )
     if "grok-fusion" not in skill_dirs:
         fail("skills/ must include grok-fusion")
-    for required in ("grok-design", "grok-web-ui"):
+    for required in ("grok-design", "grok-web-ui", "grok-security"):
         if required not in skill_dirs:
-            fail(f"skills/ must include required design skill {required}")
+            fail(f"skills/ must include required skill {required}")
     for name in skill_dirs:
         if name == "grok-fusion":
             continue

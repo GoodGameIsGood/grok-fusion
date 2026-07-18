@@ -2,6 +2,8 @@
 
 Formal overturn path against a correlated same-model majority.
 
+Cite [provocation-contract.md](provocation-contract.md) when weighing minority claims that attack framing or load-bearing assumptions: prefer evidence-backed `decision_delta` style challenges over novelty rhetoric. Do not re-run the full operator bank; do not overturn for novelty alone.
+
 ## When to run
 
 After Top-3 and provisional spine selection, launch one isolated `gf-worker` call as the `minority sentinel`.

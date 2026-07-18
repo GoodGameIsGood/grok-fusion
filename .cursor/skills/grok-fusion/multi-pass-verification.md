@@ -73,7 +73,7 @@ checks_performed: []
 
 ## Phase B — Double error hunt
 
-1. `gf-reviewer` `mode=error_hunt` pass #1 — bugs, regressions, silent failures. For plans: adversarial holes (ungrounded paths, missing verify, non-atomic steps). For **debugging** pack: also attack wrong-cause fixes, breakage of `must_not_break`, and scope beyond the Repair Card `patch_intent` / `allowed_paths`. Fold devil’s-advocate pressure into pass #1 (or one dedicated `gf-worker` falsifier immediately before the panel — not a sixth pass after the panel).
+1. `gf-reviewer` `mode=error_hunt` pass #1 — bugs, regressions, silent failures. For plans: adversarial holes (ungrounded paths, missing verify, non-atomic steps). For **debugging** pack: also attack wrong-cause fixes, breakage of `must_not_break`, and scope beyond the Repair Card `patch_intent` / `allowed_paths`. For **appsec-review** pack: also attack missing Remediation Card, divergence from `patch_intent` / `allowed_paths`, PoC-shaped `evidence` or `characterization_cmds` (when `security.forbid_exploit_poc`), and empty-perfect claims without `checks_performed`. Fold devil’s-advocate pressure into pass #1 (or one dedicated `gf-worker` falsifier immediately before the panel — not a sixth pass after the panel).
 2. Independent `gf-reviewer` `mode=error_hunt` pass #2 — **must not receive #1 findings** (anti-anchoring).
 3. Parent merges findings.
 
@@ -128,7 +128,7 @@ Parent runs the selection algorithm in `specialist-roster.md` before this phase 
 
 ### Optional roles
 
-Select ≤3 from the optional roster in `specialist-roster.md` using pack suggestions and risk triggers (G1/G2/G3, path patterns). Default `scenario: recheck`. For pack `debugging`, prefer `test_strategist`, `concurrency`, and `observability` (pinned by `select_optional_specialists.py` unless G1/G2 forces higher-severity roles).
+Select ≤3 from the optional roster in `specialist-roster.md` using pack suggestions and risk triggers (G1/G2/G3, path patterns). Default `scenario: recheck`. For pack `debugging`, prefer `test_strategist`, `concurrency`, and `observability` (pinned by `select_optional_specialists.py` unless G1/G2 forces higher-severity roles). For pack `appsec-review`, prefer `authz_tenancy`, `threat_abuse`, and `privacy_compliance`.
 
 ### Docs-only mutating roles
 
@@ -202,6 +202,8 @@ done_evidence:
   verification_runs: []
   must_not_break: []
   repair_card_id: ""
+  finding_card_ids: []
+  remediation_card_id: ""
   open_dissent: []
   unknowns: []
 ```
@@ -212,13 +214,13 @@ Rules:
 - `verification_runs`: when verify hard gate is on, at least one `exit_code: 0`
 - `must_not_break`: ≥1 primary happy path + ≥2 adjacent scenarios with cmd/result (or justified static check)
 - `repair_card_id`: required when debugging Repair Card was used
+- `finding_card_ids` / `remediation_card_id`: required when appsec-review Finding/Remediation Cards were used
 - `open_dissent` / `unknowns`: non-blocking only; blocking items ⇒ not ready for Phase E
 - Persist on `multi_pass/*.json` and on answer-track `RunEnvelope.verification.done_evidence`
 
 ## Must-not-break walkthrough
 
-Before Phase E on mutating paths: execute or explicitly verify the `must_not_break` scenarios from the Repair Card, plan EARS, or spine. Fail closed if a walkthrough cmd fails. Record results inside `done_evidence.must_not_break`.
-
+Before Phase E on mutating paths: execute or explicitly verify the `must_not_break` scenarios from the Repair Card, Remediation Card, plan EARS, or spine. Fail closed if a walkthrough cmd fails. Record results inside `done_evidence.must_not_break`.
 ## Phase E — Final Confirmation
 
 When `closure.require_final_confirmation` is true, after D PASS + complete `done_evidence` + walkthrough:
@@ -321,6 +323,7 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
 One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelope.verification.multi_pass` object (and `RunEnvelope.verification.repair_card` / `done_evidence` / `closure` when applicable); do not invent on-disk MVP state.
 
 When a Repair Card is present: any evidence that the diff diverges from `patch_intent` or `allowed_paths` ⇒ consensus FAIL (auditor clause `repair_card_followed`).
+When a Remediation Card is present: same divergence rule (auditor clause `remediation_card_followed`). PoC-shaped Finding `evidence` or Remediation `characterization_cmds` when `security.forbid_exploit_poc` ⇒ consensus FAIL.
 
 ## Done predicates
 

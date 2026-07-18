@@ -35,6 +35,14 @@
     "discovery_max_files_debug": 80,
     "preferred_specialists": ["test_strategist", "concurrency", "observability"]
   },
+  "security": {
+    "require_finding_card_on_audit": true,
+    "require_remediation_card": true,
+    "min_fix_confidence": "high",
+    "forbid_exploit_poc": true,
+    "asvs_level_default": "L1",
+    "preferred_specialists": ["authz_tenancy", "threat_abuse", "privacy_compliance"]
+  },
   "closure": {
     "require_final_confirmation": true,
     "require_done_evidence": true,

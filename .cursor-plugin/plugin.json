@@ -1,7 +1,7 @@
 {
   "name": "grok-fusion",
-  "version": "0.3.0",
-  "description": "One Grok, council-grade judgment — adaptive deliberation in Cursor for architecture, debugging, resumable MVP builds, and web/UI design craft.",
+  "version": "0.4.0",
+  "description": "One Grok, council-grade judgment — adaptive deliberation in Cursor for architecture, debugging, AppSec review, resumable MVP builds, and web/UI design craft.",
   "author": {
     "name": "GoodGameIsGood"
   },
@@ -15,7 +15,9 @@
     "verification",
     "design",
     "web-ui",
-    "visual"
+    "visual",
+    "security",
+    "appsec"
   ],
   "skills": "./skills/",
   "agents": "./agents/",

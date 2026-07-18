@@ -1,40 +1,111 @@
 # Grok Fusion
 
-> **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor — from quick fixes to architecture and resumable MVPs.
+[![CI](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml/badge.svg)](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](.cursor-plugin/plugin.json)
 
-**A Cursor plugin that turns one Grok into a careful council:** independent framing, live evidence checks, competing proposals, judges, self-critique, and verification — then adaptive compute so simple edits stay fast and large builds stay resumable.
+> **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor — from quick fixes to architecture, AppSec review, and resumable MVPs.
 
-Use it when you want stronger architecture judgment, fewer hallucinations, and a safer path from idea → MVP → working product.
+A Cursor plugin that turns one Grok into a careful council: independent framing, live evidence (repo + web researchers), competing proposals with dual-provocation challenges, judges, self-critique, and verification — with adaptive depth so simple edits stay fast and large builds stay resumable.
+
+**Product receipt (what ships / what is not claimed)**
+
+- Ships: adaptive tiers, same-model Task council (`gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web`), fail-closed honesty, multi-pass QA with closure gates, professional planning & debugging, AppSec craft (`grok-security` + pack `appsec-review`), resumable MVP waves (when mutating), web/UI design siblings
+- Does **not** claim: measured parity with other models, Cursor Marketplace one-click install, coverage of every design or security medium, exploit/PoC authorship, or that every MVP-labeled reply writes durable run state
+
+## Contents
+
+- [Setup and update](#setup-and-update)
+- [Strengths](#strengths)
+- [How to use it](#how-to-use-it)
+- [Tiers (what happens to your request)](#tiers-what-happens-to-your-request)
+- [Building an MVP with Fusion](#building-an-mvp-with-fusion)
+- [Model requirements](#model-requirements)
+- [Privacy](#privacy)
+- [Troubleshooting](#troubleshooting)
+- [For contributors / CI](#for-contributors--ci)
+- [License](#license)
 
 ---
 
-## Who this is for
+## Setup and update
 
-- Developers and founders using **Grok inside Cursor**
-- People who need better answers on architecture, debugging, research, and multi-step builds
-- Anyone who wants an MVP/agent workflow that can pause, resume, and refuse to call itself “done” without proof
+Anyone with Cursor and a strong non-Fast **Grok** model can use either path (Task/subagents required — see [Model requirements](#model-requirements)). **Option A** installs once for all projects. **Option B** copies files into one project (ZIP works — Git is optional).
 
-## What you get
+### Option A — local plugin (recommended)
 
-| Capability | In practice |
+```bash
+mkdir -p ~/.cursor/plugins/local
+git clone https://github.com/GoodGameIsGood/grok-fusion.git ~/.cursor/plugins/local/grok-fusion
+```
+
+SSH:
+
+```bash
+mkdir -p ~/.cursor/plugins/local
+git clone git@github.com:GoodGameIsGood/grok-fusion.git ~/.cursor/plugins/local/grok-fusion
+```
+
+Then in Cursor:
+
+1. Enable **third-party / local plugins** if your settings require it
+2. **Reload** the window
+3. Select the **strongest non-Fast Grok** model you have
+4. Confirm `/grok-fusion` appears and agents `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web` are visible
+5. Optionally confirm `/grok-design`, `/grok-web-ui`, and `/grok-security` appear (craft siblings)
+
+#### Update (Option A)
+
+```bash
+git -C ~/.cursor/plugins/local/grok-fusion pull --ff-only
+```
+
+Reload Cursor after updating.
+
+#### Uninstall (Option A)
+
+```bash
+rm -rf ~/.cursor/plugins/local/grok-fusion
+```
+
+Then reload Cursor.
+
+### Option B — project-only copy
+
+Use this when you cannot (or do not want to) install a global plugin. Works from a `git clone` **or** a [ZIP download](https://github.com/GoodGameIsGood/grok-fusion/archive/refs/heads/main.zip).
+
+1. Open the downloaded repo folder.
+2. In your project, create folders if needed: `.cursor/skills/`, `.cursor/agents/`, `.cursor/rules/`.
+3. Copy:
+
+| From the repo | Into your project |
 |---|---|
-| Adaptive tiers | Quick / Standard / Heavy / MVP — picks depth from the task |
-| Same-model council | Multiple Grok subagents (`gf-worker`, `gf-reviewer`, `gf-auditor`) via Cursor Task |
-| Web/UI design craft | Sibling skills `grok-design` + `grok-web-ui` (canon, tokens-first, anti-slop) + Fusion pack `visual-ui` |
-| Fresh facts | External versions/APIs checked live and dated — not guessed from memory |
-| Self-critique | Devil’s-advocate pass before the answer; empty “LGTM” reviews are rejected |
-| Multi-pass QA | Core 5 specialists every round, plus on-demand specialists (20+) with recheck/improve/advise (≤3 optional per round, veto allowed) until consensus PASS |
-| Professional plans | EARS criteria, atomic ≤5-file batches, verify commands, plan quality + multi-pass — no extra prompting needed |
-| Professional debugging | Reproduce → hypotheses → falsify → characterization → blast-radius → council Repair Card → minimal fix only when confidence is high |
-| One-shot closure | Final confirmation inside the same request (`done_evidence` + walkthrough + blind hunt → `closure: CONFIRMED`) so follow-up «перепроверь» is not required |
-| MVP mode | PR/FAQ → spine → discovery → wave DAG → TDD waves → multi-pass → resume + safety gates |
-| Fail closed | If Task/subagents or Grok inheritance fail, it says **Fusion did not run** — it will not pretend |
+| `skills/grok-fusion/` | `.cursor/skills/grok-fusion/` |
+| `skills/grok-design/` | `.cursor/skills/grok-design/` |
+| `skills/grok-web-ui/` | `.cursor/skills/grok-web-ui/` |
+| `skills/grok-security/` | `.cursor/skills/grok-security/` |
+| `agents/gf-worker.md` | `.cursor/agents/gf-worker.md` |
+| `agents/gf-reviewer.md` | `.cursor/agents/gf-reviewer.md` |
+| `agents/gf-auditor.md` | `.cursor/agents/gf-auditor.md` |
+| `agents/gf-researcher-repo.md` | `.cursor/agents/gf-researcher-repo.md` |
+| `agents/gf-researcher-web.md` | `.cursor/agents/gf-researcher-web.md` |
+| `rules/grok-fusion-auto.mdc` | `.cursor/rules/grok-fusion-auto.mdc` |
 
-Every reply ends with: `Fusion tier: Quick|Standard|Heavy|MVP`.
+4. Reload Cursor and select a strong non-Fast Grok model.
+
+#### Update (Option B)
+
+Download or pull the latest repo, overwrite the same paths in the project, then reload.
+
+#### Uninstall (Option B)
+
+Delete those copied paths from the project’s `.cursor/` folders and reload. This does **not** use `~/.cursor/plugins/...`.
+
+**Note:** Additive craft skills (`grok-design`, `grok-web-ui`, `grok-security`) live under `skills/` for plugin discovery. They are **not** dual-tree HARD-mirrored like `grok-fusion`; Option B must copy them explicitly. v0.4.0 adds AppSec craft (`grok-security` + pack `appsec-review`) alongside web/UI design craft — not every security or design medium.
 
 ### Project config
 
-Per-project quality lives in `.grok-fusion/config.json` (see `project-config.md`). Defaults are `balanced` (adaptive tiers). This repository ships `quality_profile: max` so every request uses MVP + full Heavy spine. Other projects can use `balanced` or `fast` without editing the plugin.
+Per-project quality lives in `.grok-fusion/config.json` (see `project-config.md` in the skill). Defaults for consumers are `balanced` (adaptive tiers). This repository ships `quality_profile: max` so every request uses MVP + full Heavy spine. Other projects can use `balanced` or `fast` without editing the plugin.
 
 Example `max`:
 
@@ -56,70 +127,32 @@ Example `balanced`:
 }
 ```
 
+| Profile | Behavior |
+|---|---|
+| `balanced` | Adaptive Quick / Standard / Heavy / MVP (plugin default) |
+| `fast` | Prefer Quick/Standard; escalate only on clear triggers |
+| `max` | Every request → MVP + full Heavy spine (this repo) |
+
 ---
 
-## Install (2 minutes)
+## Strengths
 
-Anyone with Cursor can use either path. **Option A** installs once for all projects. **Option B** copies files into one project only (ZIP download works — Git is optional).
+Built for developers and founders using **Grok inside Cursor** who want stronger architecture judgment, evidence-backed answers, and a safer path from idea → MVP → working product.
 
-### Option A — local plugin (recommended)
+| Strength | In practice | How to notice |
+|---|---|---|
+| Adaptive tiers | Quick / Standard / Heavy / MVP — depth matches the task | Footer: `Fusion tier: …` |
+| Same-model council | Parallel Grok subagents via Cursor Task | Agents `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web` |
+| Dual-provocation | Lens 8 forces assumption_attack + lateral_analogy challenges (no extra Task) | `provocation-contract.md`; Quick skips dedicated provocation Tasks |
+| Fail closed | No silent solo answer when Task/inheritance fails | Reply says **Fusion did not run** |
+| Fresh facts | External versions/APIs checked live and dated when claimed | Dated sources on external facts — not memory guesses |
+| Self-critique + multi-pass QA | Devil’s-advocate pass; core specialists + optional roles until consensus | Empty “LGTM” rejected; `closure: CONFIRMED` before done |
+| Professional planning & debugging | EARS plans gate edits; debug uses Repair Card + characterization | Plans `PASS` before edits; high-confidence fixes only |
+| Resumable MVP builds | PR/FAQ → spine → discovery → wave DAG → TDD waves → resume | Mutating runs under `.grok-fusion/runs/`; G0–G4 safety gates |
+| Web/UI design craft | Sibling skills `grok-design` + `grok-web-ui` + pack `visual-ui` | Canon/tokens-first; web/UI scope — not every design medium |
+| AppSec craft | Sibling skill `grok-security` + pack `appsec-review` | OWASP/ASVS Finding Cards; Remediation Card only on explicit fix |
 
-```bash
-git clone https://github.com/GoodGameIsGood/grok-fusion.git ~/.cursor/plugins/local/grok-fusion
-```
-
-SSH:
-
-```bash
-git clone git@github.com:GoodGameIsGood/grok-fusion.git ~/.cursor/plugins/local/grok-fusion
-```
-
-Then in Cursor:
-
-1. Enable **third-party / local plugins** if your settings require it
-2. **Reload** the window
-3. Select the **strongest non-Fast Grok** model you have
-4. Confirm `/grok-fusion` appears and agents `gf-worker`, `gf-reviewer`, `gf-auditor` are visible
-
-**Update (Option A):**
-
-```bash
-git -C ~/.cursor/plugins/local/grok-fusion pull --ff-only
-```
-
-**Uninstall (Option A):**
-
-```bash
-rm -rf ~/.cursor/plugins/local/grok-fusion
-```
-
-Then reload Cursor.
-
-### Option B — project-only copy
-
-Use this when you cannot (or do not want to) install a global plugin. Works from a `git clone` **or** a [ZIP download](https://github.com/GoodGameIsGood/grok-fusion/archive/refs/heads/main.zip).
-
-1. Open the downloaded repo folder.
-2. In your project, create folders if needed: `.cursor/skills/`, `.cursor/agents/`, `.cursor/rules/`.
-3. Copy:
-
-| From the repo | Into your project |
-|---|---|
-| `skills/grok-fusion/` | `.cursor/skills/grok-fusion/` |
-| `skills/grok-design/` | `.cursor/skills/grok-design/` |
-| `skills/grok-web-ui/` | `.cursor/skills/grok-web-ui/` |
-| `agents/gf-worker.md` | `.cursor/agents/gf-worker.md` |
-| `agents/gf-reviewer.md` | `.cursor/agents/gf-reviewer.md` |
-| `agents/gf-auditor.md` | `.cursor/agents/gf-auditor.md` |
-| `rules/grok-fusion-auto.mdc` | `.cursor/rules/grok-fusion-auto.mdc` |
-
-4. Reload Cursor and select a strong non-Fast Grok model.
-
-**Update (Option B):** download or pull the latest repo, then overwrite the same paths in the project and reload.
-
-**Note:** Design skills (`grok-design`, `grok-web-ui`) live under `skills/` for plugin discovery. They are **not** dual-tree HARD-mirrored like `grok-fusion`; Option B must copy them explicitly. v0.3 covers web/UI design craft + design canon — not every design medium.
-
-**Uninstall (Option B):** delete those copied paths from the project’s `.cursor/` folders and reload. This does **not** use `~/.cursor/plugins/...`.
+One-shot closure keeps `done_evidence` + walkthrough + blind hunt in the same request so follow-up «перепроверь» is not required.
 
 ---
 
@@ -143,15 +176,23 @@ Ask Grok normally. The auto rule loads Fusion routing and chooses a tier before 
 /grok-fusion Build an MVP waitlist app with signup and admin export.
 ```
 
+```text
+/grok-fusion Audit authz on the order API — OWASP/ASVS Finding Cards only, no PoC.
+```
+
+AppSec-primary prompts use pack `appsec-review` and skill `grok-security`. Audit emits Finding Cards (no edits). Explicit “fix / harden / close the vuln” requires a Remediation Card before any mutation.
+
 ### Plans (no special prompting needed)
 
-Ask for a plan, roadmap, or “how to implement X”. Fusion loads the professional planning contract automatically: goal-backward DoD, EARS acceptance criteria, atomic batches (≤5 files), verify commands, plan quality gate, multi-pass error hunts, and specialist consensus. Edits do not start until the gate is `PASS`.
+Ask for a plan, roadmap, or “how to implement X”. Fusion loads the professional planning contract: goal-backward DoD, EARS acceptance criteria, atomic batches (≤5 files), verify commands, plan quality gate, multi-pass error hunts, and specialist consensus. Edits do not start until the gate is `PASS`.
 
-Force depth when you want it:
+Force depth when you want it (under `balanced` / `fast`):
 
 - “use Quick Fusion”
 - “use Heavy Fusion” / “deep analysis”
 - “treat this as an MVP with durable waves”
+
+Under `quality_profile: max` / `tier_policy: force_mvp` (including this repository), in-chat Quick/Standard/Heavy does **not** demote — change `.grok-fusion/config.json` instead.
 
 ---
 
@@ -160,9 +201,9 @@ Force depth when you want it:
 | Tier | Typical tasks | Approx. calls | You get |
 |---|---|---|---|
 | **Quick** | Rename, one-file fix, short explanation | 1–2 | Direct answer + light verify |
-| **Standard** | Ordinary debug, research, 2–8 files | 7–8 | Verdict, evidence, risks |
-| **Heavy** | Architecture, security, migration, high stakes | ~24 | Full seven-section report |
-| **MVP** | Product / multi-wave / resumable build | Heavy spine + per-wave work | Plan, waves, durable state |
+| **Standard** | Ordinary research, explain-only debug, 2–8 files | 7–8 | Verdict, evidence, risks |
+| **Heavy** | Architecture, security, migration, high stakes | ~24 answer-track (mutating + multi-pass is higher) | Full seven-section report |
+| **MVP** | Product / multi-wave / resumable build | Heavy spine + per-wave work | Plan, waves; durable state on mutating paths |
 
 Quality over speed. Quick exists so a typo fix is not forced through a 24-call pipeline.
 
@@ -194,7 +235,7 @@ When the tier is **MVP**, Fusion does not “vibe code” forever. It runs a sta
 
 Everything else that is reversible proceeds autonomously. Checkpoint commits stay **local** — Fusion never pushes for you.
 
-**Done** means: every mandatory product/epic/wave clause is `PASS`, build/start works, core loop is verified, no open blockers.
+**Done** means: every mandatory product/epic/wave clause is `PASS`, multi-pass consensus `PASS`, `closure: CONFIRMED` when the closure gate is on, build/start works, core loop is verified, no open blockers.
 
 ---
 
@@ -213,7 +254,7 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 ## Privacy
 
 - Quick / Standard / Heavy do **not** write run artifacts into your project by default  
-- **MVP** writes under `.grok-fusion/runs/`; keep `config.json` tracked and exclude runs (see `.gitignore` pattern in this repo)  
+- **Mutating MVP** paths write under `.grok-fusion/runs/`; keep `config.json` tracked and exclude runs (see `.gitignore` pattern in this repo). Answer-only MVP under `max` still runs the Heavy spine but does not invent run folders without mutation  
 - Workers are readonly; only the parent agent edits files when you asked for implementation  
 
 ### Resume and budgets
@@ -229,11 +270,11 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 | Problem | Fix |
 |---|---|
 | Skill / auto rule missing | Confirm install path, enable local plugins, reload |
-| Agents missing | Copy all three agents + the auto rule, not only the skill |
+| Agents missing | Copy all five agents + the auto rule, not only the skill |
 | “Fusion did not run” | Check Task/subagents and Grok badges; Max Mode / team model policy |
-| Everything feels Heavy | Narrow the ask, or say “use Quick/Standard” |
+| Everything feels Heavy | On `balanced`/`fast`: narrow the ask or say “use Quick/Standard”. On `max`: change `quality_profile` in config |
 | MVP won’t resume | Say `Continue run <id>`; check `.grok-fusion/runs/<id>/`; restore from checkpoint |
-| Always MVP / too slow | Set `.grok-fusion/config.json` `quality_profile` to `balanced` or `fast` |
+| Always MVP / too slow | Set `.grok-fusion/config.json` `quality_profile` to `balanced` or `fast` (required under this repo’s `max`) |
 | Budget blocked mid-epic | Raise `budgets.max_task_calls_per_*` in config, then `Continue run <id>` |
 | Unexpected file edits | Ask for analysis only unless you want implementation |
 | Stuck on a gate | Approve, change scope, or abort — G0–G4 are intentional |
@@ -248,11 +289,15 @@ Manual smoke checklist: [`evals/smoke-runbook.md`](evals/smoke-runbook.md).
 python3 -m py_compile scripts/validate_plugin.py
 python3 scripts/validate_plugin.py
 python3 scripts/validate_plugin.py --state evals/fixtures/valid-run
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run            # must fail
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields # must fail
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason # must fail
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done    # must fail
 ```
 
-Invalid fixture must fail. CI: [`.github/workflows/validate.yml`](.github/workflows/validate.yml).
+Invalid fixtures must fail. CI: [`.github/workflows/validate.yml`](.github/workflows/validate.yml).
 
-Evaluation contracts live under [`evals/`](evals/). Blind benchmark *results* are not checked in yet — this README does not claim measured parity with other models.
+Evaluation contracts live under [`evals/`](evals/). Structural / smoke / mvp-golden records may exist under [`evals/results/`](evals/results/); blind Fable-parity benchmarks and full live `Continue run` Cursor sessions are not claimed — this README does not claim measured parity with other models.
 
 ---
 

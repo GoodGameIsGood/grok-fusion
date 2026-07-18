@@ -12,7 +12,7 @@ Expected behavior:
 
 - answer track
 - framing catches rewrite pressure and existing Postgres constraint
-- candidates include minimal-change versus evolution designs
+- candidates include minimal-change versus evolution designs; when `dual-provocation` launches, cards include both `assumption_attack` and `lateral_analogy` per provocation-contract
 - spine preserves Postgres-first optionality unless evidence rejects it
 - final answer includes ADR, rejected alternative, risks, and dissent
 
@@ -26,7 +26,7 @@ User:
 
 Expected behavior:
 
-- scouts map current billing boundaries and tests
+- researchers map current billing boundaries and tests
 - architecture playbook scenarios and fitness functions appear
 - no file edits
 
@@ -40,7 +40,8 @@ User:
 
 Expected behavior:
 
-- dual evidence scouts and primary-source checks
+- dual evidence researchers (`gf-researcher-repo` / `gf-researcher-web`) and primary-source checks
+- P2b freshness_critic on dated records
 - social posts treated as signals only
 - speculative claims labeled
 - dissent preserved when sources conflict
@@ -90,3 +91,31 @@ Expected behavior:
 - RU triggers map to `visual-ui` via adaptive-router hints
 - anti-slop bans applied from design-canon
 - ambient `frontend-design` may load; canon bans still win
+
+## AppSec review (pack appsec-review)
+
+User:
+
+```text
+/grok-fusion Security review the auth middleware for IDOR and missing tenant checks. Do not change code yet.
+```
+
+Expected behavior:
+
+- pack `appsec-review`; load craft `grok-security`
+- Finding Cards only; no edits (audit)
+- optional specialists `authz_tenancy`, `threat_abuse`, `privacy_compliance`
+
+## AppSec remediate (Russian)
+
+User:
+
+```text
+/grok-fusion Закрой уязвимость IDOR в API заказов — исправь проверку tenant.
+```
+
+Expected behavior:
+
+- AppSec-primary RU remediate verbs → pack `appsec-review`
+- Remediation Card with confidence high before edits
+- evidence allowlist only; no exploit PoC

@@ -20,6 +20,8 @@ unknowns: []
 
 ### Skeptical framer schema
 
+Cite [provocation-contract.md](provocation-contract.md) when listing wrong-premise risks or a smaller problem: prefer checkable challenges over novelty theater. Do not stamp the full operator bank into every field.
+
 ```yaml
 framer: skeptical
 wrong_premise_risks: []
@@ -70,29 +72,28 @@ Any candidate may reject the brief with evidence. Shared-anchor failure is not a
 
 Ask the user at most two questions only when answers materially change architecture. Otherwise write explicit assumptions. Under MVP long-horizon mode, structured safety gates replace the two-question limit.
 
-## P2 — Evidence x2
+## P2 — Evidence (P2a researchers + P2b critic)
 
-Launch two parallel scout Task calls. Scouts do not recommend solutions.
+Evidence acquisition uses dedicated researchers, not `gf-worker` scouts. Researchers do not recommend solutions.
 
-### Repository or source cartographer
+### P2a — Parallel researchers
 
-For codebase work, map:
+Launch in **one** parallel Task batch:
 
-- topology and module boundaries
-- dependencies and conventions
-- tests and verification commands that actually exist
-- relevant `.cursor/rules`, `AGENTS.md`, or project constraints
+| Agent | Focus |
+|---|---|
+| `gf-researcher-repo` | Topology, deps, tests, lockfiles/configs, project constraints |
+| `gf-researcher-web` | Live WebSearch/WebFetch/registry for external APIs, versions, pricing, limits, best practices |
 
-Before claiming coverage, check ignored, invisible, or oversized-file risks. Never guess APIs, schemas, packages, or paths that were not read.
+**Heavy/MVP:** always both researchers.
 
-### Constraint or corroboration scout
+**Standard claim-surface:** codebase-only → repo only; external-only → web only; **mixed** → both (do not drop a surface).
 
-Independently collect:
+Before claiming coverage, check ignored, invisible, or oversized-file risks. Never guess APIs, schemas, packages, or paths that were not read. For research tasks, web researcher performs primary-source corroboration.
 
-- compatibility and migration constraints
-- data ownership and deployment clues
-- conflicting docs or prior decisions
-- for research tasks: primary-source corroboration
+### P2b — Freshness critic
+
+Parent merges P2a packs, then launches one sequential `gf-worker` Task with `mode=freshness_critic` when required (Heavy/MVP always; Standard when any record is C2+ or `source_type` ∈ {web, registry, docs, changelog, lockfile}). Critic returns `ACCEPT` or `REJECT_WITH_GAPS` per `freshness-contract.md`. Do not enter P3 on unhandled REJECT.
 
 ### Evidence record schema
 
@@ -103,10 +104,15 @@ Independently collect:
   source_type:
   quote:
   freshness:
+  criticality: C0|C1|C2|C3
   retrieved_at:
   published_or_updated:
   confidence_basis:
   conflict:
+  researcher_role: repo|web
+  search_performed: true|false
+  tool_ids: []
+  injection_flags: []
 ```
 
 Rules:
@@ -120,3 +126,4 @@ Rules:
 - `retrieved_at` is mandatory; apply `freshness-contract.md` to every external claim
 - coverage targets and module claims must cite concrete paths; ungrounded path claims are invalid evidence
 - debugging evidence records must include the reproduce command (or observation id) and the hypothesis id under test when recording RCA claims
+- C2+ claims downstream must cite researcher `evidence_id`s; candidates/judges must not live-search those claims themselves

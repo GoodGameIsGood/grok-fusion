@@ -29,8 +29,8 @@ Do not use the model’s self-reported confidence percentage.
 Before answering:
 
 - **Readonly answer track** (Quick/Standard/Heavy/MVP with no edits): run one adversarial pass whose only goal is to prove the answer wrong.
-  - Quick: the parent argues against its own answer inline (strongest counterargument plus one concrete failure scenario).
-  - Standard/Heavy/MVP answer track: one dedicated `gf-worker` call receives the draft answer and evidence pack, and must return the strongest evidence-backed objection, one checkable failure scenario, and one cheaper alternative.
+  - Quick: the parent argues against its own answer inline (strongest counterargument plus one concrete failure scenario). WHEN tier is Quick, do not launch a dedicated provocation Task; parent-inline DA only (see [provocation-contract.md](provocation-contract.md)).
+  - Standard/Heavy/MVP answer track: one dedicated `gf-worker` call receives the draft answer and evidence pack, and must return the strongest evidence-backed objection, one checkable failure scenario, and one cheaper alternative. Cite [provocation-contract.md](provocation-contract.md) for assumption/lateral challenge quality; do not stamp identical operator boilerplate into Error Hunt #1.
   - A checkable flaw triggers at most one revision; an unresolved objection is reported as dissent with lowered confidence. Never suppress the objection.
 - **Planning or mutating track**: do **not** rely on this single-revision DA alone. Run the full [multi-pass-verification.md](multi-pass-verification.md) pipeline through Phase E (devil’s-advocate pressure is folded into Error Hunt #1 or a pre-panel falsifier; final confirmation is Phase E). Planning/mutating “at most one revision” does **not** apply; use multi-pass repair budgets instead.
 
@@ -67,6 +67,9 @@ blockers: []
 - [ ] Devil's advocate pass ran (answer track) or multi-pass error hunt covered adversarial pressure (planning/mutating), and objections are resolved or reported
 - [ ] Final confirmation ran when required; `falsify_attempt` and `checks_performed` are nonempty
 - [ ] External claims carry `retrieved_at` per `freshness-contract.md`
+- [ ] C2+ external claims are live-verified or labeled SPECULATIVE/INSUFFICIENT (no silent bare assertions)
+- [ ] C2+ claims cite researcher `evidence_id`s; no unlabeled memory facts in the final answer
+- [ ] P2b freshness_critic ran when required (Heavy/MVP always; Standard when C2+ or web/registry/docs/changelog/lockfile records)
 
 If the checklist fails on the **answer track**, run at most one revision pass, then answer with lowered confidence rather than inventing certainty. If it fails on **planning/mutating**, continue multi-pass repair within budgets or fail closed / user gate — never claim done.
 

@@ -54,7 +54,7 @@ Implementation must not edit a module whose required discovery targets are `UNRE
 
 ## Worker rules
 
-- Use readonly `gf-worker` scouts.
+- Use readonly `gf-researcher-repo` (and `gf-researcher-web` when external facts appear) for evidence mapping.
 - Output only discovery deltas and evidence records.
 - Do not recommend product or architecture solutions in discovery.
 - Re-enter discovery when a later wave owns a module that is still `UNREAD`.

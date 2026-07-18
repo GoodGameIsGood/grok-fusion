@@ -5,9 +5,9 @@ Highest-priority runtime source of truth. If other files conflict with this docu
 ## Invocation model
 
 - The parent agent is the only Fusion orchestrator.
-- Use the Cursor **Task tool** to invoke custom agents by name: `gf-worker`, `gf-reviewer`, or `gf-auditor`.
-- Do not simulate subagents inline. If the Task tool is unavailable, fail closed.
-- All Task calls that belong to one phase must be launched in **one tool-message batch**.
+- Use the Cursor **Task tool** to invoke custom agents by name: `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, or `gf-researcher-web`.
+- Do not simulate subagents inline. If the Task tool is unavailable, fail closed. If `gf-researcher-*` cannot be resolved after documented reload, fail closed (no inline evidence simulation).
+- All Task calls that belong to one phase must be launched in **one tool-message batch**. Evidence phase is split into sub-steps **P2a** and **P2b**; each sub-step is one batch (same pattern as P6 falsify-then-revise). Other phases stay one-batch.
 - Every custom agent uses `model: inherit`, `readonly: true`, and `is_background: false`.
 - `is_background: false` is mandatory so results return before continuation.
 - Mark every Fusion run with `fusion_depth=1`. Workers must not recursively invoke `/grok-fusion` or spawn nested Fusion runs.
@@ -90,11 +90,14 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 
 ## Parallelism rules
 
-- Probe: one Task call
+- Probe: one Task call (`gf-worker`)
 - Quick verifier: one Task call
-- Standard: framing 1, scout 1, candidates 3, judges 2, verifier 1
+- Standard: framing 1, researcher(s) 1|2 by claim-surface (**mixed** → both), optional P2b freshness_critic 0|1, candidates 3, judges 2, verifier 1 — target **8–10** Task calls (worst case mixed+critic = 10)
+- Standard claim-surface: codebase-only → `gf-researcher-repo`; external-only → `gf-researcher-web`; mixed (repo + external) → both
+- Standard P2b: run `gf-worker` `mode=freshness_critic` when any record is C2+ or `source_type` ∈ {web, registry, docs, changelog, lockfile}; else skip
 - Heavy P1: three framing calls in one batch
-- Heavy P2: two scout calls in one batch
+- Heavy P2a: `gf-researcher-repo` + `gf-researcher-web` in one parallel batch (always both)
+- Heavy P2b: one sequential `gf-worker` `mode=freshness_critic` on the merged evidence pack before P3
 - Heavy P3: eight candidate calls in one batch when using all lenses
 - Heavy P4 absolute scoring: five judge calls in one batch
 - Heavy P4 pairwise: three selector calls in one batch after Top-3 are known
@@ -104,6 +107,7 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 - Correlated-panel recovery: 1× `gf-worker` falsifier, then `5 + ≤3 optional` panel again
 - Answer-track final confirmation (when closure gate on): 1× `gf-reviewer` or `gf-worker` after devil’s advocate
 - MVP wave / one-shot acceptance: multi-pass through Phase E only (do not also run the legacy 2+1 review stack)
+- Researcher ceiling: ≤2 researcher Tasks per P2a (+1 critic P2b). Candidates/judges must cite researcher `evidence_id`s for C2+ claims and must not WebSearch those claims themselves.
 
 ## Source-of-truth order
 

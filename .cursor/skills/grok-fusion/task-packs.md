@@ -33,7 +33,7 @@ Pipeline emphasis:
 6. Apply only the approved minimal `patch_intent` (no drive-by refactors)
 7. Verify ladder + multi-pass; rollback on fingerprint loops
 
-Preferred lenses: failure-and-security, implementation-realist, persona-free wildcard
+Preferred lenses: failure-and-security, implementation-realist, dual-provocation
 
 Suggested optional specialists: `test_strategist`, `concurrency`, `observability`
 
@@ -45,12 +45,13 @@ Use for comparisons, literature/docs research, and factual tradeoffs.
 
 Pipeline emphasis:
 
-1. Primary-source scout
-2. Independent corroboration
+1. Primary-source via `gf-researcher-web` (and `gf-researcher-repo` when codebase facts matter)
+2. Independent corroboration (dual researchers on mixed briefs)
 3. Claim/evidence map
 4. Explicit uncertainty labels
+5. P2b freshness_critic when C2+ or web/registry records present
 
-Preferred lenses: product-and-requirements, first-principles, persona-free wildcard
+Preferred lenses: product-and-requirements, first-principles, dual-provocation
 
 Suggested optional specialists: `docs_accuracy` (if mutating notes)
 
@@ -120,20 +121,45 @@ Forbidden default: ship UI without token preflight or anti-slop scan; claim “a
 
 Triggers (EN|RU): landing, redesign, visual polish, UI mock, hero, brand page, лендинг, макет, вёрстка, интерфейс, дизайн страницы, визуальный редизайн
 
+## appsec-review
+
+Use for security audits, threat modeling, OWASP/ASVS reviews, vuln findings, and defensive remediations of user code. Pack id is `appsec-review` (not Cursor Task `security-review`).
+
+Pipeline emphasis:
+
+1. Load craft skill `grok-security` (canon → ASVS L1 → cards; threat-model-lite on boundary changes)
+2. Follow [security-playbook.md](security-playbook.md) iron gates G-S0..G-S5
+3. Audit: Finding Cards only — **MUST NOT** edit files
+4. Explicit fix/close/harden (EN|RU): Remediation Card with `confidence` ≥ `security.min_fix_confidence` before edits
+5. Multi-pass on mutate; PoC-shaped evidence/cmds ⇒ FAIL
+
+Preferred lenses: failure-and-security, implementation-realist, product-and-requirements
+
+Suggested optional specialists: `authz_tenancy`, `threat_abuse`, `privacy_compliance`
+
+Forbidden defaults:
+
+- Auto-mutate on audit or under `quality_profile: max` without explicit fix ask
+- Exploit/PoC payloads in findings or characterization
+- Empty «нет уязвимостей» / “secure” without checklist + `checks_performed`
+- Forcing this pack when primary intent is visual-ui, debugging, planning, or architecture (MAY consult `grok-security`)
+
+Triggers (EN|RU): security review, threat model, OWASP, ASVS, vuln, authz, harden, close vulnerability, аудит безопасности, угрозы, уязвимост, права доступа, закрыть дыры; remediate: исправь, закрой уязвимость, устрани дыру
+
 ## professional-planning
 
 Use for plans, roadmaps, implementation plans, CreatePlan-style artifacts, and any pre-implementation design of work.
 
 Pipeline emphasis:
 
-1. Freshness scout for external and repo facts that the plan depends on
+1. Freshness via `gf-researcher-repo` / `gf-researcher-web` for external and repo facts that the plan depends on (then P2b critic when required)
 2. Goal-backward definition of done
 3. EARS / Given-When-Then acceptance criteria
 4. Atomic batches (≤5 files each) with verify commands
 5. Plan quality gate plus multi-pass (double error hunt, completion quality, specialist consensus)
 6. Devil's advocate folded into Error Hunt #1 or a pre-panel falsifier
 
-Preferred lenses: product-and-requirements, implementation-realist, failure-and-security
+Preferred lenses: product-and-requirements, implementation-realist, dual-provocation
 
 Suggested optional specialists: `test_strategist`, `api_compat`, `data_migration`
 
@@ -151,7 +177,7 @@ Pipeline emphasis:
 4. Concise verifier for factual claims
 5. If files are mutated: multi-pass with docs-adapted specialist roles
 
-Preferred lenses: product-and-requirements, persona-free wildcard
+Preferred lenses: product-and-requirements, first-principles, dual-provocation
 
 Suggested optional specialists: `docs_accuracy` (mutating docs; plus docs-adapted core)
 
