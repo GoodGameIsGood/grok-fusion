@@ -25,6 +25,7 @@ CORE_FILES = [
     "skills/grok-fusion/grok-harness.md",
     "skills/grok-fusion/runtime-contract.md",
     "skills/grok-fusion/freshness-contract.md",
+    "skills/grok-fusion/planning-contract.md",
     "skills/grok-fusion/adaptive-router.md",
     "skills/grok-fusion/task-packs.md",
     "skills/grok-fusion/framing-and-evidence.md",
@@ -249,6 +250,13 @@ def check_schema_markers() -> None:
         fail("long-horizon-contract.md missing prfaq.json")
     if "lessons.json" not in long_horizon:
         fail("long-horizon-contract.md missing lessons.json")
+    planning = read_text(SKILL_DIR / "planning-contract.md")
+    if "Plan quality gate" not in planning:
+        fail("planning-contract.md missing Plan quality gate")
+    if "ears_criteria" not in planning:
+        fail("planning-contract.md missing ears_criteria")
+    if "professional-planning" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing professional-planning")
 
 
 def check_auto_rule() -> None:

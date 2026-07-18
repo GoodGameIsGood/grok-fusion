@@ -66,6 +66,7 @@ Violation is fail closed, not “mostly done.”
 1. One `gf-worker` produces the initial DAG after the Heavy spine and discovery.
 2. One readonly reviewer audits acyclicity, ownership overlap, missing tests, and unsafe migrations.
 3. Gate G0 must approve scope before the first mutating wave.
+4. Every wave must map to accepted plan batch ids from `planning-contract.md`. Missing mapping is fail closed.
 
 ## Epic integration check
 

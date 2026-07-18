@@ -9,7 +9,7 @@ Adaptive deliberation skill. Do not redesign this pipeline.
 
 ## Before any phase
 
-Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md).
+Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md).
 
 ## Five Iron Rules
 
@@ -32,6 +32,7 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 - Preserve the original query verbatim.
 - Choose tier from [adaptive-router.md](adaptive-router.md): always `MVP` in this deployment.
 - Classify task pack from [task-packs.md](task-packs.md).
+- If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate is `PASS`.
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
 - Initialize an in-memory `RunEnvelope` with `tier`, `track`, and `fusion_depth=1`.
@@ -85,9 +86,10 @@ Read [verification-gate.md](verification-gate.md). Full seven-section output. Fo
 0. PR/FAQ working-backwards pass per [mvp-playbook.md](mvp-playbook.md) before the Heavy spine
 1. Heavy once for the product/architecture spine
 2. Discovery via [discovery-track.md](discovery-track.md)
-3. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md)
-4. Autonomous waves via [implementation-track.md](implementation-track.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md)
-5. Wave retros append to `lessons.json`; final epic ends with a user-zero walkthrough
+3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` before the epic/wave DAG
+4. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md)
+5. Autonomous waves via [implementation-track.md](implementation-track.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md)
+6. Wave retros append to `lessons.json`; final epic ends with a user-zero walkthrough
 
 Footer: `Fusion tier: MVP`.
 

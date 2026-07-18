@@ -16,8 +16,10 @@ Before answering or editing, load the `grok-fusion` skill. **This deployment for
 5. Never claim a lighter tier was used.
 6. If Task/custom subagents are unavailable for MVP, fail closed and say Fusion did not run.
 7. Do not mutate the workspace unless the user explicitly requested implementation or an explicit build/edit task. G0–G4 safety gates still apply before writes.
+8. If the request is a plan / roadmap / spec / CreatePlan, or implementation needs a plan first, load `planning-contract.md`, select pack `professional-planning`, and do not start edits until plan quality gate is `PASS`.
 
 ## Tier policy
 
 - **All requests → MVP** (PR/FAQ, Heavy spine, discovery, wave DAG, durable state, retros).
 - Explicit “use Quick/Standard/Heavy” overrides are ignored in this deployment unless the user later changes this rule.
+- Planning requests always use `professional-planning` and `planning-contract.md`.

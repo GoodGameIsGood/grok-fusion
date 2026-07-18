@@ -40,6 +40,7 @@ Before answering, at every tier, run one adversarial pass whose only goal is to 
 - [ ] Architecture tasks include ATAM-lite scenarios and rejected alternatives
 - [ ] No workspace mutation occurred on the answer track
 - [ ] Uncertainty labels are present where evidence is weak
+- [ ] If planning was required, plan quality gate is PASS and devil's advocate on the plan is resolved or reported
 - [ ] Devil's advocate pass ran and its objection is resolved or reported
 - [ ] External claims carry `retrieved_at` per `freshness-contract.md`
 

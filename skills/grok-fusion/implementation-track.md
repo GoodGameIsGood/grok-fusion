@@ -6,7 +6,8 @@ Single-batch Standard/Heavy edits use the one-shot sequence below. MVP uses the 
 
 ## One-shot sequence
 
-1. Run the selected deliberative pipeline first and produce a file-level implementation contract.
+0. If planning is mandatory and no accepted plan exists, build one per [planning-contract.md](planning-contract.md) and obtain plan quality gate `PASS` before any edit.
+1. Run the selected deliberative pipeline first and produce a file-level implementation contract that cites plan step ids when a plan exists.
 2. The contract must list:
    - exact allowed paths
    - invariants
@@ -48,6 +49,7 @@ Before every MVP wave, re-read `spine.json`, `lessons.json`, and the active wave
 
 For each ready wave in topological order:
 
+0. Confirm the wave maps to accepted plan batch/step ids from [planning-contract.md](planning-contract.md); if no accepted plan exists, build and gate it first.
 1. Validate durable state and discovery coverage for `owns_paths`.
 2. Capture baseline tests and a checkpoint under `.grok-fusion/runs/<run-id>/checkpoints/`.
 3. Pause for any required G0–G4 safety gate before editing.

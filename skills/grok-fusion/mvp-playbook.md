@@ -11,6 +11,8 @@ Before the Heavy spine pass, write a PR/FAQ into `prfaq.json`:
 3. Riskiest assumptions as testable claims, each mapped to the earliest wave that can falsify it cheaply (riskiest assumption test).
 4. Acceptance criteria in EARS form: "WHEN <trigger> THE SYSTEM SHALL <response>". These become acceptance clauses.
 
+Detailed implementation plans for waves follow `planning-contract.md`; PR/FAQ alone is not a substitute for an executable plan.
+
 The Heavy spine pass receives the PR/FAQ as part of the canonical brief.
 
 ## Walking skeleton rule

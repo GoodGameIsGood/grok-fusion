@@ -83,9 +83,26 @@ Preferred lenses: minimal-change, implementation-realist, evolution-and-scale
 
 Forbidden default: big-bang rewrite without characterization tests
 
+## professional-planning
+
+Use for plans, roadmaps, implementation plans, CreatePlan-style artifacts, and any pre-implementation design of work.
+
+Pipeline emphasis:
+
+1. Freshness scout for external and repo facts that the plan depends on
+2. Goal-backward definition of done
+3. EARS / Given-When-Then acceptance criteria
+4. Atomic batches (≤5 files each) with verify commands
+5. Plan quality gate
+6. Devil's advocate on the plan
+
+Preferred lenses: product-and-requirements, implementation-realist, failure-and-security
+
+Forbidden: prose-only plans without verify commands; big-bang single batch
+
 ## writing-explanation
 
-Use for docs, explanations, plans, and communication artifacts.
+Use for docs, explanations, and communication artifacts that are not implementation plans.
 
 Pipeline emphasis:
 
@@ -103,3 +120,4 @@ Preferred lenses: product-and-requirements, persona-free wildcard
 - Heavy architecture: default to all eight lenses
 - MVP spine: use architecture or product-mvp pack for the initial Heavy pass; later waves use simple-code-edit, debugging, or product-mvp as needed
 - Large refactors: use refactoring-migration; single-batch scope stays Heavy, multi-wave scope escalates to MVP-tier durable state
+- Planning requests always select `professional-planning`
