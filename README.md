@@ -29,6 +29,8 @@ Every reply ends with: `Fusion tier: Quick|Standard|Heavy|MVP`.
 
 ## Install (2 minutes)
 
+Anyone with Cursor can use either path. **Option A** installs once for all projects. **Option B** copies files into one project only (ZIP download works — Git is optional).
+
 ### Option A — local plugin (recommended)
 
 ```bash
@@ -48,20 +50,41 @@ Then in Cursor:
 3. Select the **strongest non-Fast Grok** model you have
 4. Confirm `/grok-fusion` appears and agents `gf-worker`, `gf-reviewer`, `gf-auditor` are visible
 
-### Option B — project-only copy
-
-Copy into the project:
-
-- `skills/grok-fusion/` → `.cursor/skills/grok-fusion/`
-- `agents/gf-worker.md`, `agents/gf-reviewer.md`, `agents/gf-auditor.md` → `.cursor/agents/`
-- `rules/grok-fusion-auto.mdc` → `.cursor/rules/`
-
-### Update / uninstall
+**Update (Option A):**
 
 ```bash
 git -C ~/.cursor/plugins/local/grok-fusion pull --ff-only
+```
+
+**Uninstall (Option A):**
+
+```bash
 rm -rf ~/.cursor/plugins/local/grok-fusion
 ```
+
+Then reload Cursor.
+
+### Option B — project-only copy
+
+Use this when you cannot (or do not want to) install a global plugin. Works from a `git clone` **or** a [ZIP download](https://github.com/GoodGameIsGood/grok-fusion/archive/refs/heads/main.zip).
+
+1. Open the downloaded repo folder.
+2. In your project, create folders if needed: `.cursor/skills/`, `.cursor/agents/`, `.cursor/rules/`.
+3. Copy:
+
+| From the repo | Into your project |
+|---|---|
+| `skills/grok-fusion/` | `.cursor/skills/grok-fusion/` |
+| `agents/gf-worker.md` | `.cursor/agents/gf-worker.md` |
+| `agents/gf-reviewer.md` | `.cursor/agents/gf-reviewer.md` |
+| `agents/gf-auditor.md` | `.cursor/agents/gf-auditor.md` |
+| `rules/grok-fusion-auto.mdc` | `.cursor/rules/grok-fusion-auto.mdc` |
+
+4. Reload Cursor and select a strong non-Fast Grok model.
+
+**Update (Option B):** download or pull the latest repo, then overwrite the same five paths in the project and reload.
+
+**Uninstall (Option B):** delete those copied paths from the project’s `.cursor/` folders and reload. This does **not** use `~/.cursor/plugins/...`.
 
 ---
 
