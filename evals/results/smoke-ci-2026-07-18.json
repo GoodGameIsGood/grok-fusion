@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "kind": "smoke-ci",
+  "date": "2026-07-18",
+  "summary": "CI/fixture/file-presence smoke recorded. Not a live Cursor Task/badge smoke; not Fable parity.",
+  "status": "PASS",
+  "non_claims": [
+    "live Cursor Task spawn",
+    "model inherit badge",
+    "universal capability",
+    "measured Fable parity"
+  ],
+  "checks": [
+    {
+      "cmd": "/usr/bin/python3 -m py_compile scripts/validate_plugin.py",
+      "exit_code": 0,
+      "expect_exit": 0,
+      "ok": true,
+      "stderr_tail": "",
+      "at": "2026-07-18T13:08:54Z"
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py",
+      "exit_code": 0,
+      "expect_exit": 0,
+      "ok": true,
+      "stderr_tail": "",
+      "at": "2026-07-18T13:08:54Z"
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+      "exit_code": 0,
+      "expect_exit": 0,
+      "ok": true,
+      "stderr_tail": "",
+      "at": "2026-07-18T13:08:54Z"
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run",
+      "exit_code": 1,
+      "expect_exit": 1,
+      "ok": true,
+      "stderr_tail": "FAIL: state missing prfaq.json\n",
+      "at": "2026-07-18T13:08:54Z"
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields",
+      "exit_code": 1,
+      "expect_exit": 1,
+      "ok": true,
+      "stderr_tail": "FAIL: wave w0-discovery uses legacy outputs/tests keys; require produces/test_commands\n",
+      "at": "2026-07-18T13:08:54Z",
+      "expect_substring": "produces",
+      "substring_ok": true
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason",
+      "exit_code": 1,
+      "expect_exit": 1,
+      "ok": true,
+      "stderr_tail": "FAIL: run.json status blocked requires blocked_reason\n",
+      "at": "2026-07-18T13:08:54Z",
+      "expect_substring": "blocked_reason",
+      "substring_ok": true
+    },
+    {
+      "cmd": "/usr/bin/python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done",
+      "exit_code": 1,
+      "expect_exit": 1,
+      "ok": true,
+      "stderr_tail": "FAIL: w0-discovery.json complete requires closure CONFIRMED\n",
+      "at": "2026-07-18T13:08:54Z",
+      "expect_substring": "closure",
+      "substring_ok": true
+    },
+    {
+      "cmd": "file_presence",
+      "exit_code": 0,
+      "expect_exit": 0,
+      "ok": true,
+      "missing": [],
+      "at": "2026-07-18T13:08:54Z"
+    }
+  ]
+}

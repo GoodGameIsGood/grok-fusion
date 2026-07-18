@@ -29,6 +29,9 @@ Footer  Fusion tier: <actual> [| profile=… | tasks=… | multi_pass=… | veri
         MVP blocked/budget: also emit run_id, blocked_reason, remaining task_calls vs caps,
         and the exact next utterance `Continue run <run_id>`
 Resume  Continue run <run_id> → recovery-track.md
+Epic split  Tripwires (>80% epic Task budget, >5 waves, G4) → child epic inherits spine_id;
+            block/finish parent first; emit run_id + blocked_reason + Continue run <id>
+            Details: epic-track.md § Epic split UX
 ```
 
 ## Deep links

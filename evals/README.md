@@ -21,8 +21,14 @@ This directory defines evaluation contracts for:
 - `fixtures/invalid-legacy-fields/` — dag still using legacy `outputs`/`tests` (must fail mentioning `produces`)
 - `fixtures/invalid-blocked-missing-reason/` — `run.status=blocked` without `blocked_reason` (must fail)
 - `fixtures/invalid-false-done/` — multi_pass `complete` without `closure: CONFIRMED` (must fail)
-- `results/` — dated structural validate records (`structural-*.json`); not blind benchmarks
+- `results/` — dated eval records (`structural-*.json`, `smoke-ci-*.json`, `mvp-golden-*.json`); not blind Fable benchmarks
 
 ## Status
 
-Structural validate results are recorded under [`results/`](results/) (see `structural-2026-07-18.json`). Blind adaptive, MVP, and smoke suites still lack recorded pass evidence. Until those suites pass with recorded evidence, public documentation must not claim universal capability or measured Fable parity.
+Recorded under [`results/`](results/):
+
+- `structural-2026-07-18.json` — plugin + state-fixture validate
+- `smoke-ci-2026-07-18.json` — CI/fixture/file-presence smoke (`kind: smoke-ci`; **not** live Cursor Task/badge smoke)
+- `mvp-golden-2026-07-18.json` — `mvp-04` crash-resume **PARTIAL** (fixture/contract evidence; live `Continue run` still pending)
+
+Blind adaptive and full live Cursor smoke suites still lack complete recorded pass evidence. Until those suites pass with recorded evidence, public documentation must not claim universal capability or measured Fable parity.

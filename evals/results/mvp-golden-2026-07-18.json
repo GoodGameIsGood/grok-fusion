@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "mvp-golden",
+  "date": "2026-07-18",
+  "case_id": "mvp-04",
+  "case_kind": "crash-resume",
+  "summary": "Fixture/contract evidence for mvp-04 must_haves. Live Continue-run Cursor session still pending.",
+  "status": "PARTIAL",
+  "live_pending": [
+    "Continue run live Cursor session"
+  ],
+  "must_haves": [
+    {
+      "id": "resume_checks",
+      "status": "PASS",
+      "evidence_path": "skills/grok-fusion/recovery-track.md",
+      "evidence_note": "Resume checks section lists workspace_identity, spine_id, active_wave, blocked multi_pass rules",
+      "fixture_path": "evals/fixtures/valid-run/run.json"
+    },
+    {
+      "id": "no_partial_pass",
+      "status": "PASS",
+      "evidence_path": "skills/grok-fusion/recovery-track.md",
+      "evidence_note": "Interrupted waves are blocked, never partially PASS; validator enforces blocked_reason and closure CONFIRMED",
+      "fixture_path": "evals/fixtures/invalid-false-done/"
+    },
+    {
+      "id": "summary_reload",
+      "status": "PASS",
+      "evidence_path": "skills/grok-fusion/recovery-track.md",
+      "evidence_note": "Wave summary contract; resume reloads summaries",
+      "fixture_path": "evals/fixtures/valid-run/summaries/w0-discovery.json"
+    }
+  ],
+  "non_claims": [
+    "live Cursor resume exercised in this environment",
+    "full blind MVP suite pass",
+    "universal capability"
+  ]
+}

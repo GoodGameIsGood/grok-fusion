@@ -69,6 +69,21 @@ Violation is fail closed, not “mostly done.”
 3. Gate G0 must approve scope before the first mutating wave.
 4. Every wave must map to accepted plan batch ids from `planning-contract.md`. Missing mapping is fail closed.
 
+## Epic split UX
+
+Split into a child epic when any tripwire fires (do not silently continue past budgets):
+
+- Forecasted Task calls exceed **80%** of `budgets.max_task_calls_per_epic`
+- The DAG would exceed **5 waves** in one epic without a clear vertical-slice boundary
+- Gate **G4** changes goal, invariants, non-goals, or epic boundaries
+
+Rules:
+
+- Child epic inherits parent `spine_id` (and spine invariants); do not re-run Heavy unless G4 revises the spine
+- Finish or **block** the parent epic before starting mutating waves on the child
+- On handoff / budget block, emit `run_id`, `blocked_reason`, remaining task calls vs caps, and the exact utterance `Continue run <run_id>`
+- Prefer vertical-slice child epics over horizontal layer splits
+
 ## Epic integration check
 
 When the last wave of an epic completes:
