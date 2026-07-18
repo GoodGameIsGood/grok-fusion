@@ -13,6 +13,7 @@ On every MVP continuation, validate before writing:
 - `spine.json` exists, parses, and `spine_id` matches `run.json`; a missing or invalid `spine.json` for an active MVP run is fail closed
 - DAG is acyclic and ownership does not overlap for active waves
 - interrupted waves are `blocked`, never partially `PASS`
+- if `run.json.status` is `blocked`, `blocked_reason` must be present and non-empty
 - if `multi_pass/<id>.json` exists for the active wave/plan/epic: `schema_version` is 1, `status` is not silently treated as PASS while `consensus` is `IN_PROGRESS` or `FAIL`, and missing panel votes are never invented
 
 If validation fails, stop and report the blocker.
@@ -25,6 +26,7 @@ If validation fails, stop and report the blocker.
 - Continue from the last checkpoint for a `blocked` or incomplete active wave.
 - Interrupted multi-pass: set wave/plan/epic to `blocked` if the session died mid-round; resume from recorded `phase` and `round` per [multi-pass-verification.md](multi-pass-verification.md). Never mark PASS with an incomplete panel.
 - Canonical user resume phrase: `Continue run <run_id>` (loads durable state and lessons, then resumes the active wave).
+- When surfacing a blocked or budget-exhausted run, include `run_id`, `blocked_reason`, remaining `task_calls_*` vs config caps, and the exact utterance `Continue run <run_id>`.
 - Debugging rollback: restore the pre-fix checkpoint; keep the Repair Card so the next attempt still follows council `patch_intent` (or revise the card via a new council round before widening scope).
 
 ## Wave summary contract

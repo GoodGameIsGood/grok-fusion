@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "structural",
+  "date": "2026-07-18",
+  "summary": "Local structural plugin + state fixture validation recorded. Not a blind benchmark; not Fable parity.",
+  "checks": [
+    {
+      "cmd": "python3 scripts/validate_plugin.py",
+      "exit_code": 0,
+      "at": "2026-07-18T12:00:00Z"
+    },
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+      "exit_code": 0,
+      "at": "2026-07-18T12:00:00Z"
+    },
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run",
+      "exit_code": 1,
+      "at": "2026-07-18T12:00:00Z"
+    },
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields",
+      "exit_code": 1,
+      "expect_substring": "produces",
+      "at": "2026-07-18T12:00:00Z"
+    },
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason",
+      "exit_code": 1,
+      "expect_substring": "blocked_reason",
+      "at": "2026-07-18T12:00:00Z"
+    },
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done",
+      "exit_code": 1,
+      "expect_substring": "closure",
+      "at": "2026-07-18T12:00:00Z"
+    }
+  ],
+  "non_claims": [
+    "universal capability",
+    "measured Fable parity",
+    "ideal for any task"
+  ]
+}

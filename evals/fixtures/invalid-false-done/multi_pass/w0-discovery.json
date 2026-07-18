@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "id": "w0-discovery",
+  "phase": "done",
+  "round": 1,
+  "steps": [],
+  "error_hunt_1": {
+    "blockers": []
+  },
+  "error_hunt_2": {
+    "blockers": []
+  },
+  "merged_blockers": [],
+  "completion_quality": {
+    "audit_result": "PASS",
+    "verify_evidence": "present"
+  },
+  "verification_runs": [
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+      "exit_code": 0,
+      "summary": "state fixture valid",
+      "at": "2026-07-18T00:00:00Z"
+    }
+  ],
+  "panel": [
+    {
+      "role": "correctness_engineer",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "discovery coverage present"
+      ]
+    },
+    {
+      "role": "systems_architect",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "owns_paths disjoint"
+      ]
+    },
+    {
+      "role": "security_reliability",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "no secrets in discovery"
+      ]
+    },
+    {
+      "role": "product_acceptance",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "wave0 maps to plan"
+      ]
+    },
+    {
+      "role": "ops_maintainability",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "commands recorded"
+      ]
+    }
+  ],
+  "optional_panel": [
+    {
+      "role": "test_strategist",
+      "scenario": "recheck",
+      "verdict": "SHIP",
+      "checks_performed": [
+        "discovery verify commands recorded"
+      ]
+    }
+  ],
+  "optional_selection": {
+    "triggers_matched": [
+      "pack:simple-code-edit"
+    ],
+    "selected": [
+      {
+        "role": "test_strategist",
+        "scenario": "recheck"
+      }
+    ],
+    "dropped_by_cap": []
+  },
+  "repair_card": {
+    "mode": "repair_card",
+    "observation": "discovery verify commands missing",
+    "primary_cause": "commands not recorded in discovery",
+    "rejected_hypotheses": [
+      "wrong owns_paths"
+    ],
+    "must_not_break": [
+      "wave0 coverage gate"
+    ],
+    "characterization_cmds": [
+      "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run"
+    ],
+    "blast_radius_paths": [
+      "evals/fixtures/valid-run/discovery.json"
+    ],
+    "allowed_paths": [
+      "evals/fixtures/valid-run/discovery.json"
+    ],
+    "patch_intent": [
+      "record verified commands"
+    ],
+    "confidence": "high",
+    "fix_rationale": "fixture completeness",
+    "do_not_fix": []
+  },
+  "done_evidence": {
+    "request_restatement": "validate discovery wave fixture",
+    "acceptance_ids": [
+      "discovery-coverage"
+    ],
+    "verification_runs": [
+      {
+        "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+        "exit_code": 0,
+        "summary": "state fixture valid"
+      }
+    ],
+    "must_not_break": [
+      {
+        "scenario": "wave0 coverage gate",
+        "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+        "result": "PASS"
+      },
+      {
+        "scenario": "owns_paths disjoint",
+        "cmd": "static",
+        "result": "PASS"
+      },
+      {
+        "scenario": "no secrets in discovery",
+        "cmd": "static",
+        "result": "PASS"
+      }
+    ],
+    "repair_card_id": "w0-discovery",
+    "open_dissent": [],
+    "unknowns": []
+  },
+  "final_confirmation": {
+    "mode": "final_confirmation",
+    "verdict": "CONFIRMED",
+    "falsify_attempt": "Tried to find missing verification_runs and open merged_blockers",
+    "checks_performed": [
+      "verification_runs exit 0",
+      "merged_blockers empty",
+      "panel 5 SHIP"
+    ],
+    "blockers": []
+  },
+  "consensus": "PASS",
+  "status": "complete",
+  "task_calls_used": 12
+}

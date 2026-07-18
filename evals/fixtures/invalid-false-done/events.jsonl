@@ -1,0 +1,2 @@
+{"ts":"2026-07-18T00:00:00Z","type":"action","wave_id":"w0-discovery","detail":{"msg":"discovery complete"},"fingerprint":""}
+{"ts":"2026-07-18T01:00:00Z","type":"action","wave_id":"w1-core-loop","detail":{"msg":"wave started"},"fingerprint":""}

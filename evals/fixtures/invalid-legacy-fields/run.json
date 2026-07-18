@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "run_id": "run-fixture-valid-001",
+  "workspace_identity": "/tmp/example-workspace",
+  "tier": "MVP",
+  "spine_id": "spine-notes-v1",
+  "status": "active",
+  "active_wave": "w1-core-loop",
+  "branch_or_worktree": "gf/run-fixture-valid-001",
+  "created_at": "2026-07-18T00:00:00Z",
+  "updated_at": "2026-07-18T01:00:00Z"
+}

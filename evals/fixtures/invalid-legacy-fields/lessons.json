@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "lessons": [
+    {
+      "id": "l-1",
+      "wave_id": "w0-discovery",
+      "observation": "npm test needed a seeded fixture",
+      "rule": "seed test data before wave checks",
+      "applies_to": "w1-core-loop",
+      "fingerprint": "verify|npm-test|missing-fixture",
+      "tags": ["tests", "fixtures"],
+      "recurrence_count": 2,
+      "inject_hint": "Ensure fixtures exist before running verify_cmd"
+    }
+  ]
+}

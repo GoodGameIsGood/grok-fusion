@@ -15,9 +15,14 @@ This directory defines evaluation contracts for:
 - `adaptive-cases.json` — Quick/Standard/Heavy/MVP routing cases
 - `mvp-cases.json` — multi-wave, migration, resume, and rollback scenarios
 - `smoke-runbook.md` — manual Cursor plugin-load and Task smoke checks
+- `design-cases.yaml` — web/UI design skill routing and claim-hygiene cases (≥3)
 - `fixtures/valid-run/` — valid MVP state fixture for `validate_plugin.py --state`
 - `fixtures/invalid-run/` — intentionally invalid state fixture (must fail)
+- `fixtures/invalid-legacy-fields/` — dag still using legacy `outputs`/`tests` (must fail mentioning `produces`)
+- `fixtures/invalid-blocked-missing-reason/` — `run.status=blocked` without `blocked_reason` (must fail)
+- `fixtures/invalid-false-done/` — multi_pass `complete` without `closure: CONFIRMED` (must fail)
+- `results/` — dated structural validate records (`structural-*.json`); not blind benchmarks
 
 ## Status
 
-No benchmark results are recorded in this repository yet. Until adaptive, MVP, and smoke suites pass with recorded evidence, public documentation must not claim universal capability or measured Fable parity.
+Structural validate results are recorded under [`results/`](results/) (see `structural-2026-07-18.json`). Blind adaptive, MVP, and smoke suites still lack recorded pass evidence. Until those suites pass with recorded evidence, public documentation must not claim universal capability or measured Fable parity.

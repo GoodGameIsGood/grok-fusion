@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "product_clauses": [
+    {
+      "id": "pc-1",
+      "text": "User can create and list notes end-to-end",
+      "mandatory": true,
+      "status": "UNVERIFIED"
+    },
+    {
+      "id": "pc-2",
+      "text": "Build and start path works",
+      "mandatory": true,
+      "status": "UNVERIFIED"
+    }
+  ],
+  "epic_clauses": [
+    {
+      "id": "ec-1",
+      "text": "Core vertical slice ships before search polish",
+      "mandatory": true,
+      "status": "UNVERIFIED"
+    }
+  ],
+  "wave_clauses": {
+    "w1-core-loop": [
+      {
+        "id": "wc-w1-1",
+        "text": "Create and list notes unit tests pass",
+        "mandatory": true,
+        "status": "UNVERIFIED"
+      }
+    ]
+  }
+}

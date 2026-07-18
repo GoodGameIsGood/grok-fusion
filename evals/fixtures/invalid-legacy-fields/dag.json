@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "epics": [
+    {
+      "id": "epic-core",
+      "goal": "Core notes vertical slice",
+      "definition_of_done": [
+        "create and list notes via API"
+      ],
+      "waves": [
+        {
+          "id": "w0-discovery",
+          "depends_on": [],
+          "owns_paths": [],
+          "reads_paths": [
+            "src/",
+            "package.json"
+          ],
+          "forbidden_paths": [],
+          "outputs": [
+            "discovery.json"
+          ],
+          "tests": [],
+          "rollback": "n/a",
+          "status": "complete",
+          "acceptance_clause_ids": [],
+          "gates_required": []
+        },
+        {
+          "id": "w1-core-loop",
+          "depends_on": [
+            "w0-discovery"
+          ],
+          "owns_paths": [
+            "src/notes/"
+          ],
+          "reads_paths": [
+            "src/notes/",
+            "tests/"
+          ],
+          "forbidden_paths": [],
+          "outputs": [
+            "create/list notes API"
+          ],
+          "tests": [
+            "npm test -- notes"
+          ],
+          "rollback": "restore checkpoint w1",
+          "status": "active",
+          "acceptance_clause_ids": [
+            "wc-w1-1"
+          ],
+          "gates_required": [
+            "G0"
+          ]
+        }
+      ]
+    }
+  ]
+}

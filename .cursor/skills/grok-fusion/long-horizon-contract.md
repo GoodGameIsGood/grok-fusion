@@ -45,12 +45,21 @@ If `.git` exists, prefer excluding `.grok-fusion/runs/` (keep `config.json` trac
   "tier": "MVP",
   "spine_id": "",
   "status": "active|blocked|complete|aborted",
+  "blocked_reason": "",
+  "task_calls_wave": 0,
+  "task_calls_epic": 0,
   "active_wave": "",
   "branch_or_worktree": "",
   "created_at": "",
   "updated_at": ""
 }
 ```
+
+Rules:
+
+- `task_calls_wave` / `task_calls_epic` are optional ints when present (soft budget counters).
+- When `status` is `blocked`, `blocked_reason` is **required** (non-empty). Validators must fail closed if it is missing.
+- When `status` is not `blocked`, `blocked_reason` may be omitted.
 
 ### spine.json
 

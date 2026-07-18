@@ -50,8 +50,13 @@ python3 scripts/validate_plugin.py
 python3 scripts/validate_plugin.py --state evals/fixtures/valid-run
 ```
 
-Invalid fixture must fail:
+Invalid fixtures must fail (substring checks in CI):
 
 ```bash
 python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run; test $? -ne 0
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields; test $? -ne 0
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason; test $? -ne 0
+python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done; test $? -ne 0
 ```
+
+Structural results (not blind benchmarks) may be recorded under `evals/results/structural-*.json`.

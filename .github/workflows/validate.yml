@@ -24,3 +24,36 @@ jobs:
             echo "expected invalid fixture to fail" >&2
             exit 1
           fi
+      - name: Invalid legacy-fields fixture must fail
+        run: |
+          out=$(python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields 2>&1) && {
+            echo "expected invalid-legacy-fields to fail" >&2
+            exit 1
+          } || true
+          echo "$out" | grep -qi produces || {
+            echo "expected failure to mention produces" >&2
+            echo "$out" >&2
+            exit 1
+          }
+      - name: Invalid blocked-missing-reason fixture must fail
+        run: |
+          out=$(python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason 2>&1) && {
+            echo "expected invalid-blocked-missing-reason to fail" >&2
+            exit 1
+          } || true
+          echo "$out" | grep -qi blocked_reason || {
+            echo "expected failure to mention blocked_reason" >&2
+            echo "$out" >&2
+            exit 1
+          }
+      - name: Invalid false-done fixture must fail
+        run: |
+          out=$(python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done 2>&1) && {
+            echo "expected invalid-false-done to fail" >&2
+            exit 1
+          } || true
+          echo "$out" | grep -qi closure || {
+            echo "expected failure to mention closure" >&2
+            echo "$out" >&2
+            exit 1
+          }

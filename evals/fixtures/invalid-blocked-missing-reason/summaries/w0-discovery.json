@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "wave_id": "w0-discovery",
+  "spine_constraints_upheld": ["single writer per path"],
+  "files_changed": [],
+  "tests_run": [{"cmd": "npm test", "exit": 0, "hash": "abc123"}],
+  "acceptance": [{"clause": "wc-w0-1", "status": "PASS"}],
+  "open_blockers": [],
+  "dissent_carried_forward": [],
+  "discard_from_active_context": []
+}

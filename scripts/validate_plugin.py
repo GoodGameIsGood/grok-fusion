@@ -59,6 +59,7 @@ CORE_FILES = [
     "evals/adaptive-cases.json",
     "evals/mvp-cases.json",
     "evals/smoke-runbook.md",
+    "evals/design-cases.yaml",
     "evals/fixtures/valid-run/run.json",
     "evals/fixtures/valid-run/discovery.json",
     "evals/fixtures/valid-run/dag.json",
@@ -73,6 +74,13 @@ CORE_FILES = [
     "evals/fixtures/invalid-run/dag.json",
     "evals/fixtures/invalid-run/acceptance.json",
     "evals/fixtures/invalid-run/events.jsonl",
+    "evals/fixtures/invalid-legacy-fields/run.json",
+    "evals/fixtures/invalid-legacy-fields/dag.json",
+    "evals/fixtures/invalid-blocked-missing-reason/run.json",
+    "evals/fixtures/invalid-blocked-missing-reason/dag.json",
+    "evals/fixtures/invalid-false-done/run.json",
+    "evals/fixtures/invalid-false-done/multi_pass/w0-discovery.json",
+    "evals/results/structural-2026-07-18.json",
     ".github/workflows/validate.yml",
     "README.md",
     "LICENSE",
@@ -574,6 +582,9 @@ def check_design_skills_and_install_matrix() -> None:
     )
     if "grok-fusion" not in skill_dirs:
         fail("skills/ must include grok-fusion")
+    for required in ("grok-design", "grok-web-ui"):
+        if required not in skill_dirs:
+            fail(f"skills/ must include required design skill {required}")
     for name in skill_dirs:
         if name == "grok-fusion":
             continue
@@ -765,7 +776,31 @@ def validate_state_dir(state_dir: Path) -> None:
             for clause in clauses:
                 if isinstance(clause, dict) and clause.get("id"):
                     clause_ids.add(clause["id"])
+    for epic in dag.get("epics", []):
+        if not isinstance(epic, dict):
+            fail("dag epic must be an object")
+        if "definition_of_done" in epic and not isinstance(epic.get("definition_of_done"), list):
+            fail(f"epic {epic.get('id', '?')} definition_of_done must be a list")
     for wid, wave in waves.items():
+        if "outputs" in wave or "tests" in wave:
+            fail(
+                f"wave {wid} uses legacy outputs/tests keys; require produces/test_commands"
+            )
+        produces = wave.get("produces")
+        if not isinstance(produces, list):
+            fail(f"wave {wid} produces must be a list")
+        test_commands = wave.get("test_commands")
+        if not isinstance(test_commands, list):
+            fail(f"wave {wid} test_commands must be a list")
+        if "forbidden_paths" in wave and not isinstance(wave.get("forbidden_paths"), list):
+            fail(f"wave {wid} forbidden_paths must be a list")
+        rollback = wave.get("rollback")
+        if not isinstance(rollback, dict):
+            fail(f"wave {wid} rollback must be an object with git_ref and revert_steps")
+        if "git_ref" not in rollback:
+            fail(f"wave {wid} rollback missing git_ref")
+        if not isinstance(rollback.get("revert_steps"), list):
+            fail(f"wave {wid} rollback.revert_steps must be a list")
         status = wave.get("status")
         if status not in allowed_status:
             fail(f"wave {wid} has invalid status {status!r}")
@@ -778,6 +813,12 @@ def validate_state_dir(state_dir: Path) -> None:
         for cid in wave.get("acceptance_clause_ids", []):
             if cid not in clause_ids:
                 fail(f"wave {wid} references missing acceptance clause {cid}")
+    if run.get("status") == "blocked":
+        if not run.get("blocked_reason"):
+            fail("run.json status blocked requires blocked_reason")
+    for key in ("task_calls_wave", "task_calls_epic"):
+        if key in run and not isinstance(run.get(key), int):
+            fail(f"run.json {key} must be an int when present")
     active = run.get("active_wave")
     if active and active not in waves:
         fail(f"active_wave {active} missing from dag.json")
@@ -886,8 +927,8 @@ def validate_state_dir(state_dir: Path) -> None:
                         fail(f"{path.name} optional_panel[{idx}] invalid verdict")
             if mp.get("status") == "complete" and mp.get("consensus") != "PASS":
                 fail(f"{path.name} complete requires consensus PASS")
-            if mp.get("status") == "complete" and "closure" in mp and mp.get("closure") != "CONFIRMED":
-                fail(f"{path.name} complete with closure field requires CONFIRMED")
+            if mp.get("status") == "complete" and mp.get("closure") != "CONFIRMED":
+                fail(f"{path.name} complete requires closure CONFIRMED")
             if mp.get("status") == "complete" and "done_evidence" in mp:
                 de = mp["done_evidence"]
                 if not isinstance(de, dict):
@@ -907,6 +948,17 @@ def validate_state_dir(state_dir: Path) -> None:
                 fail(f"{path.name} PASS with open merged_blockers")
 
 
+def _has_structural_results() -> bool:
+    results_dir = EVALS_DIR / "results"
+    if not results_dir.is_dir():
+        return False
+    return any(path.is_file() for path in results_dir.glob("structural-*.json"))
+
+
+def _has_benchmark_results() -> bool:
+    return (EVALS_DIR / "benchmark-results.json").is_file()
+
+
 def check_readme_claims() -> None:
     readme = read_text(ROOT / "README.md")
     banned_claims = [
@@ -919,11 +971,25 @@ def check_readme_claims() -> None:
         if claim.lower() in readme.lower():
             if "designed to compete" in readme.lower():
                 continue
-            evidence = EVALS_DIR / "benchmark-results.json"
-            if not evidence.is_file():
+            # Structural validate records must never unlock Fable-parity claims.
+            if not _has_benchmark_results():
                 fail("README claims Fable superiority without recorded benchmark evidence")
+    banned_universal = [
+        "ideal for any",
+        "ideal for any task",
+        "universal capability",
+    ]
+    for claim in banned_universal:
+        if claim.lower() in readme.lower():
+            # Honest caveats that forbid the claim are allowed.
+            if "must not claim" in readme.lower() or "not claim universal" in readme.lower():
+                continue
+            if "until" in readme.lower() and ("suite" in readme.lower() or "evidence" in readme.lower()):
+                continue
+            if not (_has_benchmark_results() or _has_structural_results()):
+                fail(f"README claims {claim!r} without evaluation evidence")
     if "universal" in readme.lower() and "until" not in readme.lower():
-        if not (EVALS_DIR / "benchmark-results.json").is_file():
+        if not (_has_benchmark_results() or _has_structural_results()):
             # Allow discussing universality as a goal when paired with honest caveats.
             if "smoke-runbook" not in readme.lower() and "adaptive" not in readme.lower():
                 fail("README claims universal capability without evaluation evidence")

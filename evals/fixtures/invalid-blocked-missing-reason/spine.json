@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "spine_id": "spine-notes-v1",
+  "goal": "Smallest notes vertical slice: create and list",
+  "invariants": ["single writer per path", "no push to remote"],
+  "non_goals": ["sharing", "multi-tenant"],
+  "forbidden_paths": ["infra/prod/"],
+  "decisions": [
+    {
+      "id": "adr-1",
+      "decision": "SQLite storage for MVP",
+      "rejected_alternatives": ["Postgres from day one"],
+      "consequences": ["single-node only"],
+      "revisit_triggers": ["first multi-user requirement"]
+    }
+  ],
+  "carried_dissent": []
+}

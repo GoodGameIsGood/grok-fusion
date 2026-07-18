@@ -219,6 +219,7 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 ### Resume and budgets
 
 - Say **`Continue run <run_id>`** to resume a blocked or interrupted MVP run  
+- When blocked (including budget exhaust), the MVP footer should include `run_id`, `blocked_reason`, remaining task calls vs caps, and that exact Continue utterance  
 - Raise soft caps in `.grok-fusion/config.json` under `budgets` (`max_task_calls_per_wave`, `max_task_calls_per_epic`) when a large epic exhausts the default budget — never mark PASS on exhaust  
 
 ---

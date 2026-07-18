@@ -26,6 +26,8 @@ Close   done_evidence pack → must-not-break walkthrough → Phase E blind fina
 
 Done    consensus PASS + closure CONFIRMED + verify gate + no open blockers
 Footer  Fusion tier: <actual> [| profile=… | tasks=… | multi_pass=… | verify=… | closure=…]
+        MVP blocked/budget: also emit run_id, blocked_reason, remaining task_calls vs caps,
+        and the exact next utterance `Continue run <run_id>`
 Resume  Continue run <run_id> → recovery-track.md
 ```
 

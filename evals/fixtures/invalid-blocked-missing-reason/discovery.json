@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "coverage_targets": [
+    {
+      "module": "src/notes",
+      "required_reads": ["src/notes/store.ts", "src/notes/routes.ts"],
+      "status": "READ",
+      "evidence_ids": ["e1", "e2"]
+    }
+  ],
+  "verification_commands": [
+    {
+      "cmd": "npm test",
+      "source": "VERIFIED",
+      "source_path": "package.json"
+    }
+  ],
+  "ignored_or_large_file_risks": [],
+  "apis_and_contracts": ["POST /notes", "GET /notes"],
+  "migrations": [],
+  "external_dependencies": [],
+  "unknowns_queue": [],
+  "complete": true
+}
