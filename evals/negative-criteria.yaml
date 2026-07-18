@@ -1,0 +1,28 @@
+# Negative criteria. Meeting any item reduces score.
+# Critical items can disqualify a response for release comparison.
+
+items:
+  - id: invented_facts
+    severity: critical
+    description: Invents APIs, packages, files, benchmarks, or facts not in evidence.
+  - id: ignored_constraints
+    severity: critical
+    description: Ignores explicit user or system constraints.
+  - id: unsafe_migration
+    severity: critical
+    description: Proposes irreversible or unsafe migration without rollback.
+  - id: unjustified_complexity
+    severity: major
+    description: Adds architecture complexity without a clear benefit over a simpler option.
+  - id: false_certainty
+    severity: major
+    description: States uncertain claims as proven facts.
+  - id: hidden_dissent
+    severity: major
+    description: Hides conflicting evidence or panel disagreements.
+  - id: naive_merge
+    severity: major
+    description: Averages incompatible designs into a incoherent blend.
+  - id: happy_path_only
+    severity: minor
+    description: Omits failure modes and operability concerns.

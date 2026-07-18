@@ -1,0 +1,32 @@
+[
+  {
+    "id": "mvp-01",
+    "kind": "greenfield-multi-wave",
+    "prompt": "Build a notes MVP with create/list/search over four waves. Do not add sharing yet.",
+    "must_have": ["discovery", "dag", "checkpoints", "acceptance", "vertical_slice_first"]
+  },
+  {
+    "id": "mvp-02",
+    "kind": "brownfield-multi-wave",
+    "prompt": "Add billing invoices to an existing subscriptions service without breaking the public API.",
+    "must_have": ["discovery_coverage_gate", "owns_paths", "compat_checks", "g2_gate_if_breaking"]
+  },
+  {
+    "id": "mvp-03",
+    "kind": "migration",
+    "prompt": "Introduce an outbox table and migrate existing order writes safely.",
+    "must_have": ["g1_gate", "rollback", "migration_steps"]
+  },
+  {
+    "id": "mvp-04",
+    "kind": "crash-resume",
+    "prompt": "Continue the interrupted MVP run after the agent session crashed mid-wave.",
+    "must_have": ["resume_checks", "no_partial_pass", "summary_reload"]
+  },
+  {
+    "id": "mvp-05",
+    "kind": "rollback",
+    "prompt": "Wave 3 failed acceptance twice with the same fingerprint. Roll back and stop for a gate.",
+    "must_have": ["failure_fingerprint", "checkpoint_rollback", "user_gate"]
+  }
+]

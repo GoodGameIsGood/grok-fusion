@@ -1,0 +1,28 @@
+# Atomic weighted rubric for blind evaluation.
+# Scores are 0-10 per criterion before weighting.
+
+criteria:
+  - id: correctness
+    weight: 20
+    description: Factual and technical correctness of the recommendation.
+  - id: constraint_adherence
+    weight: 15
+    description: Honors stated constraints, non-goals, and compatibility limits.
+  - id: architecture_depth
+    weight: 15
+    description: Multiple viable designs, tradeoffs, sensitivity points, and rejected alternatives.
+  - id: feasibility
+    weight: 10
+    description: Practical migration and implementation path in a real codebase.
+  - id: risk_awareness
+    weight: 10
+    description: Concrete failure modes, security, operability, and rollback thinking.
+  - id: validation
+    weight: 10
+    description: Falsification tests, measurement plans, or executable checks.
+  - id: clarity
+    weight: 10
+    description: Structured, decision-useful presentation without filler.
+  - id: calibrated_uncertainty
+    weight: 10
+    description: Labels unknowns honestly and avoids false certainty.

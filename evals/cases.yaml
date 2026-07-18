@@ -1,0 +1,96 @@
+# Blind evaluation cases for Grok Fusion versus solo Grok and solo Fable.
+# Exactly 30 cases. Do not invent benchmark scores here.
+
+- id: ba-01
+  category: brownfield-architecture
+  prompt: Split a monolithic billing service so subscriptions and invoices can evolve independently without a big-bang rewrite.
+- id: ba-02
+  category: brownfield-architecture
+  prompt: Add multi-tenant isolation to an existing Postgres-backed SaaS API with shared schemas.
+- id: ba-03
+  category: brownfield-architecture
+  prompt: Introduce an outbox pattern for order events in a service that already writes to MySQL in the same transaction path.
+- id: ba-04
+  category: brownfield-architecture
+  prompt: Redesign authentication session storage for a NestJS app currently using in-memory sessions behind multiple replicas.
+- id: ba-05
+  category: brownfield-architecture
+  prompt: Choose a migration strategy from REST polling to webhooks for a payment provider integration already in production.
+- id: ba-06
+  category: brownfield-architecture
+  prompt: Decompose a shared media upload module used by web and mobile clients with different retry semantics.
+- id: ba-07
+  category: brownfield-architecture
+  prompt: Add read-model projections for an existing event-sourced inventory system without changing write semantics.
+- id: ba-08
+  category: brownfield-architecture
+  prompt: Plan a gradual extraction of search from a Rails monolith into a dedicated service.
+- id: ba-09
+  category: brownfield-architecture
+  prompt: Design rate limiting for a public API gateway that already has per-user quotas in Redis.
+- id: ba-10
+  category: brownfield-architecture
+  prompt: Introduce feature flags for a Python FastAPI service with strong audit requirements.
+- id: ba-11
+  category: brownfield-architecture
+  prompt: Reduce coupling between notifications and core user profile updates in a Node monolith.
+- id: ba-12
+  category: brownfield-architecture
+  prompt: Propose a compatibility strategy for renaming a widely used internal gRPC API.
+- id: ba-13
+  category: brownfield-architecture
+  prompt: Design blue-green deployment for a stateful WebSocket collaboration service.
+- id: ba-14
+  category: brownfield-architecture
+  prompt: Add durable background jobs to a Django app that currently runs celery tasks without idempotency keys.
+- id: ba-15
+  category: brownfield-architecture
+  prompt: Plan data ownership boundaries for a CRM module that currently shares tables with billing.
+
+- id: gd-01
+  category: greenfield-design
+  prompt: Design a greenfield document collaboration backend for teams under 200 users with strong offline support.
+- id: gd-02
+  category: greenfield-design
+  prompt: Design an architecture for a multiplayer turn-based game server with deterministic replays.
+- id: gd-03
+  category: greenfield-design
+  prompt: Design a privacy-preserving analytics pipeline for product events from a mobile app.
+- id: gd-04
+  category: greenfield-design
+  prompt: Design a plugin system for a local-first note-taking desktop app.
+- id: gd-05
+  category: greenfield-design
+  prompt: Design a CI artifact store for ephemeral preview environments with strict cost controls.
+
+- id: hd-01
+  category: hard-debugging
+  prompt: Intermittent 502s appear only for one region after a canary deploy of an API gateway. Diagnose likely causes and a validation plan.
+- id: hd-02
+  category: hard-debugging
+  prompt: A queue consumer reprocesses some messages twice under burst load despite apparent ack logic. Find failure modes and checks.
+- id: hd-03
+  category: hard-debugging
+  prompt: Cache stampedes occur after key expiry in a high-read catalog service. Propose root-cause hypotheses and falsification tests.
+- id: hd-04
+  category: hard-debugging
+  prompt: Flaky end-to-end tests fail only on shared CI runners and never locally. Isolate environmental causes and a fix strategy.
+- id: hd-05
+  category: hard-debugging
+  prompt: Memory grows slowly in a long-lived WebSocket worker after a library upgrade. Outline investigation steps and risks.
+
+- id: rt-01
+  category: research-tradeoffs
+  prompt: Compare open-source feature-flag systems for a Go service that needs audit trails and percentage rollouts.
+- id: rt-02
+  category: research-tradeoffs
+  prompt: Compare Postgres LISTEN/NOTIFY versus Redis streams for low-volume internal workflow signals.
+- id: rt-03
+  category: research-tradeoffs
+  prompt: Compare OPA versus application-level policy modules for multi-tenant authorization.
+- id: rt-04
+  category: research-tradeoffs
+  prompt: Compare SQLite local-first sync approaches for a desktop app that must later support multi-device sync.
+- id: rt-05
+  category: research-tradeoffs
+  prompt: Compare managed vector databases versus self-hosted options for a 10M-embedding RAG workload with strict residency rules.

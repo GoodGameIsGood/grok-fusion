@@ -1,0 +1,26 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile validator
+        run: python3 -m py_compile scripts/validate_plugin.py
+      - name: Structural validate
+        run: python3 scripts/validate_plugin.py
+      - name: Valid state fixture
+        run: python3 scripts/validate_plugin.py --state evals/fixtures/valid-run
+      - name: Invalid state fixture must fail
+        run: |
+          if python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run; then
+            echo "expected invalid fixture to fail" >&2
+            exit 1
+          fi

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "run_id": "run-fixture-invalid-001",
+  "workspace_identity": "/tmp/example-workspace",
+  "tier": "MVP",
+  "spine_id": "spine-bad",
+  "status": "active",
+  "active_wave": "missing-wave",
+  "branch_or_worktree": "gf/bad",
+  "created_at": "2026-07-18T00:00:00Z",
+  "updated_at": "2026-07-18T00:00:00Z"
+}

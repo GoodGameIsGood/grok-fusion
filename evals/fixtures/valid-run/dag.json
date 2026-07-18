@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "epics": [
+    {
+      "id": "epic-core",
+      "title": "Core notes vertical slice",
+      "waves": [
+        {
+          "id": "w0-discovery",
+          "depends_on": [],
+          "owns_paths": [],
+          "reads_paths": ["src/", "package.json"],
+          "outputs": ["discovery.json"],
+          "tests": [],
+          "rollback": "n/a",
+          "status": "complete",
+          "acceptance_clause_ids": [],
+          "gates_required": []
+        },
+        {
+          "id": "w1-core-loop",
+          "depends_on": ["w0-discovery"],
+          "owns_paths": ["src/notes/"],
+          "reads_paths": ["src/notes/", "tests/"],
+          "outputs": ["create/list notes API"],
+          "tests": ["npm test -- notes"],
+          "rollback": "restore checkpoint w1",
+          "status": "active",
+          "acceptance_clause_ids": ["wc-w1-1"],
+          "gates_required": ["G0"]
+        },
+        {
+          "id": "w2-search",
+          "depends_on": ["w1-core-loop"],
+          "owns_paths": ["src/notes/search.ts"],
+          "reads_paths": ["src/notes/"],
+          "outputs": ["search endpoint"],
+          "tests": ["npm test -- search"],
+          "rollback": "restore checkpoint w2",
+          "status": "pending",
+          "acceptance_clause_ids": [],
+          "gates_required": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "ad-01",
+    "expected_tier": "Quick",
+    "prompt": "Rename the local helper getUserName to getDisplayName in src/utils/name.ts.",
+    "max_calls": 2,
+    "notes": "Single-file reversible rename"
+  },
+  {
+    "id": "ad-02",
+    "expected_tier": "Quick",
+    "prompt": "Explain what this one function returns and give one example.",
+    "max_calls": 2,
+    "notes": "Simple explanation"
+  },
+  {
+    "id": "ad-03",
+    "expected_tier": "Standard",
+    "prompt": "Fix a flaky unit test that fails only when another test runs first. Touch only the test file and one helper.",
+    "max_calls": 8,
+    "notes": "Ordinary debugging across a few files"
+  },
+  {
+    "id": "ad-04",
+    "expected_tier": "Standard",
+    "prompt": "Compare two libraries for CSV parsing in our Node service and recommend one.",
+    "max_calls": 8,
+    "notes": "Research/comparison"
+  },
+  {
+    "id": "ad-05",
+    "expected_tier": "Heavy",
+    "prompt": "Design a multi-tenant data isolation strategy for our existing Postgres schema.",
+    "max_calls": 30,
+    "notes": "Architecture/security decision"
+  },
+  {
+    "id": "ad-06",
+    "expected_tier": "MVP",
+    "prompt": "Build an MVP waitlist app with signup, confirmation email hook, and admin export over multiple waves.",
+    "max_calls": null,
+    "notes": "Multi-wave product build"
+  }
+]

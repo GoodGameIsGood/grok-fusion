@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "spine_id": "spine-bad",
+  "goal": "invalid fixture",
+  "invariants": [],
+  "non_goals": [],
+  "forbidden_paths": [],
+  "decisions": [],
+  "carried_dissent": []
+}

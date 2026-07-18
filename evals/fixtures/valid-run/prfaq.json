@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "press_release": "Notes MVP lets a solo user capture and find notes in under five seconds, launched today.",
+  "customer": "solo knowledge worker",
+  "problem": "notes scattered across tools",
+  "benefit": "one fast place to create and list notes",
+  "faq": [{"q": "How do I start?", "a": "Run the documented start command and open the app."}],
+  "riskiest_assumptions": [
+    {"assumption": "users need list before search", "test": "core loop demo without search", "wave_id": "w1-core-loop"}
+  ],
+  "ears_criteria": [
+    {"id": "ears-1", "text": "WHEN a user submits a note THE SYSTEM SHALL persist it and show it in the list"}
+  ]
+}

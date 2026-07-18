@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "coverage_targets": [],
+  "verification_commands": [],
+  "ignored_or_large_file_risks": [],
+  "apis_and_contracts": [],
+  "migrations": [],
+  "external_dependencies": [],
+  "unknowns_queue": [],
+  "complete": false
+}

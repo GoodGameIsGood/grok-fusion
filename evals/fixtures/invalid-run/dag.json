@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "epics": [
+    {
+      "id": "epic-cycle",
+      "title": "Cyclic DAG",
+      "waves": [
+        {
+          "id": "wa",
+          "depends_on": ["wb"],
+          "owns_paths": ["src/a/"],
+          "reads_paths": [],
+          "outputs": [],
+          "tests": [],
+          "rollback": "n/a",
+          "status": "active",
+          "acceptance_clause_ids": ["missing-clause"],
+          "gates_required": ["G9"]
+        },
+        {
+          "id": "wb",
+          "depends_on": ["wa"],
+          "owns_paths": ["src/a/"],
+          "reads_paths": [],
+          "outputs": [],
+          "tests": [],
+          "rollback": "n/a",
+          "status": "active"
+        }
+      ]
+    }
+  ]
+}

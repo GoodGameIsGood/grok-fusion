@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "product_clauses": [
+    {
+      "id": "pc-bad",
+      "text": "invalid status clause",
+      "mandatory": true,
+      "status": "MAYBE"
+    }
+  ],
+  "epic_clauses": [],
+  "wave_clauses": {}
+}
