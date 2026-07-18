@@ -118,3 +118,4 @@ Rules:
 - `evidence_id` is unique per record; candidates and contracts reference records by this id
 - `quote` is a verbatim snippet (max 2 lines) for file/doc sources; empty only for tool outputs
 - `retrieved_at` is mandatory; apply `freshness-contract.md` to every external claim
+- coverage targets and module claims must cite concrete paths; ungrounded path claims are invalid evidence

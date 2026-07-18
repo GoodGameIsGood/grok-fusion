@@ -134,3 +134,13 @@ Grok verbosity is a defect, not a style. Hard caps per worker artifact:
 Over-cap artifacts get one repair prompt; a second violation drops the card under quorum rules.
 
 Caps limit artifact length only. They never limit the number of verification, research, or corroboration calls — see `freshness-contract.md` Budget priority.
+
+## Footer telemetry
+
+When project config `telemetry.footer_stats` is true, append stats after the tier:
+
+```text
+Fusion tier: MVP | profile=max | tasks=28 | multi_pass=PASS | verify=0
+```
+
+Fields: `profile` from config, `tasks` = Task calls used this turn/wave, `multi_pass` = latest consensus or `n/a`, `verify` = last verify `exit_code` or `n/a`.

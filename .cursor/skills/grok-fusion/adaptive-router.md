@@ -2,35 +2,40 @@
 
 Deterministic tier selection for every Grok Fusion run.
 
-## Forced policy (this deployment)
+## Read project config before tier
 
-**Always select `MVP` for every request.** Do not choose Quick, Standard, or Heavy as the selected tier.
+Load [project-config.md](project-config.md) and `.grok-fusion/config.json` (or plugin defaults) **before** choosing a tier. Precedence: in-chat override > project config > defaults.
 
-**Maximum quality:** every request must run the full Heavy P0–P7 council via Task (`gf-worker`) after the runtime probe. No parent-only shortcut. No “label MVP without spine.” Short Q&A is not exempt.
+## Profile application
 
-Pipeline for every request:
+### quality_profile: max (or tier_policy: force_mvp)
 
-1. Task probe per `runtime-contract.md` (fail closed on mismatch)
-2. Full Heavy P0–P7 spine (framing → evidence → candidates → selection → minority → falsify/revise → verify) for every answer-track and build-track request
-3. PR/FAQ working-backwards pass when product/build intent is present
-4. Discovery wave when modules will be touched
-5. Epic/wave DAG when multi-step work is required
-6. Autonomous wave loop with G0–G4 safety gates for mutating work
+- Select `MVP` for every request.
+- Run Task probe, then full Heavy P0–P7 spine on answer and build tracks.
+- No parent-only shortcut. No “label MVP without spine.”
+- Footer: `Fusion tier: MVP`.
+- Mutating paths also write durable state under `.grok-fusion/runs/<run-id>/`.
+- Explicit Quick/Standard/Heavy in-chat requests are remapped to this max policy unless the user changes project config.
 
-Output: full Heavy-depth verdict under footer `Fusion tier: MVP`. When implementing, also write durable state under `.grok-fusion/runs/<run-id>/`.
+### quality_profile: balanced (default when no config)
 
-Answer-track Q&A still runs steps 1–2 fully; skip durable wave machinery only when no implementation was requested. Never skip the Heavy spine.
+Use the tier rules below (Quick / Standard / Heavy / MVP).
 
-## Tiers (reference only — not selected in this deployment)
+### quality_profile: fast
+
+Prefer Quick/Standard from the rules below. Do not escalate to Heavy/MVP unless triggers clearly match (architecture, security, migration, multi-wave). Answer track may skip full Heavy spine when `allow_quick_shortcut` is true.
+
+## Tiers
 
 ### Quick
 
-Use when all are true:
+Use when all are true (and profile is not `max`):
 
 - goal is clear
 - work is local, reversible, and low-risk
 - single-step or single-file, or a tiny explanation/edit
 - no architecture choice, migration, security boundary, or multi-module redesign
+- `answer_track.allow_quick_shortcut` is true (balanced/fast)
 
 Pipeline:
 
@@ -44,7 +49,7 @@ Output: direct answer plus `Fusion tier: Quick`.
 
 ### Standard
 
-Use when:
+Use when (and profile is not `max`):
 
 - moderate ambiguity
 - ordinary debugging, research, comparison, or 2–8 file changes
@@ -65,7 +70,7 @@ Output: Verdict, Evidence, Risks, then `Fusion tier: Standard`.
 
 ### Heavy
 
-Use when any is true:
+Use when any is true (and profile is not `max`):
 
 - architecture or ATAM-level design
 - security, auth, permissions, or threat modeling
@@ -73,6 +78,7 @@ Use when any is true:
 - cross-module / high-stakes decision
 - large brownfield refactor or framework/library migration in one batch
 - user explicitly asks for deep analysis or `/grok-fusion` Heavy behavior
+- `answer_track.require_heavy_spine` is true for this answer-track request
 
 Pipeline: full P0–P7 from `SKILL.md` (~24 calls).
 
@@ -82,30 +88,29 @@ Output: full seven-section report plus `Fusion tier: Heavy`.
 
 Use when any is true:
 
+- `quality_profile` is `max` or `tier_policy` is `force_mvp`
 - user asks to build a product, MVP, or large feature set
 - work spans more than one wave or two top-level modules
 - resumable long-horizon implementation is required
 - a refactor or migration spans multiple waves and needs durable state
-- **this deployment: every request**
 
 Pipeline:
 
-1. Heavy once for the architecture/product spine
-2. Discovery wave
-3. Epic/wave DAG
-4. Autonomous wave loop with G0–G4 safety gates
+1. Heavy once for the architecture/product spine (always on `max`)
+2. Discovery wave when modules will be touched
+3. Epic/wave DAG when multi-step work is required
+4. Autonomous wave loop with G0–G4 safety gates for mutating work
 
 Output: wave/MVP progress with durable state under `.grok-fusion/runs/<run-id>/`, plus `Fusion tier: MVP`.
 
 ## Escalation
 
-In this deployment there is no upward escalation: the tier is already MVP.
+Escalate Quick → Standard → Heavy → MVP when new evidence shows higher stakes. Never silently label a lighter tier than the work performed.
 
-Never silently label a lighter tier.
+On `max` / `force_mvp` there is no downward tier: stay on MVP + Heavy spine.
 
-## Forced tiers
+## Forced tiers (config-driven)
 
-- Every request → `MVP` + mandatory full Heavy P0–P7 Task spine
-- `/grok-fusion` with any wording → `MVP` + mandatory full Heavy P0–P7 Task spine
-- Explicit Quick/Standard/Heavy requests are remapped to this maximum MVP policy
+- `max` / `force_mvp` → every request uses `MVP` + mandatory full Heavy P0–P7 Task spine
 - Parent-only or simulated-council replies must not use the Fusion footer; say Fusion did not run instead
+- Mutating work always requires multi-pass specialist consensus regardless of profile (profile only changes answer-track depth)

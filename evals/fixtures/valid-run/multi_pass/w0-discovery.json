@@ -7,7 +7,15 @@
   "error_hunt_1": {"blockers": []},
   "error_hunt_2": {"blockers": []},
   "merged_blockers": [],
-  "completion_quality": {"audit_result": "PASS"},
+  "completion_quality": {"audit_result": "PASS", "verify_evidence": "present"},
+  "verification_runs": [
+    {
+      "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+      "exit_code": 0,
+      "summary": "state fixture valid",
+      "at": "2026-07-18T00:00:00Z"
+    }
+  ],
   "panel": [
     {"role": "correctness_engineer", "verdict": "SHIP", "checks_performed": ["discovery coverage present"]},
     {"role": "systems_architect", "verdict": "SHIP", "checks_performed": ["owns_paths disjoint"]},
@@ -23,6 +31,11 @@
       "checks_performed": ["discovery verify commands recorded"]
     }
   ],
+  "optional_selection": {
+    "triggers_matched": ["pack:simple-code-edit"],
+    "selected": [{"role": "test_strategist", "scenario": "recheck"}],
+    "dropped_by_cap": []
+  },
   "consensus": "PASS",
   "status": "complete",
   "task_calls_used": 12

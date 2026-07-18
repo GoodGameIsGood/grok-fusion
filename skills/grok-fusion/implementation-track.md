@@ -19,8 +19,8 @@ Acceptance for every mutating path uses [multi-pass-verification.md](multi-pass-
    - atomic steps (see multi-pass atomic-step definition)
 3. Only the parent agent edits files. `gf-worker` stays readonly.
 4. Verify every precondition before changing code.
-5. For each atomic step: implement, run `verify_cmd`, then Phase A `step_recheck` per [multi-pass-verification.md](multi-pass-verification.md).
-6. After all steps: run Phases B→C→D (double error hunt → completion quality → specialist panel) and enforce consensus math.
+5. For each atomic step: implement, run `verify_cmd`, then Phase A `step_recheck` per [multi-pass-verification.md](multi-pass-verification.md). Record each run in `verification_runs` / `events.jsonl`.
+6. After all steps: run Phases B→ verify hard gate → C→D (double error hunt → completion quality → specialist panel) and enforce consensus math. Do not mark done if `verify_hard_gate` is on and no successful verify exists.
 7. Fix only evidence-backed defects within allowed paths, then re-enter from Error Hunt #1. Respect `max_fix_cycles` and `max_consensus_rounds`.
 8. Audit every acceptance clause as `PASS`, `FAIL`, or `UNVERIFIED` via completion_quality.
 9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`, or while multi-pass `consensus` is not `PASS`.
@@ -64,10 +64,11 @@ For each ready wave in topological order:
 4. Parent edits only `owns_paths`.
 5. TDD: write or extend a failing test for the wave acceptance first, implement to green, refactor; then run wave-specific unit/integration/build commands that were verified in discovery. Treat each plan step or TDD cycle as an atomic step with Phase A recheck.
 6. After all steps are green locally, run the full multi-pass gate from [multi-pass-verification.md](multi-pass-verification.md):
+   - Ensure `verification_runs` includes successful repo-native commands (verify hard gate)
    - Phase B: Error Hunt #1 then #2 (sequential Task batches)
    - merge blockers (union; empty hunt ≠ clearance)
-   - Phase C: one `gf-auditor` `completion_quality`
-   - Before Phase D: run selection from [specialist-roster.md](specialist-roster.md); record roles+scenarios
+   - Phase C: one `gf-auditor` `completion_quality` (must see verify evidence)
+   - Before Phase D: run selection from [specialist-roster.md](specialist-roster.md); record `optional_selection`
    - Phase D: core five + ≤3 optional `gf-reviewer` `specialist_panel` in one parallel batch
    - consensus per wave math (core ≥4 valid SHIP; optional veto; no `long_term_risk: high` on core)
 7. Fix evidence-backed defects for at most `max_fix_cycles` (6). Consensus panel re-entry at most `max_consensus_rounds` (5). Soft `max_task_calls` (40) → user gate, never PASS.
@@ -75,7 +76,7 @@ For each ready wave in topological order:
 9. Mark the wave complete only when every mandatory clause is `PASS` **and** `multi_pass/<wave-id>.json` has `consensus: PASS` and `status: complete`.
 10. Write `summaries/<wave-id>.json` and continue to the next unblocked DAG node.
 11. If this wave completes an epic, run the epic integration check from `epic-track.md` before starting the next epic (includes product-level multi-pass with 5/5 consensus).
-12. Wave retro: append to `lessons.json` at least one lesson (what failed, what to do differently) whenever any edit cycle, multi-pass phase, or auditor found a defect; propagate recurring lessons into the next wave prompts.
+12. Wave retro: append to `lessons.json` at least one lesson (what failed, what to do differently) whenever any edit cycle, multi-pass phase, or auditor found a defect; set `fingerprint`, `tags`, `recurrence_count`, and `inject_hint`. Before Phase B/D of the next wave, inject top recurring lessons into reviewer prompts when `lessons.inject_recurring` is true.
 
 Never claim MVP done until every mandatory product/epic/wave clause is `PASS`, required multi-pass artifacts are `consensus: PASS`, the build/start path works, and the core vertical flow is verified.
 

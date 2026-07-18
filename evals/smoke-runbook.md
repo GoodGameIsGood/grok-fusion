@@ -32,6 +32,10 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Self-critique | Final answers include resolved or reported devil's advocate objection |
 | Multi-pass consensus | Mutating/plan runs show per-step recheck, double error hunt, completion quality, and ≥5 specialist votes with consensus PASS before done |
 | Optional specialists | Migration or public-API waves fire ≤3 optional roles (e.g. `data_migration`, `api_compat`) recorded in `optional_panel` |
+| Project config | Missing config → balanced adaptive tiers; with `quality_profile: max` → MVP footer every turn |
+| Footer telemetry | When enabled, footer includes `profile=` and `tasks=` / `multi_pass=` / `verify=` |
+| Verify hard gate | Mutating done claims include successful `verification_runs` (exit_code 0) |
+| Continue run | `Continue run <run_id>` resumes durable state and lessons |
 
 ## Commands
 

@@ -29,6 +29,30 @@ Use it when you want stronger architecture judgment, fewer hallucinations, and a
 
 Every reply ends with: `Fusion tier: Quick|Standard|Heavy|MVP`.
 
+### Project config
+
+Per-project quality lives in `.grok-fusion/config.json` (see `project-config.md`). Defaults are `balanced` (adaptive tiers). This repository ships `quality_profile: max` so every request uses MVP + full Heavy spine. Other projects can use `balanced` or `fast` without editing the plugin.
+
+Example `max`:
+
+```json
+{
+  "schema_version": 1,
+  "quality_profile": "max",
+  "tier_policy": "force_mvp"
+}
+```
+
+Example `balanced`:
+
+```json
+{
+  "schema_version": 1,
+  "quality_profile": "balanced",
+  "tier_policy": "adaptive"
+}
+```
+
 ---
 
 ## Install (2 minutes)
@@ -182,8 +206,13 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 ## Privacy
 
 - Quick / Standard / Heavy do **not** write run artifacts into your project by default  
-- **MVP only** writes under `.grok-fusion/` (add that path to `.git/info/exclude` when possible)  
+- **MVP** writes under `.grok-fusion/runs/`; keep `config.json` tracked and exclude runs (see `.gitignore` pattern in this repo)  
 - Workers are readonly; only the parent agent edits files when you asked for implementation  
+
+### Resume and budgets
+
+- Say **`Continue run <run_id>`** to resume a blocked or interrupted MVP run  
+- Raise soft caps in `.grok-fusion/config.json` under `budgets` (`max_task_calls_per_wave`, `max_task_calls_per_epic`) when a large epic exhausts the default budget — never mark PASS on exhaust  
 
 ---
 
@@ -195,7 +224,9 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 | Agents missing | Copy all three agents + the auto rule, not only the skill |
 | “Fusion did not run” | Check Task/subagents and Grok badges; Max Mode / team model policy |
 | Everything feels Heavy | Narrow the ask, or say “use Quick/Standard” |
-| MVP won’t resume | Check `.grok-fusion/runs/<id>/`; restore from checkpoint |
+| MVP won’t resume | Say `Continue run <id>`; check `.grok-fusion/runs/<id>/`; restore from checkpoint |
+| Always MVP / too slow | Set `.grok-fusion/config.json` `quality_profile` to `balanced` or `fast` |
+| Budget blocked mid-epic | Raise `budgets.max_task_calls_per_*` in config, then `Continue run <id>` |
 | Unexpected file edits | Ask for analysis only unless you want implementation |
 | Stuck on a gate | Approve, change scope, or abort — G0–G4 are intentional |
 

@@ -89,6 +89,17 @@ Recommend next steps without silent rubber-stamp `SHIP`. Usual verdicts: `REWORK
 6. Record selected roles+scenarios in multi_pass JSON field optional_panel.
 ```
 
+Parent must also persist the selection record (and may call `scripts/select_optional_specialists.py` for the same result):
+
+```yaml
+selection:
+  triggers_matched: []
+  selected: [{role: "", scenario: recheck}]
+  dropped_by_cap: []
+```
+
+Store the same object on multi_pass as `optional_selection`. Honor project config `preferred_specialists`, `disabled_specialists`, and `multi_pass.max_optional_specialists`.
+
 ### Severity priority for the cap
 
 `authz_tenancy` = `data_migration` = `api_compat` = `threat_abuse` = `privacy_compliance` > `release_rollback` > `concurrency` > others.

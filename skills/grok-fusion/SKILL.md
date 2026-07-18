@@ -9,7 +9,7 @@ Adaptive deliberation skill. Do not redesign this pipeline.
 
 ## Before any phase
 
-Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md) and [specialist-roster.md](specialist-roster.md).
+Read [project-config.md](project-config.md) and load `.grok-fusion/config.json` (or defaults). Then read [orchestration-checklist.md](orchestration-checklist.md) for the P0→done path. Deep contracts: [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md) and [specialist-roster.md](specialist-roster.md).
 
 ## Five Iron Rules
 
@@ -30,12 +30,12 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 ### P0 — Preflight
 
 - Preserve the original query verbatim.
-- Choose tier from [adaptive-router.md](adaptive-router.md): always `MVP` in this deployment.
+- Read project config before tier ([project-config.md](project-config.md)); choose tier from [adaptive-router.md](adaptive-router.md).
 - Classify task pack from [task-packs.md](task-packs.md).
 - If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate and multi-pass consensus are `PASS`.
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
-- Initialize an in-memory `RunEnvelope` with `tier`, `track`, and `fusion_depth=1`.
+- Initialize an in-memory `RunEnvelope` with `tier`, `track`, `quality_profile`, and `fusion_depth=1`.
 
 ### Quick
 
@@ -83,17 +83,17 @@ Read [verification-gate.md](verification-gate.md). Full seven-section output. Fo
 
 ### MVP
 
-In this deployment every request is MVP at **maximum quality**: Task probe, then full Heavy P0–P7 before any answer. No short-question exemption.
+When the router (or `quality_profile: max`) selects MVP:
 
 0. PR/FAQ working-backwards pass per [mvp-playbook.md](mvp-playbook.md) when product/build intent is present (before or with the Heavy spine)
-1. Full Heavy P0–P7 for every request (answer track and build track). This is the product/architecture spine when building; for pure Q&A it is still the mandatory council depth
+1. Full Heavy P0–P7 for the product/architecture spine (mandatory on `max` for every request, including pure Q&A)
 2. Discovery via [discovery-track.md](discovery-track.md) when modules will be touched
 3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` (including multi-pass) before the epic/wave DAG
 4. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md) when multi-step work is required
 5. Autonomous waves via [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md) when mutating
 6. Wave retros append to `lessons.json`; final epic ends with user-zero walkthrough and product-level multi-pass (5/5)
 
-Footer: `Fusion tier: MVP` only (never emit Quick/Standard/Heavy footers when this deployment’s MVP path reuses the Heavy P0–P7 spine).
+Footer: `Fusion tier: MVP` (on `max`, never emit Quick/Standard/Heavy).
 
 ## Implementation track
 
@@ -102,6 +102,10 @@ If mutation was requested, read [implementation-track.md](implementation-track.m
 ## Fail closed
 
 If tools, model inheritance, quorum, or schema requirements fail, say that Fusion did not run. Never return a solo answer as Fusion.
+
+When `telemetry.footer_stats` is enabled, end with:
+
+`Fusion tier: <tier> | profile=<profile> | tasks=<n> | multi_pass=<PASS|FAIL|n/a> | verify=<code|n/a>`
 
 ## Examples
 

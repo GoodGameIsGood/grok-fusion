@@ -77,7 +77,7 @@ When the last wave of an epic completes:
 2. Launch one `gf-auditor` call with a mandatory spine-conformance clause: the implemented code still satisfies `spine.json` invariants and boundaries.
 3. A FAIL or UNVERIFIED spine-conformance clause blocks the next epic.
 4. On the final epic, add a user-zero walkthrough: one `gf-reviewer` call follows the documented quickstart and demo command literally, as a first-time user, and fails the audit on any missing step, undocumented dependency, or broken command.
-5. Run **product-level** multi-pass verification per [multi-pass-verification.md](multi-pass-verification.md): Error Hunt #1 → #2 → completion_quality → specialist panel with **5/5** consensus required. Persist `multi_pass/<epic-id>.json`.
+5. Run **product-level** multi-pass verification per [multi-pass-verification.md](multi-pass-verification.md): Error Hunt #1 → #2 → completion_quality → specialist panel with **5/5** consensus required. Persist `multi_pass/<epic-id>.json`. Inject recurring lessons from `lessons.json` into those reviewer prompts when config enables it.
 
 ### Status machine on epic/product multi-pass FAIL
 

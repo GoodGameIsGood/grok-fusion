@@ -19,12 +19,30 @@ Parent edits only. Reviewers and auditors stay readonly via Task. Never simulate
 
 ```text
 per-step recheck → Error Hunt #1 → Error Hunt #2 → merge blockers
-  → completion_quality (gf-auditor) → specialist panel (≥5) → consensus
+  → verify_hard_gate (mutating) → completion_quality (gf-auditor)
+  → specialist panel (≥5) → consensus
 ```
 
 On any evidence-backed blocker or consensus FAIL: parent fixes within `owns_paths` / allowed paths, then re-enter from Error Hunt #1 (never hunt-once after a fix).
 
 Do not nest a specialist panel inside per-step recheck.
+
+## Verify hard gate
+
+When project config `multi_pass.verify_hard_gate` is true (default for `balanced`/`max` mutating), parent must record real command runs before Phase C/D consensus can be `PASS`:
+
+```json
+"verification_runs": [
+  {"cmd": "", "exit_code": 0, "summary": "", "at": ""}
+]
+```
+
+Rules:
+
+- At least one mutating verify run with `exit_code: 0` is required for wave/one-shot `status: complete` (unless every step used justified `verify_cmd: n/a` and auditor accepts that justification).
+- Any `exit_code != 0` ⇒ consensus FAIL; fix and re-run verify before re-entering hunts.
+- Parent appends the same runs to `events.jsonl` (`type: verify`).
+- Plans may use checklist verify commands as dry evidence; code-mutating waves require executed commands.
 
 ## Atomic step
 
@@ -175,14 +193,15 @@ Authoritative numbers live here and in `long-horizon-contract.md` (must match). 
 
 | Budget | Value |
 |---|---|
-| `max_fix_cycles` per wave/one-shot | 6 |
-| `max_consensus_rounds` per wave/one-shot | 5 |
+| `max_fix_cycles` per wave/one-shot | 6 (or `budgets.max_fix_cycles`) |
+| `max_consensus_rounds` per wave/one-shot | 5 (or `budgets.max_consensus_rounds`) |
 | `max_plan_multi_pass_rounds` | 2 |
 | `max_step_recheck_retries` per step | 2 |
-| `max_task_calls` soft ceiling per wave | 40 |
+| `max_task_calls` soft ceiling per wave | 40 (or `budgets.max_task_calls_per_wave`) |
+| `max_task_calls` soft ceiling per epic | 200 (or `budgets.max_task_calls_per_epic`) |
 | Identical failure fingerprint | 2 (then rollback + user gate) |
 
-On budget exhaust: status `blocked`, never “almost done”. A structured yes/no user gate may authorize another round.
+On budget exhaust: status `blocked`, never “almost done”. Prompt the user with `Continue run <run_id>` after raising caps in `.grok-fusion/config.json` if needed. A structured yes/no user gate may authorize another round.
 
 ## Fail-closed and resume matrix
 
@@ -217,8 +236,14 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
   "error_hunt_2": {},
   "merged_blockers": [],
   "completion_quality": {},
+  "verification_runs": [],
   "panel": [],
   "optional_panel": [],
+  "optional_selection": {
+    "triggers_matched": [],
+    "selected": [],
+    "dropped_by_cap": []
+  },
   "consensus": "PASS|FAIL|IN_PROGRESS",
   "status": "in_progress|blocked|complete",
   "task_calls_used": 0
@@ -229,7 +254,7 @@ One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelop
 
 ## Done predicates
 
-- Wave/one-shot: `consensus: PASS` and `status: complete` (MVP file or envelope), no open `merged_blockers`, mandatory clauses PASS.
+- Wave/one-shot: `consensus: PASS` and `status: complete` (MVP file or envelope), no open `merged_blockers`, mandatory clauses PASS, and verify hard gate satisfied when enabled.
 - Plan: plan quality checklist PASS **and** multi-pass `consensus: PASS`.
 - Epic/product: local wave multi-pass complete, plus product-level multi-pass with **5/5** consensus PASS.
 - MVP product done additionally requires every required `multi_pass/*.json` for completed waves/plan/epic to show `consensus: PASS` and `status: complete`.

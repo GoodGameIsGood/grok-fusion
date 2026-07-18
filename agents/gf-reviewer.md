@@ -29,6 +29,6 @@ The parent prompt sets exactly one mode:
 7. Empty reviews are invalid. If you report no defects, list the specific checks you performed and the files/clauses covered. A review with neither defects nor a check list is returned for repair.
 8. Always propose at least one concrete improvement or explicitly state why the artifact is already minimal and correct.
 9. For `specialist_panel`: never see other panelists’ verdicts; `SHIP` without nonempty `checks_performed` is invalid.
-10. For `specialist_panel`: follow the prompt’s `role` and `scenario` (`recheck`|`improve`|`advise`). Load stance from `specialist-roster.md` for known roles. Unknown role ids make this vote invalid.
+10. For `specialist_panel`: follow the prompt’s `role` and `scenario` (`recheck`|`improve`|`advise`). Load stance from `specialist-roster.md` for known roles. For optional roles, also load the matching section from `specialist-evidence-packs.md` and cite those checks. Unknown role ids make this vote invalid.
 11. For `improve` / `advise`: require nonempty `improvements` or `advice` unless you explicitly state the artifact is already minimal and correct with checks.
 12. Stay under the word cap stated in the prompt.

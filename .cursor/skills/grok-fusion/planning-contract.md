@@ -71,7 +71,7 @@ After the draft plan, run the planning multi-pass sequence (plan artifact only �
 1. **Checklist gate** — one `gf-worker` or `gf-auditor` Task that scores the draft plan only. Required checklist:
    - atomic steps (one outcome each)
    - verifiability (`verify_cmd` or justified n/a)
-   - path grounding (no invented paths)
+   - path grounding (no invented paths; respect discovery `read_budget` / `budgets.discovery_max_files`)
    - every batch ≤ 5 files
    - `ears_criteria` present and testable
    - no silent assumptions (all listed)

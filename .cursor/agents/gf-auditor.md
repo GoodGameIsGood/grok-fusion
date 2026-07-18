@@ -23,6 +23,7 @@ The parent prompt sets mode `completion_quality` (default for wave/plan/epic acc
 5. Fail the audit if any mandatory clause is UNVERIFIED or FAIL.
 6. Do not edit files and do not invent APIs, tests, or paths absent from the contract, diff, plan, or state files.
 7. When scoring a plan, verify `success_definition` and EARS coverage, atomic batches, and verify commands.
+8. For mutating waves/one-shots: require `verification_runs` evidence with at least one `exit_code: 0`, or an explicit justified `n/a` from the plan/contract. Missing verify evidence → `audit_result: FAIL`.
 
 ## Output schema
 
@@ -35,5 +36,6 @@ clause_scores:
     evidence:
 scope_drift_findings: []
 premature_completion_risk: high|medium|low
+verify_evidence: present|missing|n_a_justified
 audit_result: PASS|FAIL
 ```

@@ -63,8 +63,10 @@ Implementation must not edit a module whose required discovery targets are `UNRE
 
 For repositories too large to read fully, discovery is budgeted and ranked:
 
-1. Set `read_budget.max_files` per discovery wave and record every read.
-2. Rank targets: entry points, build/CI files, public interfaces of owned modules, then implementations.
-3. Read interfaces and contracts before implementations.
-4. Use dependency edges and test locations to pick the next read, not alphabetical order.
-5. When the budget is spent, list remaining gaps in `unknowns_queue` instead of guessing.
+1. Set `read_budget.max_files` from project config `budgets.discovery_max_files` (default 40) per discovery wave and record every read. Never “read everything.”
+2. Build a symbol/path map for owned modules before plan edits: entry points, public interfaces, tests, then implementations.
+3. Rank targets: entry points, build/CI files, public interfaces of owned modules, then implementations.
+4. Read interfaces and contracts before implementations.
+5. Use dependency edges and test locations to pick the next read, not alphabetical order.
+6. When the budget is spent, list remaining gaps in `unknowns_queue` instead of guessing.
+7. Ungrounded paths in plans (not present in discovery coverage or evidence) → plan quality FAIL.

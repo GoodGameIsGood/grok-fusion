@@ -23,7 +23,7 @@ Use MVP durable state when the adaptive router selects `MVP`.
   checkpoints/
 ```
 
-If `.git` exists, add `.grok-fusion/` to `.git/info/exclude` when available. Prefer that over changing a tracked `.gitignore`.
+If `.git` exists, prefer excluding `.grok-fusion/runs/` (keep `config.json` tracked). See repository `.gitignore` pattern.
 
 ## Persistence rules
 
@@ -98,16 +98,32 @@ Working-backwards product definition. Written before the Heavy spine pass.
 
 ### lessons.json
 
-Reflexion memory. Appended after every wave retro; read in every wave preamble.
+Reflexion memory. Appended after every wave retro; read in every wave preamble. When project config `lessons.inject_recurring` is true, inject top recurring lessons into Error Hunt and specialist prompts.
 
 ```json
 {
   "schema_version": 1,
   "lessons": [
-    {"id": "", "wave_id": "", "observation": "", "rule": "", "applies_to": ""}
+    {
+      "id": "",
+      "wave_id": "",
+      "observation": "",
+      "rule": "",
+      "applies_to": "",
+      "fingerprint": "",
+      "tags": [],
+      "recurrence_count": 1,
+      "inject_hint": ""
+    }
   ]
 }
 ```
+
+Rules:
+
+- On each defect-driven retro, append or bump `recurrence_count` for matching `fingerprint`.
+- Before Phase B/D, inject lessons with highest `recurrence_count` whose `applies_to` matches the wave/epic (or `*`).
+- Resume must reload `lessons.json` and keep injecting until the fingerprint is cleared by a successful wave.
 
 ### discovery.json
 
@@ -163,7 +179,7 @@ Per-wave, plan, and epic multi-pass artifacts. Schema and consensus rules: [mult
 multi_pass/<wave-or-plan-or-epic-id>.json
 ```
 
-Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `consensus`, `status`, `task_calls_used`.
+Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `verification_runs`, `consensus`, `status`, `task_calls_used`.
 
 ## Spine lock
 
@@ -181,15 +197,16 @@ Any G4-approved spine change must rewrite `spine.json` and append a `gate` event
 
 Authoritative multi-pass budgets (must match [multi-pass-verification.md](multi-pass-verification.md)):
 
-- `max_fix_cycles` per wave/one-shot: 6
-- `max_consensus_rounds` per wave/one-shot: 5
+- `max_fix_cycles` per wave/one-shot: 6 (override via project config)
+- `max_consensus_rounds` per wave/one-shot: 5 (override via project config)
 - `max_plan_multi_pass_rounds`: 2
 - `max_step_recheck_retries` per step: 2
-- `max_task_calls` soft ceiling per wave: 40
+- `max_task_calls` soft ceiling per wave: 40 (override via `budgets.max_task_calls_per_wave`)
+- `max_task_calls` soft ceiling per epic: 200 (override via `budgets.max_task_calls_per_epic`)
 - identical failure fingerprint max: 2
 - full Heavy rerun max per epic: 1
 
-Budget exhaust → status `blocked`, never “almost done.”
+Budget exhaust → status `blocked`, never “almost done.” Resume with `Continue run <run_id>` after adjusting config caps if needed.
 
 ## Done predicate
 

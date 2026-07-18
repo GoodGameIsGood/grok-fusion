@@ -38,6 +38,9 @@ CORE_FILES = [
     "skills/grok-fusion/verification-gate.md",
     "skills/grok-fusion/multi-pass-verification.md",
     "skills/grok-fusion/specialist-roster.md",
+    "skills/grok-fusion/project-config.md",
+    "skills/grok-fusion/orchestration-checklist.md",
+    "skills/grok-fusion/specialist-evidence-packs.md",
     "skills/grok-fusion/implementation-track.md",
     "skills/grok-fusion/long-horizon-contract.md",
     "skills/grok-fusion/discovery-track.md",
@@ -46,6 +49,7 @@ CORE_FILES = [
     "skills/grok-fusion/recovery-track.md",
     "skills/grok-fusion/examples.md",
     "scripts/validate_plugin.py",
+    "scripts/select_optional_specialists.py",
     "evals/README.md",
     "evals/cases.yaml",
     "evals/rubric.yaml",
@@ -253,9 +257,51 @@ def check_schema_markers() -> None:
         "Fail-closed and resume matrix",
         "optional_panel",
         "scenario: recheck|improve|advise",
+        "Verify hard gate",
+        "verification_runs",
     ):
         if marker not in multi_pass:
             fail(f"multi-pass-verification.md missing {marker}")
+    project_config = read_text(SKILL_DIR / "project-config.md")
+    for marker in (
+        "Read project config before tier",
+        "quality_profile",
+        "balanced",
+    ):
+        if marker not in project_config:
+            fail(f"project-config.md missing {marker}")
+    if "Read project config before tier" not in read_text(SKILL_DIR / "adaptive-router.md"):
+        fail("adaptive-router.md missing Read project config before tier")
+    checklist = read_text(SKILL_DIR / "orchestration-checklist.md")
+    if "P0" not in checklist or "multi-pass-verification.md" not in checklist:
+        fail("orchestration-checklist.md missing P0→done path")
+    evidence_packs = read_text(SKILL_DIR / "specialist-evidence-packs.md")
+    for role_id in (
+        "api_compat",
+        "data_migration",
+        "performance",
+        "ux_accessibility",
+        "test_strategist",
+        "dependency_supply_chain",
+        "concurrency",
+        "observability",
+        "authz_tenancy",
+        "privacy_compliance",
+        "network_resilience",
+        "cache_consistency",
+        "frontend_state",
+        "dx_tooling",
+        "docs_accuracy",
+        "i18n_localization",
+        "cost_finops",
+        "release_rollback",
+        "threat_abuse",
+        "data_model_integrity",
+        "search_indexing",
+        "mobile_offline",
+    ):
+        if f"## {role_id}" not in evidence_packs:
+            fail(f"specialist-evidence-packs.md missing section {role_id}")
     roster = read_text(SKILL_DIR / "specialist-roster.md")
     for marker in ("Scenario templates", "Selection algorithm", "max 3"):
         if marker not in roster:
@@ -345,9 +391,12 @@ def check_agents() -> None:
         if "description" not in data or not data["description"]:
             fail(f"{name} missing description")
     reviewer = read_text(AGENTS_DIR / "gf-reviewer.md")
-    for marker in ("specialist_panel", "scenario", "specialist-roster.md"):
+    for marker in ("specialist_panel", "scenario", "specialist-roster.md", "specialist-evidence-packs.md"):
         if marker not in reviewer:
             fail(f"gf-reviewer.md missing {marker}")
+    auditor = read_text(AGENTS_DIR / "gf-auditor.md")
+    if "verify_evidence" not in auditor:
+        fail("gf-auditor.md missing verify_evidence")
 
 
 def check_forbidden_strings() -> None:
@@ -646,6 +695,33 @@ def validate_state_dir(state_dir: Path) -> None:
                 fail(f"{path.name} merged_blockers must be a list")
             if not isinstance(mp.get("panel"), list):
                 fail(f"{path.name} panel must be a list")
+            if "verification_runs" in mp:
+                runs = mp["verification_runs"]
+                if not isinstance(runs, list):
+                    fail(f"{path.name} verification_runs must be a list")
+                if mp.get("status") == "complete" and mp.get("consensus") == "PASS":
+                    ok = False
+                    for run in runs:
+                        if isinstance(run, dict) and run.get("exit_code") == 0:
+                            ok = True
+                            break
+                    if not ok:
+                        fail(f"{path.name} complete PASS requires a verification_runs entry with exit_code 0")
+            if "optional_selection" in mp:
+                sel = mp["optional_selection"]
+                if not isinstance(sel, dict):
+                    fail(f"{path.name} optional_selection must be an object")
+                for key in ("triggers_matched", "selected", "dropped_by_cap"):
+                    if key not in sel or not isinstance(sel[key], list):
+                        fail(f"{path.name} optional_selection missing list {key}")
+                if "G1" in sel.get("triggers_matched", []):
+                    roles = [
+                        e.get("role")
+                        for e in sel.get("selected", [])
+                        if isinstance(e, dict)
+                    ]
+                    if "data_migration" not in roles:
+                        fail(f"{path.name} G1 trigger requires data_migration in optional_selection.selected")
             if "optional_panel" in mp:
                 optional = mp["optional_panel"]
                 if not isinstance(optional, list):

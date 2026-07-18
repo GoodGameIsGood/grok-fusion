@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "quality_profile": "max",
+  "tier_policy": "force_mvp",
+  "answer_track": {
+    "require_heavy_spine": true,
+    "allow_quick_shortcut": false
+  },
+  "multi_pass": {
+    "max_optional_specialists": 3,
+    "verify_hard_gate": true,
+    "require_selection_record": true
+  },
+  "budgets": {
+    "max_fix_cycles": 6,
+    "max_consensus_rounds": 5,
+    "max_task_calls_per_wave": 40,
+    "max_task_calls_per_epic": 200,
+    "discovery_max_files": 40
+  },
+  "lessons": {
+    "inject_recurring": true,
+    "min_lessons_on_defect": 1
+  },
+  "telemetry": {
+    "footer_stats": true
+  },
+  "preferred_specialists": [],
+  "disabled_specialists": []
+}
