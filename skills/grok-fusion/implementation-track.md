@@ -67,8 +67,9 @@ For each ready wave in topological order:
    - Phase B: Error Hunt #1 then #2 (sequential Task batches)
    - merge blockers (union; empty hunt ≠ clearance)
    - Phase C: one `gf-auditor` `completion_quality`
-   - Phase D: five `gf-reviewer` `specialist_panel` roles in one parallel batch
-   - consensus per wave math (≥4 valid SHIP, zero BLOCK, no `long_term_risk: high`)
+   - Before Phase D: run selection from [specialist-roster.md](specialist-roster.md); record roles+scenarios
+   - Phase D: core five + ≤3 optional `gf-reviewer` `specialist_panel` in one parallel batch
+   - consensus per wave math (core ≥4 valid SHIP; optional veto; no `long_term_risk: high` on core)
 7. Fix evidence-backed defects for at most `max_fix_cycles` (6). Consensus panel re-entry at most `max_consensus_rounds` (5). Soft `max_task_calls` (40) → user gate, never PASS.
 8. Two identical failure fingerprints trigger rollback and a user gate.
 9. Mark the wave complete only when every mandatory clause is `PASS` **and** `multi_pass/<wave-id>.json` has `consensus: PASS` and `status: complete`.

@@ -15,6 +15,14 @@
     {"role": "product_acceptance", "verdict": "SHIP", "checks_performed": ["wave0 maps to plan"]},
     {"role": "ops_maintainability", "verdict": "SHIP", "checks_performed": ["commands recorded"]}
   ],
+  "optional_panel": [
+    {
+      "role": "test_strategist",
+      "scenario": "recheck",
+      "verdict": "SHIP",
+      "checks_performed": ["discovery verify commands recorded"]
+    }
+  ],
   "consensus": "PASS",
   "status": "complete",
   "task_calls_used": 12

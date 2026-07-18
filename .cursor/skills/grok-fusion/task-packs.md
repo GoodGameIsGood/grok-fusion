@@ -15,6 +15,8 @@ Pipeline emphasis:
 
 Preferred lenses: implementation-realist, failure-and-security
 
+Suggested optional specialists: `test_strategist`, `dx_tooling`
+
 Forbidden default: greenfield rewrite
 
 ## debugging
@@ -31,6 +33,8 @@ Pipeline emphasis:
 
 Preferred lenses: failure-and-security, implementation-realist, persona-free wildcard
 
+Suggested optional specialists: `test_strategist`, `concurrency`, `observability`
+
 ## research
 
 Use for comparisons, literature/docs research, and factual tradeoffs.
@@ -43,6 +47,8 @@ Pipeline emphasis:
 4. Explicit uncertainty labels
 
 Preferred lenses: product-and-requirements, first-principles, persona-free wildcard
+
+Suggested optional specialists: `docs_accuracy` (if mutating notes)
 
 Social/X posts are signals only.
 
@@ -60,6 +66,8 @@ Pipeline emphasis:
 
 Preferred lenses: product-and-requirements, minimal-change, evolution-and-scale, implementation-realist
 
+Suggested optional specialists: `ux_accessibility`, `privacy_compliance`, `release_rollback`
+
 ## architecture
 
 Use for system design, boundaries, migrations, and irreversible structural choices.
@@ -67,6 +75,8 @@ Use for system design, boundaries, migrations, and irreversible structural choic
 Pipeline emphasis: ATAM-lite from `architecture-playbook.md`
 
 Preferred lenses: all eight Heavy lenses unless the router explicitly narrows them
+
+Suggested optional specialists: `api_compat`, `data_model_integrity`, `observability`
 
 ## refactoring-migration
 
@@ -81,6 +91,8 @@ Pipeline emphasis:
 5. Delete the old path only after the new path is verified
 
 Preferred lenses: minimal-change, implementation-realist, evolution-and-scale
+
+Suggested optional specialists: `data_migration`, `api_compat`, `test_strategist`
 
 Forbidden default: big-bang rewrite without characterization tests
 
@@ -99,6 +111,8 @@ Pipeline emphasis:
 
 Preferred lenses: product-and-requirements, implementation-realist, failure-and-security
 
+Suggested optional specialists: `test_strategist`, `api_compat`, `data_migration`
+
 Forbidden: prose-only plans without verify commands; big-bang single batch
 
 ## writing-explanation
@@ -114,6 +128,8 @@ Pipeline emphasis:
 5. If files are mutated: multi-pass with docs-adapted specialist roles
 
 Preferred lenses: product-and-requirements, persona-free wildcard
+
+Suggested optional specialists: `docs_accuracy` (mutating docs; plus docs-adapted core)
 
 ## Lens selection rule
 

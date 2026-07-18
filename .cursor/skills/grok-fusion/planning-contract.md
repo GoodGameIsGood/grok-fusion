@@ -78,7 +78,7 @@ After the draft plan, run the planning multi-pass sequence (plan artifact only �
 2. **Error Hunt #1** — `gf-reviewer` `mode=error_hunt` with adversarial / devil’s-advocate pressure on the plan (holes that would fail in implementation).
 3. **Error Hunt #2** — independent `gf-reviewer` `mode=error_hunt` that must not see Hunt #1 findings. Merge per multi-pass union rules.
 4. **Completion quality** — `gf-auditor` `mode=completion_quality`: plan covers `success_definition` and EARS.
-5. **Specialist panel** — five `gf-reviewer` `specialist_panel` roles (plan stances) in one parallel batch; consensus math for plans (≥4 valid SHIP, zero BLOCK, no `long_term_risk: high`).
+5. **Specialist panel** — core five `gf-reviewer` `specialist_panel` roles (plan stances) plus ≤3 optional from [specialist-roster.md](specialist-roster.md) (prefer `api_compat` / `data_migration` / `test_strategist` when the plan has ungrounded APIs or migrations) in one parallel batch; consensus math for plans (core ≥4 valid SHIP, optional veto, no core `long_term_risk: high`).
 
 Output:
 

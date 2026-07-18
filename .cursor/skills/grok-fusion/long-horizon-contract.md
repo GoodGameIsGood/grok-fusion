@@ -163,7 +163,7 @@ Per-wave, plan, and epic multi-pass artifacts. Schema and consensus rules: [mult
 multi_pass/<wave-or-plan-or-epic-id>.json
 ```
 
-Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `consensus`, `status`, `task_calls_used`.
+Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `consensus`, `status`, `task_calls_used`.
 
 ## Spine lock
 

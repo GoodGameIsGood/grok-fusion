@@ -90,9 +90,11 @@ audit_result: PASS|FAIL
 
 ## Phase D — Specialist panel
 
-Launch **five** `gf-reviewer` Tasks with `mode=specialist_panel` in **one** parallel Task batch. Do not put specialist modes on `gf-auditor`.
+Launch the **core five** `gf-reviewer` Tasks with `mode=specialist_panel` plus up to **three** optional roles from [specialist-roster.md](specialist-roster.md), all in **one** parallel Task batch (max 8). Do not put specialist modes on `gf-auditor`.
 
-### Code / product roles
+Parent runs the selection algorithm in `specialist-roster.md` before this phase and records chosen optional roles+scenarios.
+
+### Code / product roles (core)
 
 | Role id | Focus |
 |---|---|
@@ -102,17 +104,24 @@ Launch **five** `gf-reviewer` Tasks with `mode=specialist_panel` in **one** para
 | `product_acceptance` | EARS/DoD, user-zero path |
 | `ops_maintainability` | rollback, ops debt, observability |
 
+### Optional roles
+
+Select ≤3 from the optional roster in `specialist-roster.md` using pack suggestions and risk triggers (G1/G2/G3, path patterns). Default `scenario: recheck`.
+
 ### Docs-only mutating roles
 
-Remap to: `accuracy`, `structure_clarity`, `audience_fit`, `completeness`, `maintainability_of_docs`. Same schemas and consensus math.
+Remap core to: `accuracy`, `structure_clarity`, `audience_fit`, `completeness`, `maintainability_of_docs`. Same schemas and consensus math. Optional: prefer `docs_accuracy` and related docs roles (still max 3 optional).
 
 ### specialist_panel output
 
 ```yaml
 mode: specialist_panel
 role: ""
+scenario: recheck|improve|advise
 verdict: SHIP|REWORK|BLOCK
 blockers: []
+improvements: []
+advice: []
 long_term_risk: high|medium|low
 confidence: high|medium|low
 checks_performed: []
@@ -137,23 +146,28 @@ Roles are **stance diversity**, not model diversity. Same Grok inherit is expect
 
 ## Consensus math
 
+Core votes live in `panel`. Optional votes live in `optional_panel`.
+
 ### Wave / one-shot / plan
 
 `consensus: PASS` iff all hold:
 
-- ≥4 **valid** `SHIP`
-- zero `BLOCK`
-- zero `REWORK` with nonempty blockers
-- no panelist with `long_term_risk: high`
-- at least 4 valid votes after anti-LGTM (else fail the round)
+- ≥4 **valid** core `SHIP` (optional `SHIP` does not count toward this)
+- zero core `BLOCK`
+- zero core `REWORK` with nonempty blockers
+- no core panelist with `long_term_risk: high`
+- at least 4 valid **core** votes after anti-LGTM (else fail the round)
+- zero optional `BLOCK`
+- zero optional `REWORK` with nonempty blockers
+- optional `SHIP` with empty `checks_performed` → invalid (anti-LGTM); drop that vote
 
 Else: fix → Phase B → C → D.
 
-`REWORK` with empty blockers counts as non-SHIP (blocks epic 5/5). For wave 4/5, one empty-blocker `REWORK` is allowed only if the other four are valid `SHIP` and no `long_term_risk: high`.
+`REWORK` with empty blockers counts as non-SHIP for core (blocks epic 5/5). For wave 4/5, one empty-blocker core `REWORK` is allowed only if the other four core votes are valid `SHIP` and no `long_term_risk: high`.
 
 ### Epic / product final
 
-Require **5/5 valid SHIP**, zero `BLOCK`, zero `REWORK` with nonempty blockers, no `long_term_risk: high`.
+Require **5/5 valid core SHIP**, zero core `BLOCK`, zero core `REWORK` with nonempty blockers, no core `long_term_risk: high`, plus zero optional `BLOCK` / zero optional `REWORK` with nonempty blockers.
 
 ## Budget SoT
 
@@ -204,6 +218,7 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
   "merged_blockers": [],
   "completion_quality": {},
   "panel": [],
+  "optional_panel": [],
   "consensus": "PASS|FAIL|IN_PROGRESS",
   "status": "in_progress|blocked|complete",
   "task_calls_used": 0

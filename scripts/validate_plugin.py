@@ -37,6 +37,7 @@ CORE_FILES = [
     "skills/grok-fusion/architecture-playbook.md",
     "skills/grok-fusion/verification-gate.md",
     "skills/grok-fusion/multi-pass-verification.md",
+    "skills/grok-fusion/specialist-roster.md",
     "skills/grok-fusion/implementation-track.md",
     "skills/grok-fusion/long-horizon-contract.md",
     "skills/grok-fusion/discovery-track.md",
@@ -250,9 +251,41 @@ def check_schema_markers() -> None:
         "consensus: PASS",
         "max_fix_cycles",
         "Fail-closed and resume matrix",
+        "optional_panel",
+        "scenario: recheck|improve|advise",
     ):
         if marker not in multi_pass:
             fail(f"multi-pass-verification.md missing {marker}")
+    roster = read_text(SKILL_DIR / "specialist-roster.md")
+    for marker in ("Scenario templates", "Selection algorithm", "max 3"):
+        if marker not in roster:
+            fail(f"specialist-roster.md missing {marker}")
+    for role_id in (
+        "api_compat",
+        "data_migration",
+        "performance",
+        "ux_accessibility",
+        "test_strategist",
+        "dependency_supply_chain",
+        "concurrency",
+        "observability",
+        "authz_tenancy",
+        "privacy_compliance",
+        "network_resilience",
+        "cache_consistency",
+        "frontend_state",
+        "dx_tooling",
+        "docs_accuracy",
+        "i18n_localization",
+        "cost_finops",
+        "release_rollback",
+        "threat_abuse",
+        "data_model_integrity",
+        "search_indexing",
+        "mobile_offline",
+    ):
+        if f"`{role_id}`" not in roster:
+            fail(f"specialist-roster.md missing role id {role_id}")
     if "Rebuttal round" not in selector:
         fail("selector.md missing Rebuttal round")
     mvp = read_text(SKILL_DIR / "mvp-playbook.md")
@@ -311,6 +344,10 @@ def check_agents() -> None:
             fail(f"{name} must set is_background: false")
         if "description" not in data or not data["description"]:
             fail(f"{name} missing description")
+    reviewer = read_text(AGENTS_DIR / "gf-reviewer.md")
+    for marker in ("specialist_panel", "scenario", "specialist-roster.md"):
+        if marker not in reviewer:
+            fail(f"gf-reviewer.md missing {marker}")
 
 
 def check_forbidden_strings() -> None:
@@ -609,6 +646,48 @@ def validate_state_dir(state_dir: Path) -> None:
                 fail(f"{path.name} merged_blockers must be a list")
             if not isinstance(mp.get("panel"), list):
                 fail(f"{path.name} panel must be a list")
+            if "optional_panel" in mp:
+                optional = mp["optional_panel"]
+                if not isinstance(optional, list):
+                    fail(f"{path.name} optional_panel must be a list")
+                known_optional = {
+                    "api_compat",
+                    "data_migration",
+                    "performance",
+                    "ux_accessibility",
+                    "test_strategist",
+                    "dependency_supply_chain",
+                    "concurrency",
+                    "observability",
+                    "authz_tenancy",
+                    "privacy_compliance",
+                    "network_resilience",
+                    "cache_consistency",
+                    "frontend_state",
+                    "dx_tooling",
+                    "docs_accuracy",
+                    "i18n_localization",
+                    "cost_finops",
+                    "release_rollback",
+                    "threat_abuse",
+                    "data_model_integrity",
+                    "search_indexing",
+                    "mobile_offline",
+                }
+                allowed_scenarios = {"recheck", "improve", "advise"}
+                allowed_verdicts = {"SHIP", "REWORK", "BLOCK"}
+                if mp.get("status") == "complete" and len(optional) > 3:
+                    fail(f"{path.name} complete optional_panel must have ≤3 entries")
+                for idx, entry in enumerate(optional):
+                    if not isinstance(entry, dict):
+                        fail(f"{path.name} optional_panel[{idx}] must be an object")
+                    role = entry.get("role")
+                    if role not in known_optional:
+                        fail(f"{path.name} optional_panel[{idx}] unknown role {role!r}")
+                    if entry.get("scenario") not in allowed_scenarios:
+                        fail(f"{path.name} optional_panel[{idx}] invalid scenario")
+                    if entry.get("verdict") not in allowed_verdicts:
+                        fail(f"{path.name} optional_panel[{idx}] invalid verdict")
             if mp.get("status") == "complete" and mp.get("consensus") != "PASS":
                 fail(f"{path.name} complete requires consensus PASS")
             if mp.get("consensus") == "PASS" and mp.get("merged_blockers"):

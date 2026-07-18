@@ -9,7 +9,7 @@ Adaptive deliberation skill. Do not redesign this pipeline.
 
 ## Before any phase
 
-Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md).
+Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md) and [specialist-roster.md](specialist-roster.md).
 
 ## Five Iron Rules
 
@@ -97,7 +97,7 @@ Footer: `Fusion tier: MVP` only (never emit Quick/Standard/Heavy footers when th
 
 ## Implementation track
 
-If mutation was requested, read [implementation-track.md](implementation-track.md) and [multi-pass-verification.md](multi-pass-verification.md). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus).
+If mutation was requested, read [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), and [specialist-roster.md](specialist-roster.md). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus with ≤3 optional roles).
 
 ## Fail closed
 

@@ -76,7 +76,8 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 | Fewer than 2 of 2 judge cards after one retry (Standard) | Stop: Fusion did not run |
 | Invalid schema | One short repair prompt only; no full rerun |
 | Repair still invalid | Drop that card if quorum still holds; otherwise stop |
-| Multi-pass specialist panel fewer than 4 valid votes after one repair | Wave/plan `blocked`; do not mark PASS |
+| Multi-pass specialist panel fewer than 4 valid core votes after one repair | Wave/plan `blocked`; do not mark PASS |
+| Incomplete optional votes after one repair | Drop those optional votes (do not invent); if a required-by-trigger optional failed and trigger was G1/G2/security-class → round FAIL |
 | Multi-pass Task unavailable mid gate | Fail closed / `blocked`; do not mark PASS |
 
 ## Isolation rules
@@ -99,8 +100,8 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 - Heavy P4 pairwise: three selector calls in one batch after Top-3 are known
 - Heavy P5: one minority sentinel call
 - Heavy P6: falsifier, then revision editor sequentially
-- Implementation multi-pass: per-step 1× `gf-reviewer` (`step_recheck`); Error Hunt #1 then #2 as sequential single-call batches; completion 1× `gf-auditor` (`completion_quality`); specialist panel 5× `gf-reviewer` in one parallel batch
-- Correlated-panel recovery: 1× `gf-worker` falsifier, then 5× panel again
+- Implementation multi-pass: per-step 1× `gf-reviewer` (`step_recheck`); Error Hunt #1 then #2 as sequential single-call batches; completion 1× `gf-auditor` (`completion_quality`); specialist panel `5 + ≤3 optional` `gf-reviewer` in one parallel batch
+- Correlated-panel recovery: 1× `gf-worker` falsifier, then `5 + ≤3 optional` panel again
 - MVP wave / one-shot acceptance: multi-pass only (do not also run the legacy 2+1 review stack)
 
 ## Source-of-truth order
