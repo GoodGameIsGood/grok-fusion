@@ -58,6 +58,8 @@ CORE_FILES = [
     "scripts/validate_plugin.py",
     "scripts/select_optional_specialists.py",
     "scripts/record_eval_results.py",
+    "scripts/warn_subagents_disabled.py",
+    "hooks/hooks.json",
     "evals/README.md",
     "evals/cases.yaml",
     "evals/rubric.yaml",
@@ -120,7 +122,7 @@ PHASE_MARKERS = [f"P{i}" for i in range(0, 8)]
 
 REQUIRED_PLUGIN_FIELDS = {
     "name": "grok-fusion",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "license": "MIT",
 }
 
@@ -201,16 +203,22 @@ def check_plugin_json() -> None:
             "skills",
             "agents",
             "rules",
+            "hooks",
         }
         unexpected = set(data) - allowed
         if unexpected:
             fail(f"{label} has unexpected fields: {sorted(unexpected)}")
-        for key, expected in (("skills", "./skills/"), ("agents", "./agents/"), ("rules", "./rules/")):
+        for key, expected in (
+            ("skills", "./skills/"),
+            ("agents", "./agents/"),
+            ("rules", "./rules/"),
+            ("hooks", "./hooks/hooks.json"),
+        ):
             if data.get(key) != expected:
                 fail(f"{label} {key} must be {expected!r}")
         loaded.append(data)
     cursor_data, grok_data = loaded
-    for key in ("skills", "agents", "rules", "name", "version", "license"):
+    for key in ("skills", "agents", "rules", "hooks", "name", "version", "license"):
         if cursor_data.get(key) != grok_data.get(key):
             fail(
                 f"dual-manifest drift on {key!r}: "
@@ -882,9 +890,18 @@ def check_grok_build_packaging() -> None:
         fail("README FULL-parity language must reference smoke-grok-build gate")
 
     runtime = read_text(SKILL_DIR / "runtime-contract.md")
-    for token in ("host matrix", "spawn_subagent", "grok-fusion:gf-"):
+    for token in ("host matrix", "spawn_subagent", "grok-fusion:gf-", "агенты (subagents) ВЫКЛЮЧЕНЫ"):
         if token not in runtime:
             fail(f"runtime-contract.md missing host-matrix token {token!r}")
+
+    warn_script = ROOT / "scripts" / "warn_subagents_disabled.py"
+    if not warn_script.is_file():
+        fail("missing scripts/warn_subagents_disabled.py")
+    hooks = json.loads(read_text(ROOT / "hooks" / "hooks.json"))
+    if "SessionStart" not in (hooks.get("hooks") or {}):
+        fail("hooks/hooks.json must register SessionStart")
+    if "warn_subagents_disabled.py" not in read_text(ROOT / "hooks" / "hooks.json"):
+        fail("hooks/hooks.json must invoke warn_subagents_disabled.py")
 
 
 def load_json(path: Path) -> object:

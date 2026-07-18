@@ -36,9 +36,9 @@ grok plugin details grok-fusion
 grok inspect
 ```
 
-Expect agents named `grok-fusion:gf-worker` (etc.). Spawn those IDs from the parent.
+Expect: `grok plugin details` lists **hooks**. With subagents off, `python3 scripts/warn_subagents_disabled.py` prints the bilingual OFF banner to stderr.
 
-### Auto-route (G1)
+## Mandatory scenarios (E1–E6)
 
 1. Prefer plugin `rules/grok-fusion-auto.mdc` if the host loads it (prove in G1 row).
 2. If rules do **not** auto-fire: keep repo `AGENTS.md` (this tree) or paste the Option C snippet from README into the **consumer** project. That is PARTIAL auto — not FULL auto-parity.

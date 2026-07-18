@@ -1,7 +1,7 @@
 {
   "name": "grok-fusion",
-  "version": "0.4.1",
-  "description": "One Grok, council-grade judgment \u2014 adaptive deliberation for architecture, debugging, AppSec review, resumable MVP builds, and web/UI design craft (Cursor and Grok Build).",
+  "version": "0.4.2",
+  "description": "One Grok, council-grade judgment — adaptive deliberation for architecture, debugging, AppSec review, resumable MVP builds, and web/UI design craft (Cursor and Grok Build).",
   "author": {
     "name": "GoodGameIsGood"
   },
@@ -23,5 +23,6 @@
   "agents": "./agents/",
   "rules": "./rules/",
   "homepage": "https://github.com/GoodGameIsGood/grok-fusion",
-  "repository": "https://github.com/GoodGameIsGood/grok-fusion"
+  "repository": "https://github.com/GoodGameIsGood/grok-fusion",
+  "hooks": "./hooks/hooks.json"
 }

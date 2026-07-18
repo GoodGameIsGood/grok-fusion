@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml/badge.svg)](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](.cursor-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.4.2-blue.svg)](.cursor-plugin/plugin.json)
 
 > **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor and Grok Build — from quick fixes to architecture, AppSec review, and resumable MVPs.
 
-A plugin that turns one Grok into a careful council: independent framing, live evidence (repo + web researchers), competing proposals with dual-provocation challenges, judges, self-critique, and verification — with adaptive depth so simple edits stay fast and large builds stay resumable. **v0.4.1** ships the same tree for **Cursor** (`.cursor-plugin/`) and **Grok Build** (`.grok-plugin/`).
+A plugin that turns one Grok into a careful council: independent framing, live evidence (repo + web researchers), competing proposals with dual-provocation challenges, judges, self-critique, and verification — with adaptive depth so simple edits stay fast and large builds stay resumable. **v0.4.2** ships the same tree for **Cursor** (`.cursor-plugin/`) and **Grok Build** (`.grok-plugin/`), plus a visible warning when the subagents / agents plaque is off.
 
 **Product receipt (what ships / what is not claimed)**
 
@@ -128,6 +128,7 @@ Enable subagents in `~/.grok/config.toml`:
 enabled = true
 ```
 
+Если плашка Subagents / agents **выключена**, при старте сессии и при каждом промпте hook покажет предупреждение, а агент обязан вывести баннер «агенты ВЫКЛЮЧЕНЫ» и `Fusion did not run` (см. `runtime-contract.md`).
 Then:
 
 1. Start a Grok Build session on a strong non-Fast Grok model
@@ -315,7 +316,7 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 |---|---|
 | Skill / auto rule missing | Confirm install path, enable local plugins, reload; on Grok Build see Option C AGENTS snippet |
 | Agents missing | Copy all five agents + the auto rule, not only the skill; on Grok try `grok-fusion:gf-*` |
-| Grok Build Fusion did not run | Enable `[subagents]`; run `evals/smoke-runbook-grok.md`; do not claim FULL without smoke PASS |
+| Grok Build Fusion did not run / баннер про агентов | Включите `[subagents] enabled = true` (плашка Subagents); см. баннер в ответе и `hooks/hooks.json` |
 | “Fusion did not run” | Check Task/subagents and Grok badges; Max Mode / team model policy |
 | Everything feels Heavy | On `balanced`/`fast`: narrow the ask or say “use Quick/Standard”. On `max`: change `quality_profile` in config |
 | MVP won’t resume | Say `Continue run <id>`; check `.grok-fusion/runs/<id>/`; restore from checkpoint |

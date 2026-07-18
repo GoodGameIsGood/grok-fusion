@@ -8,7 +8,7 @@ This repository develops the **grok-fusion** plugin. Before answering or editing
 4. Run the Task probe for Standard/Heavy/MVP; fail closed if subagents are unavailable. On Grok Build spawn **`grok-fusion:gf-worker`** (and siblings), not bare `gf-*` alone.
 5. End with `Fusion tier: …` matching the actual tier (on `max`, always `MVP`).
 
-**Grok Build checklist:** `[subagents] enabled = true` in `~/.grok/config.toml`; prefer qualified agent IDs from `grok inspect`.
+**Grok Build checklist:** `[subagents] enabled = true` in `~/.grok/config.toml` (плашка Subagents). If off, the session hook and the parent must show the subagents-OFF banner from `runtime-contract.md` so you see it immediately.
 
 ## Scope of this file
 

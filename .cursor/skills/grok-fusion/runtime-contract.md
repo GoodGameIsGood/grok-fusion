@@ -20,6 +20,29 @@ In this contract, **Task** / **Task tool** / **Task call** means the host subage
 
 Wherever Fusion docs write bare `gf-*` names, resolve them via the host matrix: on Grok Build use `grok-fusion:gf-*` first; on Cursor use bare `gf-*`. Do not treat bare names as Grok-only IDs.
 
+### Subagents / agents plaque notice (mandatory UI)
+
+When the host subagent switch is **off**, Task/custom agents are missing, or the probe cannot spawn workers, the parent **must** put this notice at the **top** of the user-visible reply (before any other prose), then fail closed. Do not hide it inside a footer.
+
+```text
+⚠️ Grok Fusion — агенты (subagents) ВЫКЛЮЧЕНЫ
+⚠️ Grok Fusion — subagents / Task agents are OFF
+
+Без этой плашки council не запустится.
+Without this toggle the Fusion council cannot start.
+
+Как включить / Enable:
+• Grok Build → `~/.grok/config.toml`:
+    [subagents]
+    enabled = true
+  или Extensions → Subagents → enable, затем новый сеанс.
+• Cursor → Task tool + custom agents `gf-*` must be available.
+
+Fusion did not run.
+```
+
+Grok Build installs also run `scripts/warn_subagents_disabled.py` via `hooks/hooks.json` (`SessionStart` / `UserPromptSubmit`) so the warning appears even before the model answers when the plaque is off.
+
 ## Invocation model
 
 - The parent agent is the only Fusion orchestrator.

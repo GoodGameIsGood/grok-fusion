@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "python3 scripts/warn_subagents_disabled.py"
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "python3 scripts/warn_subagents_disabled.py"
+      }
+    ]
+  }
+}
