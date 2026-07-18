@@ -1,0 +1,25 @@
+---
+description: Automatically route every Grok request through Grok Fusion adaptive tiers before acting.
+alwaysApply: true
+---
+
+# Grok Fusion Auto
+
+Before answering or editing, load the `grok-fusion` skill and choose a tier from `adaptive-router.md`.
+
+## Required behavior
+
+1. Read `skills/grok-fusion/SKILL.md` guidance (or the installed plugin skill) when available.
+2. Classify the request and select exactly one tier: `Quick`, `Standard`, `Heavy`, or `MVP`.
+3. Follow that tier's pipeline. Do not invent a custom pipeline.
+4. End every response with: `Fusion tier: Quick|Standard|Heavy|MVP`.
+5. Never claim a Heavy or MVP result if a lighter tier was used.
+6. If Task/custom subagents are unavailable for Standard/Heavy/MVP, fail closed and say Fusion did not run. Quick may proceed with parent-only work plus honest disclosure.
+7. Do not mutate the workspace unless the user explicitly requested implementation or the request is an explicit build/edit task routed to Standard/Heavy/MVP implementation.
+
+## Tier hints
+
+- Local, clear, reversible, single-step or single-file → Quick
+- Ordinary debug/research/comparison across a few files → Standard
+- Architecture, security, migration, cross-module, high-stakes → Heavy
+- Build an MVP/product, multi-wave or multi-module resumable work → MVP
