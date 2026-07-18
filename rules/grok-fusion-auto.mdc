@@ -1,5 +1,5 @@
 ---
-description: Automatically route every Grok request through Grok Fusion using the project quality profile (default balanced; max forces MVP + Heavy spine).
+description: Route Grok requests through Grok Fusion using the project quality profile when this rule is loaded (Cursor alwaysApply; on Grok Build prefer AGENTS.md / Option C if plugin rules do not auto-fire).
 alwaysApply: true
 ---
 
@@ -12,7 +12,7 @@ Before answering or editing, load the `grok-fusion` skill. Read project config b
 1. Read `skills/grok-fusion/SKILL.md` guidance (or the installed plugin skill) when available.
 2. Load `.grok-fusion/config.json` per `project-config.md` (or plugin defaults: `quality_profile: balanced`).
 3. Select tier from `adaptive-router.md` using that profile. Do not invent a custom pipeline.
-4. Before any user-facing Fusion answer: run the Task probe when the selected tier is Standard, Heavy, or MVP (host Task tool: Cursor Task or Grok `task`/`spawn_subagent`; see runtime-contract host matrix). On `max` / `force_mvp`, also run the full Heavy P0–P7 council: framing/candidates/judges via `gf-worker`; evidence P2a via `gf-researcher-repo` + `gf-researcher-web`; P2b freshness_critic via `gf-worker`. On Grok Build, spawn **`grok-fusion:gf-*`** (qualified) first. Parent-only answers, inline simulation of subagents, or “label tier without Task spine” when required are forbidden. Fail closed: say Fusion did not run. If `gf-researcher-*` is unresolved after documented reload, fail closed.
+4. Before any user-facing Fusion answer: run the Task probe when the selected tier is Standard, Heavy, or MVP (host Task tool: Cursor Task or Grok `task`/`spawn_subagent`; see runtime-contract host matrix). On `max` / `force_mvp`, also run the full Heavy P0–P7 council. Spawn IDs: Cursor bare `gf-*`; Grok Build **`grok-fusion:gf-worker`**, `grok-fusion:gf-researcher-repo`, `grok-fusion:gf-researcher-web`, etc. Parent-only answers, inline simulation of subagents, or “label tier without Task spine” when required are forbidden. Fail closed: say Fusion did not run. If researchers are unresolved after documented reload, fail closed.
 5. End every response with `Fusion tier: Quick|Standard|Heavy|MVP` matching the **actual** tier used. On `max`, always `MVP`. Include `closure=` in telemetry when enabled.
 6. Never claim a lighter tier than the work performed.
 7. If Task/custom subagents are unavailable when the selected tier requires them, fail closed and say Fusion did not run.

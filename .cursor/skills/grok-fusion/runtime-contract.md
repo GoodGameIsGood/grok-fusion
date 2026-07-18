@@ -18,11 +18,13 @@ Fusion runs on Cursor and Grok Build from the same plugin tree. Behavioral parit
 
 In this contract, **Task** / **Task tool** / **Task call** means the host subagent spawn surface (Cursor Task tool or Grok `task`/`spawn_subagent`). Fail closed if that surface is unavailable for Standard/Heavy/MVP.
 
+Wherever Fusion docs write bare `gf-*` names, resolve them via the host matrix: on Grok Build use `grok-fusion:gf-*` first; on Cursor use bare `gf-*`. Do not treat bare names as Grok-only IDs.
+
 ## Invocation model
 
 - The parent agent is the only Fusion orchestrator.
 - Use the host **Task tool** (see host matrix) to invoke custom agents by name. On **Grok Build**, spawn **`grok-fusion:gf-worker`** (and siblings) first; fall back to bare `gf-*` only if the qualified name does not resolve. On **Cursor**, use bare `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, or `gf-researcher-web`.
-- Do not simulate subagents inline. If the Task tool is unavailable, fail closed. If `gf-researcher-*` cannot be resolved after documented reload, fail closed (no inline evidence simulation).
+- Do not simulate subagents inline. If the Task tool is unavailable, fail closed. If researchers cannot be resolved after documented reload (`gf-researcher-*` / `grok-fusion:gf-researcher-*`), fail closed (no inline evidence simulation).
 - All Task calls that belong to one phase must be launched in **one tool-message batch**. Evidence phase is split into sub-steps **P2a** and **P2b**; each sub-step is one batch (same pattern as P6 falsify-then-revise). Other phases stay one-batch.
 - Every custom agent uses `model: inherit`, `readonly: true`, and `is_background: false`.
 - `is_background: false` is mandatory so results return before continuation.
@@ -34,7 +36,7 @@ In this contract, **Task** / **Task tool** / **Task call** means the host subage
 Before Standard, Heavy, or MVP pipelines:
 
 1. Parent generates a random 8-character `probe_nonce`.
-2. Launch one trivial `gf-worker` Task probe whose prompt contains the nonce and this required schema:
+2. Launch one trivial worker Task probe — Cursor: `gf-worker`; Grok Build: **`grok-fusion:gf-worker`** — whose prompt contains the nonce and this required schema:
 
 ```yaml
 probe_nonce:

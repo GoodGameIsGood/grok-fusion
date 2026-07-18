@@ -5,8 +5,10 @@ This repository develops the **grok-fusion** plugin. Before answering or editing
 1. Load the `grok-fusion` skill (`skills/grok-fusion/SKILL.md` or `/grok-fusion`).
 2. Load `.grok-fusion/config.json` (this repo ships `quality_profile: max` / `force_mvp`).
 3. Follow `runtime-contract.md` host matrix (Cursor Task tool or Grok Build `task`/`spawn_subagent`).
-4. Run the Task probe for Standard/Heavy/MVP; fail closed if subagents are unavailable. On Grok Build prefer agents `grok-fusion:gf-*`.
+4. Run the Task probe for Standard/Heavy/MVP; fail closed if subagents are unavailable. On Grok Build spawn **`grok-fusion:gf-worker`** (and siblings), not bare `gf-*` alone.
 5. End with `Fusion tier: …` matching the actual tier (on `max`, always `MVP`).
+
+**Grok Build checklist:** `[subagents] enabled = true` in `~/.grok/config.toml`; prefer qualified agent IDs from `grok inspect`.
 
 ## Scope of this file
 
