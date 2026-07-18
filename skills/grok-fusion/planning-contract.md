@@ -11,7 +11,7 @@ Planning is required when any is true:
 - MVP work before the epic/wave DAG is written
 - Cursor Plan mode or any pre-implementation design of work
 
-Do not start edits until the plan quality gate is `PASS`.
+Do not start edits until the plan quality gate is `PASS` **and** plan multi-pass consensus is `PASS` per [multi-pass-verification.md](multi-pass-verification.md).
 
 ## Plan shape
 
@@ -66,14 +66,19 @@ Reject and revise any plan that contains:
 
 ## Plan quality gate
 
-Launch one `gf-worker` or `gf-auditor` Task that scores the draft plan only. Required checklist:
+After the draft plan, run the planning multi-pass sequence (plan artifact only — no code edits):
 
-- atomic steps (one outcome each)
-- verifiability (`verify_cmd` or justified n/a)
-- path grounding (no invented paths)
-- every batch ≤ 5 files
-- `ears_criteria` present and testable
-- no silent assumptions (all listed)
+1. **Checklist gate** — one `gf-worker` or `gf-auditor` Task that scores the draft plan only. Required checklist:
+   - atomic steps (one outcome each)
+   - verifiability (`verify_cmd` or justified n/a)
+   - path grounding (no invented paths)
+   - every batch ≤ 5 files
+   - `ears_criteria` present and testable
+   - no silent assumptions (all listed)
+2. **Error Hunt #1** — `gf-reviewer` `mode=error_hunt` with adversarial / devil’s-advocate pressure on the plan (holes that would fail in implementation).
+3. **Error Hunt #2** — independent `gf-reviewer` `mode=error_hunt` that must not see Hunt #1 findings. Merge per multi-pass union rules.
+4. **Completion quality** — `gf-auditor` `mode=completion_quality`: plan covers `success_definition` and EARS.
+5. **Specialist panel** — five `gf-reviewer` `specialist_panel` roles (plan stances) in one parallel batch; consensus math for plans (≥4 valid SHIP, zero BLOCK, no `long_term_risk: high`).
 
 Output:
 
@@ -81,13 +86,18 @@ Output:
 plan_quality: PASS|FAIL
 failures: []
 repair_hints: []
+multi_pass_consensus: PASS|FAIL|IN_PROGRESS
 ```
 
-On `FAIL`: one revision only. On a second `FAIL`: fail closed or ask at most two clarifying questions. Do not implement.
+`plan_quality: PASS` only if the checklist gate PASSes **and** `multi_pass_consensus: PASS`.
+
+On FAIL: repair the plan and re-run the multi-pass sequence. At most `max_plan_multi_pass_rounds` (2) full repair loops. On a second FAIL: fail closed or ask at most two clarifying questions. Do not implement.
+
+For MVP planning, persist `.grok-fusion/runs/<run-id>/multi_pass/<plan-id>.json`. Plan-only CreatePlan requests write plan + multi_pass JSON and never mutate product code.
 
 ## Devil's advocate on plans
 
-Before accepting a plan, run one adversarial pass whose only goal is to prove the plan fails in implementation. Return the strongest evidence-backed objection and one cheaper alternative path. A checkable flaw triggers revision; an unresolved objection is reported as dissent with lowered confidence. Never suppress it.
+Devil’s-advocate pressure is folded into Error Hunt #1 (or one dedicated `gf-worker` falsifier immediately before the specialist panel). Do not add a sixth redundant adversarial pass after the panel. A checkable flaw triggers revision; unresolved objections are reported as dissent with lowered confidence. Never suppress them.
 
 ## Handoff
 

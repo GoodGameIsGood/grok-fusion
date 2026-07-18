@@ -1,25 +1,28 @@
 ---
-description: Automatically route every Grok request through Grok Fusion MVP tier before acting.
+description: Automatically route every Grok request through maximum-quality Grok Fusion MVP (full Heavy spine) before acting.
 alwaysApply: true
 ---
 
 # Grok Fusion Auto
 
-Before answering or editing, load the `grok-fusion` skill. **This deployment forces tier `MVP` for every request.**
+Before answering or editing, load the `grok-fusion` skill. **This deployment forces tier `MVP` with maximum deliberation on every request.**
 
 ## Required behavior
 
 1. Read `skills/grok-fusion/SKILL.md` guidance (or the installed plugin skill) when available.
-2. Select tier `MVP` for every request. Do not route to Quick, Standard, or Heavy.
+2. Select tier `MVP` for every request. Do not route to Quick, Standard, or Heavy as the selected tier.
 3. Follow the MVP pipeline from `adaptive-router.md` and `SKILL.md`. Do not invent a custom pipeline.
-4. End every response with: `Fusion tier: MVP`.
-5. Never claim a lighter tier was used.
-6. If Task/custom subagents are unavailable for MVP, fail closed and say Fusion did not run.
-7. Do not mutate the workspace unless the user explicitly requested implementation or an explicit build/edit task. G0–G4 safety gates still apply before writes.
-8. If the request is a plan / roadmap / spec / CreatePlan, or implementation needs a plan first, load `planning-contract.md`, select pack `professional-planning`, and do not start edits until plan quality gate is `PASS`.
+4. **Maximum quality (mandatory):** before any user-facing answer, run the Task probe, then the full Heavy P0–P7 council (`gf-worker` via Task). Parent-only answers, inline simulation of subagents, or “label MVP without Task spine” are forbidden. Fail closed: say Fusion did not run.
+5. End every response with: `Fusion tier: MVP`.
+6. Never claim a lighter tier was used.
+7. If Task/custom subagents are unavailable for MVP, fail closed and say Fusion did not run.
+8. Do not mutate the workspace unless the user explicitly requested implementation or an explicit build/edit task. G0–G4 safety gates still apply before writes.
+9. If the request is a plan / roadmap / spec / CreatePlan, or implementation needs a plan first, load `planning-contract.md` and `multi-pass-verification.md`, select pack `professional-planning`, and do not start edits until plan quality gate and multi-pass consensus are `PASS`.
+10. Mutating work must complete `multi-pass-verification.md` (per-step recheck, double error hunt, completion quality, specialist consensus) before claiming done.
 
 ## Tier policy
 
-- **All requests → MVP** (PR/FAQ, Heavy spine, discovery, wave DAG, durable state, retros).
-- Explicit “use Quick/Standard/Heavy” overrides are ignored in this deployment unless the user later changes this rule.
-- Planning requests always use `professional-planning` and `planning-contract.md`.
+- **All requests → MVP** with **full Heavy P0–P7 spine** on answer track (no short-question shortcut).
+- Build/impl paths also run PR/FAQ, discovery, wave DAG, multi-pass QA, durable state, and retros when applicable.
+- Explicit “use Quick/Standard/Heavy” overrides are remapped to this maximum MVP policy unless the user later changes this rule.
+- Planning requests always use `professional-planning`, `planning-contract.md`, and multi-pass plan consensus.

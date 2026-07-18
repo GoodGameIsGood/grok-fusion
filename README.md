@@ -22,8 +22,9 @@ Use it when you want stronger architecture judgment, fewer hallucinations, and a
 | Same-model council | Multiple Grok subagents (`gf-worker`, `gf-reviewer`, `gf-auditor`) via Cursor Task |
 | Fresh facts | External versions/APIs checked live and dated — not guessed from memory |
 | Self-critique | Devil’s-advocate pass before the answer; empty “LGTM” reviews are rejected |
-| Professional plans | EARS criteria, atomic ≤5-file batches, verify commands, plan quality gate — no extra prompting needed |
-| MVP mode | PR/FAQ → spine → discovery → wave DAG → TDD waves → resume + safety gates |
+| Multi-pass QA | After each step and after the work: double error hunt, completion-quality audit, then ≥5 specialist roles until consensus PASS |
+| Professional plans | EARS criteria, atomic ≤5-file batches, verify commands, plan quality + multi-pass — no extra prompting needed |
+| MVP mode | PR/FAQ → spine → discovery → wave DAG → TDD waves → multi-pass → resume + safety gates |
 | Fail closed | If Task/subagents or Grok inheritance fail, it says **Fusion did not run** — it will not pretend |
 
 Every reply ends with: `Fusion tier: Quick|Standard|Heavy|MVP`.
@@ -113,7 +114,7 @@ Ask Grok normally. The auto rule loads Fusion routing and chooses a tier before 
 
 ### Plans (no special prompting needed)
 
-Ask for a plan, roadmap, or “how to implement X”. Fusion loads the professional planning contract automatically: goal-backward DoD, EARS acceptance criteria, atomic batches (≤5 files), verify commands, plan quality gate, and devil’s advocate on the plan. Edits do not start until the gate is `PASS`.
+Ask for a plan, roadmap, or “how to implement X”. Fusion loads the professional planning contract automatically: goal-backward DoD, EARS acceptance criteria, atomic batches (≤5 files), verify commands, plan quality gate, multi-pass error hunts, and specialist consensus. Edits do not start until the gate is `PASS`.
 
 Force depth when you want it:
 

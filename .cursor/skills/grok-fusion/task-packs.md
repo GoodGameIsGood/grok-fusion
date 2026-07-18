@@ -56,6 +56,7 @@ Pipeline emphasis:
 2. Core loop and smallest vertical slice
 3. Adoption, operability, and data/security minimums
 4. Wave DAG and acceptance clauses
+5. Multi-pass verification and specialist consensus before wave/epic done
 
 Preferred lenses: product-and-requirements, minimal-change, evolution-and-scale, implementation-realist
 
@@ -93,8 +94,8 @@ Pipeline emphasis:
 2. Goal-backward definition of done
 3. EARS / Given-When-Then acceptance criteria
 4. Atomic batches (≤5 files each) with verify commands
-5. Plan quality gate
-6. Devil's advocate on the plan
+5. Plan quality gate plus multi-pass (double error hunt, completion quality, specialist consensus)
+6. Devil's advocate folded into Error Hunt #1 or a pre-panel falsifier
 
 Preferred lenses: product-and-requirements, implementation-realist, failure-and-security
 
@@ -110,6 +111,7 @@ Pipeline emphasis:
 2. Accuracy against evidence
 3. Clarity and structure
 4. Concise verifier for factual claims
+5. If files are mutated: multi-pass with docs-adapted specialist roles
 
 Preferred lenses: product-and-requirements, persona-free wildcard
 

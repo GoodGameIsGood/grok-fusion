@@ -59,5 +59,5 @@ Expected behavior:
 - implementation contract with allowed paths
 - parent-only edits
 - repository-native tests
-- two `gf-reviewer` passes
-- no done claim while acceptance clauses remain FAIL or UNVERIFIED
+- multi-pass verification (per-step recheck, double error hunt, completion quality, 5-role specialist consensus)
+- no done claim while acceptance clauses remain FAIL or UNVERIFIED, or multi-pass consensus is not PASS

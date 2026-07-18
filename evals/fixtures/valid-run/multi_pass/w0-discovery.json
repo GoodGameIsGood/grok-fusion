@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "w0-discovery",
+  "phase": "done",
+  "round": 1,
+  "steps": [],
+  "error_hunt_1": {"blockers": []},
+  "error_hunt_2": {"blockers": []},
+  "merged_blockers": [],
+  "completion_quality": {"audit_result": "PASS"},
+  "panel": [
+    {"role": "correctness_engineer", "verdict": "SHIP", "checks_performed": ["discovery coverage present"]},
+    {"role": "systems_architect", "verdict": "SHIP", "checks_performed": ["owns_paths disjoint"]},
+    {"role": "security_reliability", "verdict": "SHIP", "checks_performed": ["no secrets in discovery"]},
+    {"role": "product_acceptance", "verdict": "SHIP", "checks_performed": ["wave0 maps to plan"]},
+    {"role": "ops_maintainability", "verdict": "SHIP", "checks_performed": ["commands recorded"]}
+  ],
+  "consensus": "PASS",
+  "status": "complete",
+  "task_calls_used": 12
+}

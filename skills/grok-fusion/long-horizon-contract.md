@@ -18,6 +18,7 @@ Use MVP durable state when the adaptive router selects `MVP`.
   dag.json
   acceptance.json
   events.jsonl
+  multi_pass/
   summaries/
   checkpoints/
 ```
@@ -154,6 +155,16 @@ Compact completed-wave state for context compaction. See `recovery-track.md`.
 
 Rollback metadata, patches, or path snapshots for the active wave.
 
+### multi_pass/
+
+Per-wave, plan, and epic multi-pass artifacts. Schema and consensus rules: [multi-pass-verification.md](multi-pass-verification.md).
+
+```text
+multi_pass/<wave-or-plan-or-epic-id>.json
+```
+
+Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `consensus`, `status`, `task_calls_used`.
+
 ## Spine lock
 
 The spine lives in `spine.json`. These fields are immutable without gate G4:
@@ -168,9 +179,17 @@ Any G4-approved spine change must rewrite `spine.json` and append a `gate` event
 
 ## Anti-loop budgets
 
-- per-wave max edit cycles: 3
+Authoritative multi-pass budgets (must match [multi-pass-verification.md](multi-pass-verification.md)):
+
+- `max_fix_cycles` per wave/one-shot: 6
+- `max_consensus_rounds` per wave/one-shot: 5
+- `max_plan_multi_pass_rounds`: 2
+- `max_step_recheck_retries` per step: 2
+- `max_task_calls` soft ceiling per wave: 40
 - identical failure fingerprint max: 2
 - full Heavy rerun max per epic: 1
+
+Budget exhaust → status `blocked`, never “almost done.”
 
 ## Done predicate
 
@@ -179,4 +198,6 @@ MVP is done only when:
 - every mandatory product, epic, and wave clause is `PASS`
 - discovery coverage meets the required threshold for touched modules
 - no open blockers remain in the DAG
+- every required `multi_pass/*.json` for completed waves, the accepted plan, and the final epic has `consensus: PASS` and `status: complete`
+- no open `merged_blockers` in those multi-pass artifacts
 - core vertical flow and build/start path are verified

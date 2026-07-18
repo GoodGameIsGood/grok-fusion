@@ -30,6 +30,7 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Safety gates | Migration/breaking changes pause at G1/G2 |
 | Freshness | External library/version claims carry retrieved_at from live lookups |
 | Self-critique | Final answers include resolved or reported devil's advocate objection |
+| Multi-pass consensus | Mutating/plan runs show per-step recheck, double error hunt, completion quality, and ≥5 specialist votes with consensus PASS before done |
 
 ## Commands
 

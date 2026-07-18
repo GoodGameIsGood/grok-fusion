@@ -36,6 +36,7 @@ CORE_FILES = [
     "skills/grok-fusion/minority-sentinel.md",
     "skills/grok-fusion/architecture-playbook.md",
     "skills/grok-fusion/verification-gate.md",
+    "skills/grok-fusion/multi-pass-verification.md",
     "skills/grok-fusion/implementation-track.md",
     "skills/grok-fusion/long-horizon-contract.md",
     "skills/grok-fusion/discovery-track.md",
@@ -60,6 +61,7 @@ CORE_FILES = [
     "evals/fixtures/valid-run/prfaq.json",
     "evals/fixtures/valid-run/lessons.json",
     "evals/fixtures/valid-run/events.jsonl",
+    "evals/fixtures/valid-run/multi_pass/w0-discovery.json",
     "evals/fixtures/invalid-run/run.json",
     "evals/fixtures/invalid-run/discovery.json",
     "evals/fixtures/invalid-run/dag.json",
@@ -239,6 +241,18 @@ def check_schema_markers() -> None:
         fail("freshness-contract.md missing Budget priority")
     if "Devil's advocate pass" not in read_text(SKILL_DIR / "verification-gate.md"):
         fail("verification-gate.md missing Devil's advocate pass")
+    multi_pass = read_text(SKILL_DIR / "multi-pass-verification.md")
+    for marker in (
+        "Phase A — Per-step recheck",
+        "Phase B — Double error hunt",
+        "Phase C — Completion quality",
+        "Phase D — Specialist panel",
+        "consensus: PASS",
+        "max_fix_cycles",
+        "Fail-closed and resume matrix",
+    ):
+        if marker not in multi_pass:
+            fail(f"multi-pass-verification.md missing {marker}")
     if "Rebuttal round" not in selector:
         fail("selector.md missing Rebuttal round")
     mvp = read_text(SKILL_DIR / "mvp-playbook.md")
@@ -250,13 +264,24 @@ def check_schema_markers() -> None:
         fail("long-horizon-contract.md missing prfaq.json")
     if "lessons.json" not in long_horizon:
         fail("long-horizon-contract.md missing lessons.json")
+    if "max_fix_cycles" not in long_horizon:
+        fail("long-horizon-contract.md missing max_fix_cycles")
+    if "per-wave max edit cycles: 3" in long_horizon:
+        fail("long-horizon-contract.md still has obsolete edit-cycle budget of 3")
     planning = read_text(SKILL_DIR / "planning-contract.md")
     if "Plan quality gate" not in planning:
         fail("planning-contract.md missing Plan quality gate")
     if "ears_criteria" not in planning:
         fail("planning-contract.md missing ears_criteria")
+    if "multi_pass_consensus" not in planning:
+        fail("planning-contract.md missing multi_pass_consensus")
     if "professional-planning" not in read_text(SKILL_DIR / "task-packs.md"):
         fail("task-packs.md missing professional-planning")
+    impl = read_text(SKILL_DIR / "implementation-track.md")
+    if "multi-pass-verification.md" not in impl:
+        fail("implementation-track.md missing multi-pass-verification.md")
+    if "Invoke `gf-reviewer` twice" in impl:
+        fail("implementation-track.md still uses legacy 2+1 review gate")
 
 
 def check_auto_rule() -> None:
@@ -566,6 +591,28 @@ def validate_state_dir(state_dir: Path) -> None:
                 json.loads(line)
             except json.JSONDecodeError as exc:
                 fail(f"events.jsonl line {line_no} invalid JSON: {exc}")
+    multi_pass_dir = state_dir / "multi_pass"
+    if multi_pass_dir.is_dir():
+        allowed_consensus = {"PASS", "FAIL", "IN_PROGRESS"}
+        allowed_mp_status = {"in_progress", "blocked", "complete"}
+        for path in sorted(multi_pass_dir.glob("*.json")):
+            mp = load_json(path)
+            if not isinstance(mp, dict) or mp.get("schema_version") != 1:
+                fail(f"{path.name} schema_version must be 1")
+            if not mp.get("id"):
+                fail(f"{path.name} missing id")
+            if mp.get("consensus") not in allowed_consensus:
+                fail(f"{path.name} has invalid consensus")
+            if mp.get("status") not in allowed_mp_status:
+                fail(f"{path.name} has invalid status")
+            if not isinstance(mp.get("merged_blockers"), list):
+                fail(f"{path.name} merged_blockers must be a list")
+            if not isinstance(mp.get("panel"), list):
+                fail(f"{path.name} panel must be a list")
+            if mp.get("status") == "complete" and mp.get("consensus") != "PASS":
+                fail(f"{path.name} complete requires consensus PASS")
+            if mp.get("consensus") == "PASS" and mp.get("merged_blockers"):
+                fail(f"{path.name} PASS with open merged_blockers")
 
 
 def check_readme_claims() -> None:

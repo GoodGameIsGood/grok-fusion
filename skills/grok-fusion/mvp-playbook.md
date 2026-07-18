@@ -21,7 +21,7 @@ Wave 1 after discovery is always a walking skeleton: the thinnest end-to-end pat
 
 ## TDD wave loop
 
-Inside every mutating wave: write or extend a failing repository-native test for the wave's acceptance first, implement the minimum to pass, then refactor with tests green. A wave without a runnable test needs an explicitly accepted reason recorded in its summary.
+Inside every mutating wave: write or extend a failing repository-native test for the wave's acceptance first, implement the minimum to pass, then refactor with tests green. A wave without a runnable test needs an explicitly accepted reason recorded in its summary. After steps are green, run [multi-pass-verification.md](multi-pass-verification.md) before marking the wave complete.
 
 ## Required planning shape
 

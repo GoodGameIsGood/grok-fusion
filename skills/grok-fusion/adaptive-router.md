@@ -4,19 +4,22 @@ Deterministic tier selection for every Grok Fusion run.
 
 ## Forced policy (this deployment)
 
-**Always select `MVP` for every request.** Do not choose Quick, Standard, or Heavy.
+**Always select `MVP` for every request.** Do not choose Quick, Standard, or Heavy as the selected tier.
+
+**Maximum quality:** every request must run the full Heavy P0–P7 council via Task (`gf-worker`) after the runtime probe. No parent-only shortcut. No “label MVP without spine.” Short Q&A is not exempt.
 
 Pipeline for every request:
 
-1. PR/FAQ working-backwards pass when product/build intent is present; for pure Q&A still run MVP durable planning lightly or escalate to full MVP when implementation begins
-2. Heavy once for the architecture/product spine when a spine does not yet exist
-3. Discovery wave when modules will be touched
-4. Epic/wave DAG when multi-step work is required
-5. Autonomous wave loop with G0–G4 safety gates for mutating work
+1. Task probe per `runtime-contract.md` (fail closed on mismatch)
+2. Full Heavy P0–P7 spine (framing → evidence → candidates → selection → minority → falsify/revise → verify) for every answer-track and build-track request
+3. PR/FAQ working-backwards pass when product/build intent is present
+4. Discovery wave when modules will be touched
+5. Epic/wave DAG when multi-step work is required
+6. Autonomous wave loop with G0–G4 safety gates for mutating work
 
-Output: MVP progress with durable state under `.grok-fusion/runs/<run-id>/` when implementing, plus `Fusion tier: MVP`.
+Output: full Heavy-depth verdict under footer `Fusion tier: MVP`. When implementing, also write durable state under `.grok-fusion/runs/<run-id>/`.
 
-For short questions that need no durable state, still label `Fusion tier: MVP`, run the Heavy spine path for high-stakes answers, and keep fail-closed Task/probe rules.
+Answer-track Q&A still runs steps 1–2 fully; skip durable wave machinery only when no implementation was requested. Never skip the Heavy spine.
 
 ## Tiers (reference only — not selected in this deployment)
 
@@ -102,6 +105,7 @@ Never silently label a lighter tier.
 
 ## Forced tiers
 
-- Every request → `MVP`
-- `/grok-fusion` with any wording → `MVP`
-- Explicit Quick/Standard/Heavy requests are remapped to `MVP` in this deployment
+- Every request → `MVP` + mandatory full Heavy P0–P7 Task spine
+- `/grok-fusion` with any wording → `MVP` + mandatory full Heavy P0–P7 Task spine
+- Explicit Quick/Standard/Heavy requests are remapped to this maximum MVP policy
+- Parent-only or simulated-council replies must not use the Fusion footer; say Fusion did not run instead

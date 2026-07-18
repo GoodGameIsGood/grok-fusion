@@ -4,9 +4,11 @@ Use for explicit code changes. Default answer track remains readonly.
 
 Single-batch Standard/Heavy edits use the one-shot sequence below. MVP uses the autonomous wave loop.
 
+Acceptance for every mutating path uses [multi-pass-verification.md](multi-pass-verification.md). That contract **replaces** the legacy `2×gf-reviewer + gf-auditor` done-gate. Do not stack both.
+
 ## One-shot sequence
 
-0. If planning is mandatory and no accepted plan exists, build one per [planning-contract.md](planning-contract.md) and obtain plan quality gate `PASS` before any edit.
+0. If planning is mandatory and no accepted plan exists, build one per [planning-contract.md](planning-contract.md) and obtain plan quality gate `PASS` (including multi-pass consensus) before any edit.
 1. Run the selected deliberative pipeline first and produce a file-level implementation contract that cites plan step ids when a plan exists.
 2. The contract must list:
    - exact allowed paths
@@ -14,15 +16,15 @@ Single-batch Standard/Heavy edits use the one-shot sequence below. MVP uses the 
    - preconditions
    - repository-native test commands
    - acceptance clauses
+   - atomic steps (see multi-pass atomic-step definition)
 3. Only the parent agent edits files. `gf-worker` stays readonly.
 4. Verify every precondition before changing code.
-5. Run repository-native tests, typecheck, or lint. Do not invent commands.
-6. Invoke `gf-reviewer` twice in one parallel Task batch:
-   - correctness, contracts, and edge cases
-   - architecture, requirements, and scope drift
-7. Fix only evidence-backed defects, then rerun verification.
-8. Audit every acceptance clause as `PASS`, `FAIL`, or `UNVERIFIED`.
-9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`.
+5. For each atomic step: implement, run `verify_cmd`, then Phase A `step_recheck` per [multi-pass-verification.md](multi-pass-verification.md).
+6. After all steps: run Phases B→C→D (double error hunt → completion quality → specialist panel) and enforce consensus math.
+7. Fix only evidence-backed defects within allowed paths, then re-enter from Error Hunt #1. Respect `max_fix_cycles` and `max_consensus_rounds`.
+8. Audit every acceptance clause as `PASS`, `FAIL`, or `UNVERIFIED` via completion_quality.
+9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`, or while multi-pass `consensus` is not `PASS`.
+10. Record multi-pass results on `RunEnvelope.verification.multi_pass` (one-shot) or under `.grok-fusion/runs/<run-id>/multi_pass/` (MVP).
 
 ## Implementation contract schema
 
@@ -34,6 +36,12 @@ invariants:
 preconditions:
 test_commands:
 acceptance_clauses:
+steps:
+  - id:
+    files: []
+    action: ""
+    verify_cmd: ""
+    acceptance_ids: []
 wave_id:
 baseline_test_snapshot:
 rollback_git_ref:
@@ -49,24 +57,26 @@ Before every MVP wave, re-read `spine.json`, `lessons.json`, and the active wave
 
 For each ready wave in topological order:
 
-0. Confirm the wave maps to accepted plan batch/step ids from [planning-contract.md](planning-contract.md); if no accepted plan exists, build and gate it first.
+0. Confirm the wave maps to accepted plan batch/step ids from [planning-contract.md](planning-contract.md); if no accepted plan exists, build and gate it first (plan multi-pass included).
 1. Validate durable state and discovery coverage for `owns_paths`.
 2. Capture baseline tests and a checkpoint under `.grok-fusion/runs/<run-id>/checkpoints/`.
 3. Pause for any required G0–G4 safety gate before editing.
 4. Parent edits only `owns_paths`.
-5. TDD: write or extend a failing test for the wave acceptance first, implement to green, refactor; then run wave-specific unit/integration/build commands that were verified in discovery.
-6. Launch in one Task batch:
-   - `gf-reviewer` correctness
-   - `gf-reviewer` scope/architecture
-   - `gf-auditor` acceptance
-7. Fix evidence-backed defects for at most three edit cycles.
+5. TDD: write or extend a failing test for the wave acceptance first, implement to green, refactor; then run wave-specific unit/integration/build commands that were verified in discovery. Treat each plan step or TDD cycle as an atomic step with Phase A recheck.
+6. After all steps are green locally, run the full multi-pass gate from [multi-pass-verification.md](multi-pass-verification.md):
+   - Phase B: Error Hunt #1 then #2 (sequential Task batches)
+   - merge blockers (union; empty hunt ≠ clearance)
+   - Phase C: one `gf-auditor` `completion_quality`
+   - Phase D: five `gf-reviewer` `specialist_panel` roles in one parallel batch
+   - consensus per wave math (≥4 valid SHIP, zero BLOCK, no `long_term_risk: high`)
+7. Fix evidence-backed defects for at most `max_fix_cycles` (6). Consensus panel re-entry at most `max_consensus_rounds` (5). Soft `max_task_calls` (40) → user gate, never PASS.
 8. Two identical failure fingerprints trigger rollback and a user gate.
-9. Mark the wave complete only when every mandatory clause is `PASS`.
+9. Mark the wave complete only when every mandatory clause is `PASS` **and** `multi_pass/<wave-id>.json` has `consensus: PASS` and `status: complete`.
 10. Write `summaries/<wave-id>.json` and continue to the next unblocked DAG node.
-11. If this wave completes an epic, run the epic integration check from `epic-track.md` before starting the next epic.
-12. Wave retro: append to `lessons.json` at least one lesson (what failed, what to do differently) whenever any edit cycle, reviewer, or auditor found a defect; propagate recurring lessons into the next wave prompts.
+11. If this wave completes an epic, run the epic integration check from `epic-track.md` before starting the next epic (includes product-level multi-pass with 5/5 consensus).
+12. Wave retro: append to `lessons.json` at least one lesson (what failed, what to do differently) whenever any edit cycle, multi-pass phase, or auditor found a defect; propagate recurring lessons into the next wave prompts.
 
-Never claim MVP done until every mandatory product/epic/wave clause is `PASS`, the build/start path works, and the core vertical flow is verified.
+Never claim MVP done until every mandatory product/epic/wave clause is `PASS`, required multi-pass artifacts are `consensus: PASS`, the build/start path works, and the core vertical flow is verified.
 
 ## Safety gates
 
@@ -80,28 +90,32 @@ Hybrid autonomy: reversible waves proceed automatically. Pause only for:
 
 Gate prompts must be structured yes/no or constrained choices. Record gate outcomes in `events.jsonl`.
 
+Re-check G0–G4 before every fix edit inside multi-pass loops. Dirty tree, scope expansion beyond `owns_paths`, or invariant changes pause per the multi-pass fail-closed matrix.
+
 ## Mandatory quality clauses
 
-Every mutating wave adds these clauses to its acceptance set, scored by `gf-auditor` as mandatory:
+Every mutating wave adds these clauses to its acceptance set, scored by `gf-auditor` `completion_quality` as mandatory:
 
 - repository-native lint/typecheck/build commands from discovery pass cleanly
 - errors are handled at system boundaries touched by the wave
 - no dead code, placeholder stubs, or commented-out blocks introduced
 - no secrets or credentials in code or config
 - every symbol used by the change is grounded per `grok-harness.md` symbol grounding
+- multi-pass consensus is PASS for this wave
 
 ## Reviewer prompts
 
-Reviewers and the auditor receive:
+Reviewers and the auditor receive what their multi-pass mode requires:
 
 - original query
 - canonical brief
 - implementation contract or wave state
-- diff
+- diff and/or plan artifact
 - test command outputs
 - discovery coverage for owned modules
+- mode (`step_recheck` | `error_hunt` | `specialist_panel` | `completion_quality`) and role stance when applicable
 
-They must not edit files and must not invent APIs or paths absent from the contract, diff, or state.
+They must not edit files and must not invent APIs or paths absent from the contract, diff, plan, or state. Error Hunt #2 must not receive Hunt #1 findings. Panelists must not receive other panelists' verdicts.
 
 ## Safety rules
 
@@ -110,3 +124,4 @@ They must not edit files and must not invent APIs or paths absent from the contr
 - No broadening scope beyond allowed or owned paths
 - Fail closed if tests cannot be identified and the change is non-trivial
 - Local checkpoint commits only; never push
+- Fail closed if Task/custom subagents are unavailable mid multi-pass

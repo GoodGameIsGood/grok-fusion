@@ -9,7 +9,7 @@ Adaptive deliberation skill. Do not redesign this pipeline.
 
 ## Before any phase
 
-Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md).
+Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.md), [freshness-contract.md](freshness-contract.md), and [adaptive-router.md](adaptive-router.md). Choose a task pack from [task-packs.md](task-packs.md). If planning is mandatory, also read [planning-contract.md](planning-contract.md). Mutating or plan gates also read [multi-pass-verification.md](multi-pass-verification.md).
 
 ## Five Iron Rules
 
@@ -21,7 +21,7 @@ Read [grok-harness.md](grok-harness.md), [runtime-contract.md](runtime-contract.
 
 ## Orchestration
 
-Use the Cursor Task tool targeting custom agent `gf-worker` for isolated phase work. Use `gf-reviewer` after edits and `gf-auditor` on MVP wave acceptance. Launch all calls for one phase in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline.
+Use the Cursor Task tool targeting custom agent `gf-worker` for isolated phase work. Use `gf-reviewer` and `gf-auditor` for [multi-pass-verification.md](multi-pass-verification.md) on plans and mutating work. Launch all calls for one phase in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline.
 
 For Standard, Heavy, and MVP: run one Task probe first. If the subagent model badge is not Grok, fail closed.
 
@@ -32,7 +32,7 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 - Preserve the original query verbatim.
 - Choose tier from [adaptive-router.md](adaptive-router.md): always `MVP` in this deployment.
 - Classify task pack from [task-packs.md](task-packs.md).
-- If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate is `PASS`.
+- If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate and multi-pass consensus are `PASS`.
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
 - Initialize an in-memory `RunEnvelope` with `tier`, `track`, and `fusion_depth=1`.
@@ -83,19 +83,21 @@ Read [verification-gate.md](verification-gate.md). Full seven-section output. Fo
 
 ### MVP
 
-0. PR/FAQ working-backwards pass per [mvp-playbook.md](mvp-playbook.md) before the Heavy spine
-1. Heavy once for the product/architecture spine
-2. Discovery via [discovery-track.md](discovery-track.md)
-3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` before the epic/wave DAG
-4. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md)
-5. Autonomous waves via [implementation-track.md](implementation-track.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md)
-6. Wave retros append to `lessons.json`; final epic ends with a user-zero walkthrough
+In this deployment every request is MVP at **maximum quality**: Task probe, then full Heavy P0–P7 before any answer. No short-question exemption.
 
-Footer: `Fusion tier: MVP`.
+0. PR/FAQ working-backwards pass per [mvp-playbook.md](mvp-playbook.md) when product/build intent is present (before or with the Heavy spine)
+1. Full Heavy P0–P7 for every request (answer track and build track). This is the product/architecture spine when building; for pure Q&A it is still the mandatory council depth
+2. Discovery via [discovery-track.md](discovery-track.md) when modules will be touched
+3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` (including multi-pass) before the epic/wave DAG
+4. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md) when multi-step work is required
+5. Autonomous waves via [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md) when mutating
+6. Wave retros append to `lessons.json`; final epic ends with user-zero walkthrough and product-level multi-pass (5/5)
+
+Footer: `Fusion tier: MVP` only (never emit Quick/Standard/Heavy footers when this deployment’s MVP path reuses the Heavy P0–P7 spine).
 
 ## Implementation track
 
-If mutation was requested, read [implementation-track.md](implementation-track.md). Only the parent edits. Then run repository-native verification, reviewers, and for MVP waves the auditor.
+If mutation was requested, read [implementation-track.md](implementation-track.md) and [multi-pass-verification.md](multi-pass-verification.md). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus).
 
 ## Fail closed
 

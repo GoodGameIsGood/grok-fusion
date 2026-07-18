@@ -76,6 +76,8 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 | Fewer than 2 of 2 judge cards after one retry (Standard) | Stop: Fusion did not run |
 | Invalid schema | One short repair prompt only; no full rerun |
 | Repair still invalid | Drop that card if quorum still holds; otherwise stop |
+| Multi-pass specialist panel fewer than 4 valid votes after one repair | Wave/plan `blocked`; do not mark PASS |
+| Multi-pass Task unavailable mid gate | Fail closed / `blocked`; do not mark PASS |
 
 ## Isolation rules
 
@@ -97,14 +99,15 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 - Heavy P4 pairwise: three selector calls in one batch after Top-3 are known
 - Heavy P5: one minority sentinel call
 - Heavy P6: falsifier, then revision editor sequentially
-- Implementation review: two `gf-reviewer` calls in one batch
-- MVP wave acceptance: two reviewers plus one `gf-auditor` in one batch
+- Implementation multi-pass: per-step 1× `gf-reviewer` (`step_recheck`); Error Hunt #1 then #2 as sequential single-call batches; completion 1× `gf-auditor` (`completion_quality`); specialist panel 5× `gf-reviewer` in one parallel batch
+- Correlated-panel recovery: 1× `gf-worker` falsifier, then 5× panel again
+- MVP wave / one-shot acceptance: multi-pass only (do not also run the legacy 2+1 review stack)
 
 ## Source-of-truth order
 
 1. `runtime-contract.md`
-2. `candidate-card.md`, `selector.md`, `verification-gate.md`, `falsify-and-revise.md`
-3. `adaptive-router.md`, `task-packs.md`, `framing-and-evidence.md`, `architecture-playbook.md`, `implementation-track.md`, `long-horizon-contract.md`
+2. `candidate-card.md`, `selector.md`, `verification-gate.md`, `falsify-and-revise.md`, `multi-pass-verification.md`
+3. `adaptive-router.md`, `task-packs.md`, `framing-and-evidence.md`, `architecture-playbook.md`, `implementation-track.md`, `planning-contract.md`, `long-horizon-contract.md`
 4. `SKILL.md`
 5. Agent prompts and examples
 
@@ -123,6 +126,9 @@ Grok verbosity is a defect, not a style. Hard caps per worker artifact:
 | Falsifier report | 400 words |
 | Revision | 500 words |
 | Probe reply | 50 words |
+| Step recheck | 300 words |
+| Error hunt | 400 words |
+| Specialist panel card | 400 words |
 
 Over-cap artifacts get one repair prompt; a second violation drops the card under quorum rules.
 

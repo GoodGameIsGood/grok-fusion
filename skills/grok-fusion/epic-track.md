@@ -57,6 +57,7 @@ Do not start wave N+1 until:
 
 - all dependencies are `complete`
 - every mandatory acceptance clause for wave N is `PASS`
+- wave N multi-pass `consensus` is `PASS` per [multi-pass-verification.md](multi-pass-verification.md)
 - discovery coverage for owned modules is satisfied
 
 Violation is fail closed, not “mostly done.”
@@ -76,3 +77,12 @@ When the last wave of an epic completes:
 2. Launch one `gf-auditor` call with a mandatory spine-conformance clause: the implemented code still satisfies `spine.json` invariants and boundaries.
 3. A FAIL or UNVERIFIED spine-conformance clause blocks the next epic.
 4. On the final epic, add a user-zero walkthrough: one `gf-reviewer` call follows the documented quickstart and demo command literally, as a first-time user, and fails the audit on any missing step, undocumented dependency, or broken command.
+5. Run **product-level** multi-pass verification per [multi-pass-verification.md](multi-pass-verification.md): Error Hunt #1 → #2 → completion_quality → specialist panel with **5/5** consensus required. Persist `multi_pass/<epic-id>.json`.
+
+### Status machine on epic/product multi-pass FAIL
+
+- Do **not** mark the product or MVP done.
+- Set the epic to blocked in durable state / events.
+- Reopen the **last wave** (or waves owning failing paths) to `blocked` / incomplete.
+- Prior local wave multi-pass PASS artifacts may remain on disk, but the product gate overrides “MVP done.”
+- Append a recovery event to `events.jsonl` and resume from `multi_pass/<epic-id>.json` via `recovery-track.md`.
