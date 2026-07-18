@@ -1,25 +1,23 @@
 ---
-description: Automatically route every Grok request through Grok Fusion adaptive tiers before acting.
+description: Automatically route every Grok request through Grok Fusion MVP tier before acting.
 alwaysApply: true
 ---
 
 # Grok Fusion Auto
 
-Before answering or editing, load the `grok-fusion` skill and choose a tier from `adaptive-router.md`.
+Before answering or editing, load the `grok-fusion` skill. **This deployment forces tier `MVP` for every request.**
 
 ## Required behavior
 
 1. Read `skills/grok-fusion/SKILL.md` guidance (or the installed plugin skill) when available.
-2. Classify the request and select exactly one tier: `Quick`, `Standard`, `Heavy`, or `MVP`.
-3. Follow that tier's pipeline. Do not invent a custom pipeline.
-4. End every response with: `Fusion tier: Quick|Standard|Heavy|MVP`.
-5. Never claim a Heavy or MVP result if a lighter tier was used.
-6. If Task/custom subagents are unavailable for Standard/Heavy/MVP, fail closed and say Fusion did not run. Quick may proceed with parent-only work plus honest disclosure.
-7. Do not mutate the workspace unless the user explicitly requested implementation or the request is an explicit build/edit task routed to Standard/Heavy/MVP implementation.
+2. Select tier `MVP` for every request. Do not route to Quick, Standard, or Heavy.
+3. Follow the MVP pipeline from `adaptive-router.md` and `SKILL.md`. Do not invent a custom pipeline.
+4. End every response with: `Fusion tier: MVP`.
+5. Never claim a lighter tier was used.
+6. If Task/custom subagents are unavailable for MVP, fail closed and say Fusion did not run.
+7. Do not mutate the workspace unless the user explicitly requested implementation or an explicit build/edit task. G0–G4 safety gates still apply before writes.
 
-## Tier hints
+## Tier policy
 
-- Local, clear, reversible, single-step or single-file → Quick
-- Ordinary debug/research/comparison across a few files → Standard
-- Architecture, security, migration, cross-module, high-stakes → Heavy
-- Build an MVP/product, multi-wave or multi-module resumable work → MVP
+- **All requests → MVP** (PR/FAQ, Heavy spine, discovery, wave DAG, durable state, retros).
+- Explicit “use Quick/Standard/Heavy” overrides are ignored in this deployment unless the user later changes this rule.

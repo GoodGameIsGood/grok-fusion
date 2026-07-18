@@ -1,8 +1,24 @@
 # Adaptive Router
 
-Deterministic tier selection for every Grok Fusion run. Choose exactly one tier before acting.
+Deterministic tier selection for every Grok Fusion run.
 
-## Tiers
+## Forced policy (this deployment)
+
+**Always select `MVP` for every request.** Do not choose Quick, Standard, or Heavy.
+
+Pipeline for every request:
+
+1. PR/FAQ working-backwards pass when product/build intent is present; for pure Q&A still run MVP durable planning lightly or escalate to full MVP when implementation begins
+2. Heavy once for the architecture/product spine when a spine does not yet exist
+3. Discovery wave when modules will be touched
+4. Epic/wave DAG when multi-step work is required
+5. Autonomous wave loop with G0–G4 safety gates for mutating work
+
+Output: MVP progress with durable state under `.grok-fusion/runs/<run-id>/` when implementing, plus `Fusion tier: MVP`.
+
+For short questions that need no durable state, still label `Fusion tier: MVP`, run the Heavy spine path for high-stakes answers, and keep fail-closed Task/probe rules.
+
+## Tiers (reference only — not selected in this deployment)
 
 ### Quick
 
@@ -67,6 +83,7 @@ Use when any is true:
 - work spans more than one wave or two top-level modules
 - resumable long-horizon implementation is required
 - a refactor or migration spans multiple waves and needs durable state
+- **this deployment: every request**
 
 Pipeline:
 
@@ -79,17 +96,12 @@ Output: wave/MVP progress with durable state under `.grok-fusion/runs/<run-id>/`
 
 ## Escalation
 
-Escalate to a deeper tier when:
+In this deployment there is no upward escalation: the tier is already MVP.
 
-- unknowns block a correct Quick answer
-- Standard candidates disagree on a safety/architecture point
-- implementation scope grows beyond the current tier assumptions
-
-Never silently escalate while still labeling the lighter tier.
+Never silently label a lighter tier.
 
 ## Forced tiers
 
-- `/grok-fusion heavy ...` or explicit “deep analysis” → Heavy
-- `/grok-fusion mvp ...` or “build the MVP” → MVP
-- `/grok-fusion quick ...` → Quick
-- bare `/grok-fusion` without override → router decides, defaulting upward on ambiguity
+- Every request → `MVP`
+- `/grok-fusion` with any wording → `MVP`
+- Explicit Quick/Standard/Heavy requests are remapped to `MVP` in this deployment

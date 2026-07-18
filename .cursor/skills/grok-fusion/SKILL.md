@@ -30,7 +30,7 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 ### P0 — Preflight
 
 - Preserve the original query verbatim.
-- Choose tier from [adaptive-router.md](adaptive-router.md): `Quick | Standard | Heavy | MVP`.
+- Choose tier from [adaptive-router.md](adaptive-router.md): always `MVP` in this deployment.
 - Classify task pack from [task-packs.md](task-packs.md).
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
