@@ -24,7 +24,7 @@ Add to `xai-org/plugin-marketplace` → `.grok-plugin/marketplace.json`:
   "source": {
     "source": "url",
     "url": "https://github.com/GoodGameIsGood/grok-fusion.git",
-    "sha": "2445458795b6dbaba6825e8f51650a54a4db6b77"
+    "sha": "dc0912b3e23edb29253540bc037fca138cb6982e"
   },
   "homepage": "https://github.com/GoodGameIsGood/grok-fusion",
   "keywords": [
