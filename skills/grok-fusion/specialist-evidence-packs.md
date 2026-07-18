@@ -26,6 +26,12 @@ Evidence focus for optional `gf-reviewer` roles. Load the matching section for `
 - Check: keyboard path, contrast/labels, user-zero first run
 - Red flags: icon-only controls, silent failures, missing empty states
 
+## visual_design_critique
+
+- Read: first viewport, hero/brand treatment, token usage, section composition
+- Check: brand test, hero budget, anti-slop clusters, cards-in-hero, clutter, intentional motion
+- Red flags: purple-indigo/cream-terracotta/broadsheet defaults without brief; weak brand; fabricated stats; inventing a parallel design system beside an existing one
+
 ## test_strategist
 
 - Read: `verify_cmd`, new tests, flake history in `lessons.json`

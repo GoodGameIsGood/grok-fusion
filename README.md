@@ -20,11 +20,13 @@ Use it when you want stronger architecture judgment, fewer hallucinations, and a
 |---|---|
 | Adaptive tiers | Quick / Standard / Heavy / MVP — picks depth from the task |
 | Same-model council | Multiple Grok subagents (`gf-worker`, `gf-reviewer`, `gf-auditor`) via Cursor Task |
+| Web/UI design craft | Sibling skills `grok-design` + `grok-web-ui` (canon, tokens-first, anti-slop) + Fusion pack `visual-ui` |
 | Fresh facts | External versions/APIs checked live and dated — not guessed from memory |
 | Self-critique | Devil’s-advocate pass before the answer; empty “LGTM” reviews are rejected |
 | Multi-pass QA | Core 5 specialists every round, plus on-demand specialists (20+) with recheck/improve/advise (≤3 optional per round, veto allowed) until consensus PASS |
 | Professional plans | EARS criteria, atomic ≤5-file batches, verify commands, plan quality + multi-pass — no extra prompting needed |
 | Professional debugging | Reproduce → hypotheses → falsify → characterization → blast-radius → council Repair Card → minimal fix only when confidence is high |
+| One-shot closure | Final confirmation inside the same request (`done_evidence` + walkthrough + blind hunt → `closure: CONFIRMED`) so follow-up «перепроверь» is not required |
 | MVP mode | PR/FAQ → spine → discovery → wave DAG → TDD waves → multi-pass → resume + safety gates |
 | Fail closed | If Task/subagents or Grok inheritance fail, it says **Fusion did not run** — it will not pretend |
 
@@ -104,6 +106,8 @@ Use this when you cannot (or do not want to) install a global plugin. Works from
 | From the repo | Into your project |
 |---|---|
 | `skills/grok-fusion/` | `.cursor/skills/grok-fusion/` |
+| `skills/grok-design/` | `.cursor/skills/grok-design/` |
+| `skills/grok-web-ui/` | `.cursor/skills/grok-web-ui/` |
 | `agents/gf-worker.md` | `.cursor/agents/gf-worker.md` |
 | `agents/gf-reviewer.md` | `.cursor/agents/gf-reviewer.md` |
 | `agents/gf-auditor.md` | `.cursor/agents/gf-auditor.md` |
@@ -111,7 +115,9 @@ Use this when you cannot (or do not want to) install a global plugin. Works from
 
 4. Reload Cursor and select a strong non-Fast Grok model.
 
-**Update (Option B):** download or pull the latest repo, then overwrite the same five paths in the project and reload.
+**Update (Option B):** download or pull the latest repo, then overwrite the same paths in the project and reload.
+
+**Note:** Design skills (`grok-design`, `grok-web-ui`) live under `skills/` for plugin discovery. They are **not** dual-tree HARD-mirrored like `grok-fusion`; Option B must copy them explicitly. v0.3 covers web/UI design craft + design canon — not every design medium.
 
 **Uninstall (Option B):** delete those copied paths from the project’s `.cursor/` folders and reload. This does **not** use `~/.cursor/plugins/...`.
 

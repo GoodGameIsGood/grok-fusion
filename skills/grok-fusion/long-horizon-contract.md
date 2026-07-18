@@ -179,7 +179,7 @@ Per-wave, plan, and epic multi-pass artifacts. Schema and consensus rules: [mult
 multi_pass/<wave-or-plan-or-epic-id>.json
 ```
 
-Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `verification_runs`, `consensus`, `status`, `task_calls_used`. When debugging: also persist `repair_card` on the multi_pass artifact and/or `RunEnvelope.verification.repair_card`.
+Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `verification_runs`, `consensus`, `status`, `task_calls_used`. When debugging: also persist `repair_card`. When closure gate is on and status is `complete`: also `done_evidence`, `final_confirmation`, and `closure: CONFIRMED`.
 
 ## Spine lock
 
@@ -203,6 +203,7 @@ Authoritative multi-pass budgets (must match [multi-pass-verification.md](multi-
 - `max_step_recheck_retries` per step: 2
 - `max_task_calls` soft ceiling per wave: 40 (override via `budgets.max_task_calls_per_wave`)
 - `max_task_calls` soft ceiling per epic: 200 (override via `budgets.max_task_calls_per_epic`)
+- `max_final_confirmation_rounds`: 2 (override via `closure.max_final_confirmation_rounds`)
 - identical failure fingerprint max: 2
 - full Heavy rerun max per epic: 1
 
@@ -215,6 +216,7 @@ MVP is done only when:
 - every mandatory product, epic, and wave clause is `PASS`
 - discovery coverage meets the required threshold for touched modules
 - no open blockers remain in the DAG
-- every required `multi_pass/*.json` for completed waves, the accepted plan, and the final epic has `consensus: PASS` and `status: complete`
+- every required `multi_pass/*.json` for completed waves, the accepted plan, and the final epic has `consensus: PASS`, `status: complete`, and `closure: CONFIRMED` when the closure gate is enabled
 - no open `merged_blockers` in those multi-pass artifacts
+- `done_evidence` is complete on those artifacts when the closure gate is enabled
 - core vertical flow and build/start path are verified

@@ -26,10 +26,11 @@ When the task pack is `debugging`, also follow [debugging-playbook.md](debugging
 4. Verify every precondition before changing code. Debugging: characterization cmds green first.
 5. For each atomic step: implement, run `verify_cmd`, then Phase A `step_recheck` per [multi-pass-verification.md](multi-pass-verification.md). Record each run in `verification_runs` / `events.jsonl`.
 6. After all steps: debugging verify ladder (failing case → characterization → blast suite), then Phases B→ verify hard gate → C→D. Do not mark done if `verify_hard_gate` is on and no successful verify exists.
+6b. After D PASS: build `done_evidence`, run must-not-break walkthrough (≥1 happy path + ≥2 adjacent), then Phase E final confirmation. User-facing done only when `closure: CONFIRMED`.
 7. Fix only evidence-backed defects within allowed paths, then re-enter from Error Hunt #1. Respect `max_fix_cycles` and `max_consensus_rounds`. Debugging scope changes need a **new** Repair Card.
 8. Audit every acceptance clause as `PASS`, `FAIL`, or `UNVERIFIED` via completion_quality.
-9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`, or while multi-pass `consensus` is not `PASS`.
-10. Record multi-pass results on `RunEnvelope.verification.multi_pass` (one-shot) or under `.grok-fusion/runs/<run-id>/multi_pass/` (MVP). Persist `repair_card` on `RunEnvelope.verification.repair_card` or `multi_pass/<id>.json`.
+9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`, while multi-pass `consensus` is not `PASS`, or while `closure` is not `CONFIRMED` when the closure gate is on.
+10. Record multi-pass results on `RunEnvelope.verification.multi_pass` (one-shot) or under `.grok-fusion/runs/<run-id>/multi_pass/` (MVP). Persist `repair_card`, `done_evidence`, `final_confirmation`, and `closure` when applicable.
 
 ## Implementation contract schema
 
@@ -78,9 +79,10 @@ For each ready wave in topological order:
    - Phase D: core five + ≤3 optional `gf-reviewer` `specialist_panel` in one parallel batch
    - Persist `repair_card` on the multi_pass artifact when debugging
    - consensus per wave math (core ≥4 valid SHIP; optional veto; no `long_term_risk: high` on core)
+   - Build `done_evidence`; must-not-break walkthrough; Phase E → `closure: CONFIRMED`
 7. Fix evidence-backed defects for at most `max_fix_cycles` (6). Consensus panel re-entry at most `max_consensus_rounds` (5). Soft `max_task_calls` (40) → user gate, never PASS.
 8. Two identical failure fingerprints trigger rollback and a user gate.
-9. Mark the wave complete only when every mandatory clause is `PASS` **and** `multi_pass/<wave-id>.json` has `consensus: PASS` and `status: complete`.
+9. Mark the wave complete only when every mandatory clause is `PASS` **and** `multi_pass/<wave-id>.json` has `consensus: PASS`, `closure: CONFIRMED` (when gate on), and `status: complete`.
 10. Write `summaries/<wave-id>.json` and continue to the next unblocked DAG node.
 11. If this wave completes an epic, run the epic integration check from `epic-track.md` before starting the next epic (includes product-level multi-pass with 5/5 consensus).
 12. Wave retro: append to `lessons.json` at least one lesson (what failed, what to do differently) whenever any edit cycle, multi-pass phase, or auditor found a defect; set `fingerprint`, `tags`, `recurrence_count`, and `inject_hint`. Before Phase B/D of the next wave, inject top recurring lessons into reviewer prompts when `lessons.inject_recurring` is true.

@@ -34,5 +34,13 @@
     "blast_radius_discovery": true,
     "discovery_max_files_debug": 80,
     "preferred_specialists": ["test_strategist", "concurrency", "observability"]
+  },
+  "closure": {
+    "require_final_confirmation": true,
+    "require_done_evidence": true,
+    "require_must_not_break_walkthrough": true,
+    "require_blind_hunt": true,
+    "max_final_confirmation_rounds": 2,
+    "forbid_empty_perfect": true
   }
 }

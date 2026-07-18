@@ -13,12 +13,12 @@ Before answering or editing, load the `grok-fusion` skill. Read project config b
 2. Load `.grok-fusion/config.json` per `project-config.md` (or plugin defaults: `quality_profile: balanced`).
 3. Select tier from `adaptive-router.md` using that profile. Do not invent a custom pipeline.
 4. Before any user-facing Fusion answer: run the Task probe when the selected tier is Standard, Heavy, or MVP. On `max` / `force_mvp`, also run the full Heavy P0–P7 council (`gf-worker` via Task). Parent-only answers, inline simulation of subagents, or “label tier without Task spine” when required are forbidden. Fail closed: say Fusion did not run.
-5. End every response with `Fusion tier: Quick|Standard|Heavy|MVP` matching the **actual** tier used. On `max`, always `MVP`.
+5. End every response with `Fusion tier: Quick|Standard|Heavy|MVP` matching the **actual** tier used. On `max`, always `MVP`. Include `closure=` in telemetry when enabled.
 6. Never claim a lighter tier than the work performed.
 7. If Task/custom subagents are unavailable when the selected tier requires them, fail closed and say Fusion did not run.
 8. Do not mutate the workspace unless the user explicitly requested implementation or an explicit build/edit task. G0–G4 safety gates still apply before writes.
-9. If the request is a plan / roadmap / spec / CreatePlan, or implementation needs a plan first, load `planning-contract.md` and `multi-pass-verification.md`, select pack `professional-planning`, and do not start edits until plan quality gate and multi-pass consensus are `PASS`.
-10. Mutating work must complete `multi-pass-verification.md` (per-step recheck, double error hunt, completion quality, specialist consensus) before claiming done.
+9. If the request is a plan / roadmap / spec / CreatePlan, or implementation needs a plan first, load `planning-contract.md` and `multi-pass-verification.md`, select pack `professional-planning`, and do not start edits until plan quality gate, multi-pass consensus, and `closure: CONFIRMED` (when closure gate on) are satisfied.
+10. Mutating work must complete `multi-pass-verification.md` through Phase E (`done_evidence`, must-not-break walkthrough, blind final confirmation) before claiming done. Never claim done/fixed/high confidence without `closure: CONFIRMED` when the closure gate is on. Forbid empty «всё идеально» / «багов нет» without checks when `forbid_empty_perfect` is true.
 
 ## Tier policy
 
@@ -27,4 +27,4 @@ Before answering or editing, load the `grok-fusion` skill. Read project config b
 - `fast`: prefer Quick/Standard; escalate only on clear triggers.
 - `max`: all requests → MVP + full Heavy P0–P7 spine; build paths also run PR/FAQ, discovery, wave DAG, multi-pass QA, durable state when applicable.
 - In-chat overrides beat config except when the user is only asking to change depth for one turn under a non-max profile.
-- Planning requests always use `professional-planning`, `planning-contract.md`, and multi-pass plan consensus.
+- Planning requests always use `professional-planning`, `planning-contract.md`, and multi-pass plan consensus through Phase E when closure is on.

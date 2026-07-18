@@ -100,6 +100,26 @@ Suggested optional specialists: `data_migration`, `api_compat`, `test_strategist
 
 Forbidden default: big-bang rewrite without characterization tests
 
+## visual-ui
+
+Use for landing pages, marketing UI, visual redesign, brand/UI polish, hero composition, and web visual deliverables (HTML/CSS/React).
+
+Pipeline emphasis:
+
+1. Load craft skills `grok-design` then `grok-web-ui` (canon → tokens-preflight → build)
+2. Preserve existing design systems when present
+3. Soft screenshot critique; hard screenshot+a11y DoD only on tagged visual-MVP mutate waves
+4. Anti-slop and brand-first checks from design-canon
+5. Multi-pass with visual critique + a11y when mutating UI
+
+Preferred lenses: product-and-requirements, implementation-realist, failure-and-security
+
+Suggested optional specialists: `visual_design_critique`, `ux_accessibility`, `frontend_state`
+
+Forbidden default: ship UI without token preflight or anti-slop scan; claim “any design” coverage
+
+Triggers (EN|RU): landing, redesign, visual polish, UI mock, hero, brand page, лендинг, макет, вёрстка, интерфейс, дизайн страницы, визуальный редизайн
+
 ## professional-planning
 
 Use for plans, roadmaps, implementation plans, CreatePlan-style artifacts, and any pre-implementation design of work.

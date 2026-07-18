@@ -28,6 +28,7 @@ The parent prompt sets mode `completion_quality` (default for wave/plan/epic acc
    - `repair_card_followed` — diff matches `patch_intent` and stays inside `allowed_paths`
    - `characterization_green` — characterization/baseline cmds passed (or justified `n/a`)
    - `must_not_break_checked` — must-not-break scenarios were verified or explicitly risk-accepted
+10. When the parent claims mutating done and the closure gate is on: if `closure` is missing or not `CONFIRMED`, set `audit_result: FAIL` (premature completion). Prefer `premature_completion_risk: high` when done is claimed without Phase E.
 
 ## Output schema
 
@@ -44,5 +45,6 @@ verify_evidence: present|missing|n_a_justified
 repair_card_followed: PASS|FAIL|UNVERIFIED|n_a
 characterization_green: PASS|FAIL|UNVERIFIED|n_a
 must_not_break_checked: PASS|FAIL|UNVERIFIED|n_a
+closure_status: CONFIRMED|PENDING|missing|n_a
 audit_result: PASS|FAIL
 ```

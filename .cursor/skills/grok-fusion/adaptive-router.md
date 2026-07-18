@@ -106,6 +106,15 @@ Pipeline:
 
 Output: wave/MVP progress with durable state under `.grok-fusion/runs/<run-id>/`, plus `Fusion tier: MVP`.
 
+## Pack hints (visual UI)
+
+When the user intent is primarily visual/web UI (not architecture-only), select task pack `visual-ui` after tier choice:
+
+- EN triggers: landing page, UI mock, restyle, visual redesign, brand page, hero, make it look…
+- RU triggers: лендинг, макет, вёрстка, интерфейс, дизайн страницы, визуальный редизайн, сделай красиво…
+- Parent should load craft skills `grok-design` then `grok-web-ui` (max two design skill bodies per turn)
+- Do **not** select `visual-ui` for Fusion-only, backend-only, or planning-without-visual requests
+
 ## Escalation
 
 Escalate Quick → Standard → Heavy → MVP when new evidence shows higher stakes. Never silently label a lighter tier than the work performed.

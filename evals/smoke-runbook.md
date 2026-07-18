@@ -6,6 +6,8 @@ Manual checks after installing the plugin. Do not claim universality until these
 
 1. Install to `~/.cursor/plugins/local/grok-fusion` or copy:
    - `skills/grok-fusion/`
+   - `skills/grok-design/`
+   - `skills/grok-web-ui/`
    - `agents/gf-worker.md`
    - `agents/gf-reviewer.md`
    - `agents/gf-auditor.md`
@@ -19,6 +21,7 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Check | Pass criteria |
 |---|---|
 | Skill visible | `/grok-fusion` appears and auto rule loads |
+| Design skills visible | `/grok-design` and `/grok-web-ui` appear (Option A plugin or Option B copy) |
 | Agents visible | `gf-worker`, `gf-reviewer`, `gf-auditor` are available |
 | Task spawning | Standard/Heavy runs create real Task subagents, not inline simulation |
 | Model inherit | Subagent badges match parent Grok |
@@ -37,6 +40,7 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Verify hard gate | Mutating done claims include successful `verification_runs` (exit_code 0) |
 | Continue run | `Continue run <run_id>` resumes durable state and lessons |
 | Professional debugging | Mutating debug shows Repair Card + characterization before edits; no drive-by refactors |
+| One-shot closure | Mutating done shows `done_evidence`, Phase E blind confirmation, and `closure: CONFIRMED` before user-facing done |
 
 ## Commands
 

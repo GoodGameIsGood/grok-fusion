@@ -100,9 +100,10 @@ Fail closed. Never silently degrade to a solo answer labeled as Fusion.
 - Heavy P4 pairwise: three selector calls in one batch after Top-3 are known
 - Heavy P5: one minority sentinel call
 - Heavy P6: falsifier, then revision editor sequentially
-- Implementation multi-pass: per-step 1× `gf-reviewer` (`step_recheck`); Error Hunt #1 then #2 as sequential single-call batches; completion 1× `gf-auditor` (`completion_quality`); specialist panel `5 + ≤3 optional` `gf-reviewer` in one parallel batch
+- Implementation multi-pass: per-step 1× `gf-reviewer` (`step_recheck`); Error Hunt #1 then #2 as sequential single-call batches; completion 1× `gf-auditor` (`completion_quality`); specialist panel `5 + ≤3 optional` `gf-reviewer` in one parallel batch; Phase E 1× blind `gf-reviewer` (`final_confirmation`) plus verify re-run
 - Correlated-panel recovery: 1× `gf-worker` falsifier, then `5 + ≤3 optional` panel again
-- MVP wave / one-shot acceptance: multi-pass only (do not also run the legacy 2+1 review stack)
+- Answer-track final confirmation (when closure gate on): 1× `gf-reviewer` or `gf-worker` after devil’s advocate
+- MVP wave / one-shot acceptance: multi-pass through Phase E only (do not also run the legacy 2+1 review stack)
 
 ## Source-of-truth order
 
@@ -130,6 +131,7 @@ Grok verbosity is a defect, not a style. Hard caps per worker artifact:
 | Step recheck | 300 words |
 | Error hunt | 400 words |
 | Specialist panel card | 400 words |
+| Final confirmation card | 300 words |
 
 Over-cap artifacts get one repair prompt; a second violation drops the card under quorum rules.
 
@@ -140,7 +142,7 @@ Caps limit artifact length only. They never limit the number of verification, re
 When project config `telemetry.footer_stats` is true, append stats after the tier:
 
 ```text
-Fusion tier: MVP | profile=max | tasks=28 | multi_pass=PASS | verify=0
+Fusion tier: MVP | profile=max | tasks=28 | multi_pass=PASS | verify=0 | closure=CONFIRMED
 ```
 
-Fields: `profile` from config, `tasks` = Task calls used this turn/wave, `multi_pass` = latest consensus or `n/a`, `verify` = last verify `exit_code` or `n/a`.
+Fields: `profile` from config, `tasks` = Task calls used this turn/wave, `multi_pass` = latest consensus or `n/a`, `verify` = last verify `exit_code` or `n/a`, `closure` = `CONFIRMED|PENDING|n/a`.

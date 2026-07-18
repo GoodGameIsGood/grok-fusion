@@ -21,11 +21,15 @@ Parent edits only. Reviewers and auditors stay readonly via Task. Never simulate
 per-step recheck → Error Hunt #1 → Error Hunt #2 → merge blockers
   → verify_hard_gate (mutating) → completion_quality (gf-auditor)
   → specialist panel (≥5) → consensus
+  → done_evidence + must-not-break walkthrough → Phase E final confirmation
+  → closure: CONFIRMED
 ```
 
 On any evidence-backed blocker or consensus FAIL: parent fixes within `owns_paths` / allowed paths, then re-enter from Error Hunt #1 (never hunt-once after a fix).
 
 Do not nest a specialist panel inside per-step recheck.
+
+When project config `closure.require_final_confirmation` is true (default for this repo), user-facing done requires `closure: CONFIRMED` after Phase E — panel PASS alone is not enough.
 
 ## Verify hard gate
 
@@ -187,6 +191,63 @@ Else: fix → Phase B → C → D.
 
 Require **5/5 valid core SHIP**, zero core `BLOCK`, zero core `REWORK` with nonempty blockers, no core `long_term_risk: high`, plus zero optional `BLOCK` / zero optional `REWORK` with nonempty blockers.
 
+## Done evidence pack
+
+After Phase D `consensus: PASS` (and before Phase E), parent builds `done_evidence`. Missing required fields ⇒ cannot enter Phase E.
+
+```yaml
+done_evidence:
+  request_restatement: ""
+  acceptance_ids: []
+  verification_runs: []
+  must_not_break: []
+  repair_card_id: ""
+  open_dissent: []
+  unknowns: []
+```
+
+Rules:
+
+- `acceptance_ids`: every mandatory clause must be PASS
+- `verification_runs`: when verify hard gate is on, at least one `exit_code: 0`
+- `must_not_break`: ≥1 primary happy path + ≥2 adjacent scenarios with cmd/result (or justified static check)
+- `repair_card_id`: required when debugging Repair Card was used
+- `open_dissent` / `unknowns`: non-blocking only; blocking items ⇒ not ready for Phase E
+- Persist on `multi_pass/*.json` and on answer-track `RunEnvelope.verification.done_evidence`
+
+## Must-not-break walkthrough
+
+Before Phase E on mutating paths: execute or explicitly verify the `must_not_break` scenarios from the Repair Card, plan EARS, or spine. Fail closed if a walkthrough cmd fails. Record results inside `done_evidence.must_not_break`.
+
+## Phase E — Final Confirmation
+
+When `closure.require_final_confirmation` is true, after D PASS + complete `done_evidence` + walkthrough:
+
+1. Re-run `verify_cmd` (mutating) and append to `verification_runs`.
+2. Launch **one blind** `gf-reviewer` Task with `mode=error_hunt` and prompt tag `final_confirmation`. Do **not** pass prior panel SHIP cards or parent rationale — only diff, contract, observation, and `done_evidence`.
+3. Required output:
+
+```yaml
+mode: final_confirmation
+verdict: CONFIRMED|FOUND_ISSUES
+falsify_attempt: ""
+checks_performed: []
+blockers: []
+```
+
+4. `FOUND_ISSUES`, empty `checks_performed`, or empty `falsify_attempt` → invalid; fix → re-enter Phase B (counts toward `max_fix_cycles`). At most `max_final_confirmation_rounds` (default 2).
+5. `CONFIRMED` + verify green + no blockers → set `closure: CONFIRMED` on the artifact; only then user-facing done.
+
+### Anti-empty-perfect
+
+When `closure.forbid_empty_perfect` is true, forbidden user-facing claims without `closure: CONFIRMED` and nonempty checks: «всё идеально», «перепроверка не нужна», «багов нет». Allowed: report `closure: CONFIRMED`, summarize checks, and list residual `open_dissent` / `unknowns`.
+
+If the user later says «перепроверь себя» after CONFIRMED: re-run Phase E only (cheap path). If still CONFIRMED, report checks — do not invent issues.
+
+### Scope lock
+
+Phase E does not expand product scope. New desires → new request, new Repair Card, or G4.
+
 ## Budget SoT
 
 Authoritative numbers live here and in `long-horizon-contract.md` (must match). Runtime mirrors the Task shapes only.
@@ -199,6 +260,7 @@ Authoritative numbers live here and in `long-horizon-contract.md` (must match). 
 | `max_step_recheck_retries` per step | 2 |
 | `max_task_calls` soft ceiling per wave | 40 (or `budgets.max_task_calls_per_wave`) |
 | `max_task_calls` soft ceiling per epic | 200 (or `budgets.max_task_calls_per_epic`) |
+| `max_final_confirmation_rounds` | 2 (or `closure.max_final_confirmation_rounds`) |
 | Identical failure fingerprint | 2 (then rollback + user gate) |
 
 On budget exhaust: status `blocked`, never “almost done”. Prompt the user with `Continue run <run_id>` after raising caps in `.grok-fusion/config.json` if needed. A structured yes/no user gate may authorize another round.
@@ -216,6 +278,8 @@ On budget exhaust: status `blocked`, never “almost done”. Prompt the user wi
 | Soft Task ceiling hit | User gate | No |
 | Correlated SHIP panel | Invalidate; adversarial falsifier + re-panel | No until clean panel |
 | Fingerprint hit twice | Rollback checkpoint + user gate | No |
+| Phase E Task unavailable | Fail closed / `blocked`; never invent CONFIRMED | No |
+| Final confirmation FOUND_ISSUES after max rounds | `blocked` or user gate | No |
 
 Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `recovery-track.md` using `multi_pass/<id>.json`.
 
@@ -229,7 +293,7 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
 {
   "schema_version": 1,
   "id": "",
-  "phase": "step_recheck|error_hunt_1|error_hunt_2|completion_quality|panel|done",
+  "phase": "step_recheck|error_hunt_1|error_hunt_2|completion_quality|panel|final_confirmation|done",
   "round": 0,
   "steps": [],
   "error_hunt_1": {},
@@ -245,22 +309,25 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
     "dropped_by_cap": []
   },
   "repair_card": {},
+  "done_evidence": {},
+  "final_confirmation": {},
+  "closure": "PENDING|CONFIRMED",
   "consensus": "PASS|FAIL|IN_PROGRESS",
   "status": "in_progress|blocked|complete",
   "task_calls_used": 0
 }
 ```
 
-One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelope.verification.multi_pass` object (and `RunEnvelope.verification.repair_card` when debugging); do not invent on-disk MVP state.
+One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelope.verification.multi_pass` object (and `RunEnvelope.verification.repair_card` / `done_evidence` / `closure` when applicable); do not invent on-disk MVP state.
 
 When a Repair Card is present: any evidence that the diff diverges from `patch_intent` or `allowed_paths` ⇒ consensus FAIL (auditor clause `repair_card_followed`).
 
 ## Done predicates
 
-- Wave/one-shot: `consensus: PASS` and `status: complete` (MVP file or envelope), no open `merged_blockers`, mandatory clauses PASS, and verify hard gate satisfied when enabled.
-- Plan: plan quality checklist PASS **and** multi-pass `consensus: PASS`.
-- Epic/product: local wave multi-pass complete, plus product-level multi-pass with **5/5** consensus PASS.
-- MVP product done additionally requires every required `multi_pass/*.json` for completed waves/plan/epic to show `consensus: PASS` and `status: complete`.
+- Wave/one-shot: `consensus: PASS`, `closure: CONFIRMED` (when closure gate on), `status: complete`, no open `merged_blockers`, mandatory clauses PASS, verify hard gate satisfied when enabled, `done_evidence` complete.
+- Plan: plan quality checklist PASS **and** multi-pass `consensus: PASS` **and** `closure: CONFIRMED` when closure gate on.
+- Epic/product: local wave multi-pass complete, plus product-level multi-pass with **5/5** consensus PASS and `closure: CONFIRMED`.
+- MVP product done additionally requires every required `multi_pass/*.json` for completed waves/plan/epic to show `consensus: PASS`, `status: complete`, and `closure: CONFIRMED` when the gate is enabled.
 
 ## Agent assignment
 
@@ -269,6 +336,7 @@ When a Repair Card is present: any evidence that the diff diverges from `patch_i
 | `step_recheck` | `gf-reviewer` |
 | `error_hunt` | `gf-reviewer` |
 | `specialist_panel` | `gf-reviewer` |
+| `final_confirmation` (blind) | `gf-reviewer` |
 | `completion_quality` | `gf-auditor` |
 | Correlated-panel falsifier / optional plan checklist | `gf-worker` |
 

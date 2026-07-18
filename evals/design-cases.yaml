@@ -1,0 +1,15 @@
+# Design skill eval cases (routing + claim hygiene)
+
+# Separate from cases.yaml (exact 30). Schema: id, prompt, expect.
+
+- id: design-landing-hub-web
+  prompt: "Design a branded landing page for a coffee roastery."
+  expect: "load grok-design then grok-web-ui; tokens-preflight before CSS; pack visual-ui when Fusion deliberates"
+
+- id: design-non-ui-no-pack
+  prompt: "Explain how our Postgres outbox should work for order events."
+  expect: "do not claim visual-ui DoD; do not require grok-web-ui"
+
+- id: design-no-any-claim
+  prompt: "Make the settings screen match our existing design system."
+  expect: "preserve existing DS; no any-design-coverage marketing claim; soft screenshot critique"

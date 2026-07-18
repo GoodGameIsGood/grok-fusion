@@ -98,7 +98,7 @@ PHASE_MARKERS = [f"P{i}" for i in range(0, 8)]
 
 REQUIRED_PLUGIN_FIELDS = {
     "name": "grok-fusion",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "license": "MIT",
 }
 
@@ -232,6 +232,8 @@ def check_schema_markers() -> None:
         fail("long-horizon-contract.md missing spine.json")
     if "refactoring-migration" not in read_text(SKILL_DIR / "task-packs.md"):
         fail("task-packs.md missing refactoring-migration")
+    if "## visual-ui" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing visual-ui pack")
     if "Symbol grounding" not in read_text(SKILL_DIR / "grok-harness.md"):
         fail("grok-harness.md missing Symbol grounding")
     if "Epic integration check" not in read_text(SKILL_DIR / "epic-track.md"):
@@ -260,9 +262,19 @@ def check_schema_markers() -> None:
         "scenario: recheck|improve|advise",
         "Verify hard gate",
         "verification_runs",
+        "Phase E — Final Confirmation",
+        "done_evidence",
+        "forbid_empty_perfect",
+        "closure: CONFIRMED",
     ):
         if marker not in multi_pass:
             fail(f"multi-pass-verification.md missing {marker}")
+    if "Final confirmation" not in read_text(SKILL_DIR / "verification-gate.md"):
+        fail("verification-gate.md missing Final confirmation")
+    if "require_final_confirmation" not in read_text(SKILL_DIR / "project-config.md"):
+        fail("project-config.md missing require_final_confirmation")
+    if "closure: CONFIRMED" not in read_text(SKILL_DIR / "orchestration-checklist.md"):
+        fail("orchestration-checklist.md missing closure: CONFIRMED")
     project_config = read_text(SKILL_DIR / "project-config.md")
     for marker in (
         "Read project config before tier",
@@ -292,6 +304,7 @@ def check_schema_markers() -> None:
         "data_migration",
         "performance",
         "ux_accessibility",
+        "visual_design_critique",
         "test_strategist",
         "dependency_supply_chain",
         "concurrency",
@@ -322,6 +335,7 @@ def check_schema_markers() -> None:
         "data_migration",
         "performance",
         "ux_accessibility",
+        "visual_design_critique",
         "test_strategist",
         "dependency_supply_chain",
         "concurrency",
@@ -408,13 +422,19 @@ def check_agents() -> None:
         "specialist-roster.md",
         "specialist-evidence-packs.md",
         "Repair Card",
+        "final_confirmation",
     ):
         if marker not in reviewer:
             fail(f"gf-reviewer.md missing {marker}")
     auditor = read_text(AGENTS_DIR / "gf-auditor.md")
     if "verify_evidence" not in auditor:
         fail("gf-auditor.md missing verify_evidence")
-    for marker in ("repair_card_followed", "characterization_green", "must_not_break_checked"):
+    for marker in (
+        "repair_card_followed",
+        "characterization_green",
+        "must_not_break_checked",
+        "closure_status",
+    ):
         if marker not in auditor:
             fail(f"gf-auditor.md missing {marker}")
 
@@ -517,9 +537,16 @@ def check_evals() -> None:
         "adaptive-cases.json",
         "mvp-cases.json",
         "smoke-runbook.md",
+        "design-cases.yaml",
     ):
         if not (EVALS_DIR / name).is_file():
             fail(f"missing evals/{name}")
+    design_cases = parse_simple_yaml_cases(read_text(EVALS_DIR / "design-cases.yaml"))
+    if len(design_cases) < 3:
+        fail(f"evals/design-cases.yaml must have at least 3 cases; found {len(design_cases)}")
+    for case in design_cases:
+        if not case.get("id") or not case.get("prompt") or not case.get("expect"):
+            fail("evals/design-cases.yaml cases require id, prompt, and expect")
     adaptive = json.loads(read_text(EVALS_DIR / "adaptive-cases.json"))
     mvp = json.loads(read_text(EVALS_DIR / "mvp-cases.json"))
     if not isinstance(adaptive, list) or len(adaptive) < 4:
@@ -535,6 +562,78 @@ def check_evals() -> None:
     ):
         if not path.is_file():
             fail(f"long-horizon support requires {path.name}")
+
+
+def check_design_skills_and_install_matrix() -> None:
+    """Additive design skills + Option B inventory + grok-fusion dual-tree."""
+    skills_root = ROOT / "skills"
+    if not skills_root.is_dir():
+        fail("missing skills/ directory")
+    skill_dirs = sorted(
+        p.name for p in skills_root.iterdir() if p.is_dir() and (p / "SKILL.md").is_file()
+    )
+    if "grok-fusion" not in skill_dirs:
+        fail("skills/ must include grok-fusion")
+    for name in skill_dirs:
+        if name == "grok-fusion":
+            continue
+        skill_md = skills_root / name / "SKILL.md"
+        text = read_text(skill_md)
+        try:
+            data = parse_frontmatter(text)
+        except Failure as exc:
+            fail(f"skills/{name}/SKILL.md frontmatter: {exc}")
+        if data.get("name") != name:
+            fail(f"skills/{name}/SKILL.md name must match directory ({name!r})")
+        if "description" not in data or not str(data.get("description", "")).strip():
+            fail(f"skills/{name}/SKILL.md missing description")
+        line_count = len(text.splitlines())
+        if line_count > 300:
+            fail(f"skills/{name}/SKILL.md has {line_count} lines; must be <= 300")
+
+    readme = read_text(ROOT / "README.md")
+    smoke = read_text(EVALS_DIR / "smoke-runbook.md")
+    for name in skill_dirs:
+        token = f"skills/{name}/"
+        if token not in readme:
+            fail(f"README Option B / install matrix missing {token}")
+        if token not in smoke:
+            fail(f"evals/smoke-runbook.md missing {token}")
+
+    cursor_skill = ROOT / ".cursor" / "skills" / "grok-fusion"
+    if cursor_skill.is_dir():
+        import filecmp
+
+        cmp = filecmp.dircmp(SKILL_DIR, cursor_skill)
+
+        def walk_diffs(dc: filecmp.dircmp, prefix: str = "") -> list[str]:
+            out: list[str] = []
+            for fname in dc.diff_files:
+                out.append(f"{prefix}{fname}")
+            for fname in dc.left_only:
+                out.append(f"{prefix}{fname} (skills only)")
+            for fname in dc.right_only:
+                out.append(f"{prefix}{fname} (.cursor only)")
+            for sub_name, sub_dc in dc.subdirs.items():
+                out.extend(walk_diffs(sub_dc, f"{prefix}{sub_name}/"))
+            return out
+
+        mismatches = walk_diffs(cmp)
+        if mismatches:
+            fail(
+                "dual-tree drift skills/grok-fusion vs .cursor/skills/grok-fusion: "
+                + ", ".join(mismatches[:12])
+            )
+
+    data = json.loads(read_text(PLUGIN_JSON))
+    keywords = data.get("keywords") or []
+    for required in ("design", "web-ui", "visual"):
+        if required not in keywords:
+            fail(f"plugin.json keywords must include {required!r}")
+    banned = ["any design task shipped", "any design coverage", "любую дизайн задачу уже"]
+    for phrase in banned:
+        if phrase.lower() in readme.lower():
+            fail(f"README claims unshipped design coverage: {phrase!r}")
 
 
 def load_json(path: Path) -> object:
@@ -751,6 +850,7 @@ def validate_state_dir(state_dir: Path) -> None:
                     "data_migration",
                     "performance",
                     "ux_accessibility",
+                    "visual_design_critique",
                     "test_strategist",
                     "dependency_supply_chain",
                     "concurrency",
@@ -786,6 +886,23 @@ def validate_state_dir(state_dir: Path) -> None:
                         fail(f"{path.name} optional_panel[{idx}] invalid verdict")
             if mp.get("status") == "complete" and mp.get("consensus") != "PASS":
                 fail(f"{path.name} complete requires consensus PASS")
+            if mp.get("status") == "complete" and "closure" in mp and mp.get("closure") != "CONFIRMED":
+                fail(f"{path.name} complete with closure field requires CONFIRMED")
+            if mp.get("status") == "complete" and "done_evidence" in mp:
+                de = mp["done_evidence"]
+                if not isinstance(de, dict):
+                    fail(f"{path.name} done_evidence must be an object")
+                for key in ("request_restatement", "acceptance_ids", "must_not_break"):
+                    if key not in de:
+                        fail(f"{path.name} done_evidence missing {key}")
+            if mp.get("status") == "complete" and "final_confirmation" in mp:
+                fc = mp["final_confirmation"]
+                if not isinstance(fc, dict):
+                    fail(f"{path.name} final_confirmation must be an object")
+                if fc.get("verdict") != "CONFIRMED":
+                    fail(f"{path.name} complete final_confirmation must be CONFIRMED")
+                if not fc.get("checks_performed") or not fc.get("falsify_attempt"):
+                    fail(f"{path.name} final_confirmation requires checks_performed and falsify_attempt")
             if mp.get("consensus") == "PASS" and mp.get("merged_blockers"):
                 fail(f"{path.name} PASS with open merged_blockers")
 
@@ -831,6 +948,7 @@ def main(argv: list[str] | None = None) -> int:
         check_markdown_links()
         check_iron_rules()
         check_evals()
+        check_design_skills_and_install_matrix()
         check_readme_claims()
     except Failure as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

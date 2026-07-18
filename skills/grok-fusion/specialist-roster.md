@@ -14,7 +14,7 @@ Optional narrow specialists for Grok Fusion multi-pass Phase D. All roles run as
 | `product_acceptance` | EARS/DoD, user-zero path |
 | `ops_maintainability` | rollback, ops debt, observability |
 
-## Optional roster (22)
+## Optional roster (23)
 
 | Role id | Focus | Typical triggers |
 |---|---|---|
@@ -22,6 +22,7 @@ Optional narrow specialists for Grok Fusion multi-pass Phase D. All roles run as
 | `data_migration` | schema, backfill, dual-write, rollback | G1; `**/migrations/**`, prisma/alembic |
 | `performance` | N+1, hot paths, payloads, timeouts | loops in hot modules; queue/worker packs |
 | `ux_accessibility` | user-zero, a11y, empty/error states | UI/frontend packs; product MVP UI waves |
+| `visual_design_critique` | composition, brand signal, anti-slop, hero rules | `visual-ui` pack; landing/CSS/HTML visual waves |
 | `test_strategist` | coverage gaps, flake risk, missing regression | weak/absent `verify_cmd`; flake history in lessons |
 | `dependency_supply_chain` | new deps, pins, licenses, supply risk | `package.json`/`Cargo.toml`/`go.mod` changes |
 | `concurrency` | races, locks, idempotency, at-least-once | workers, async, shared mutable state |
@@ -102,7 +103,7 @@ Store the same object on multi_pass as `optional_selection`. Honor project confi
 
 ### Severity priority for the cap
 
-`authz_tenancy` = `data_migration` = `api_compat` = `threat_abuse` = `privacy_compliance` > `release_rollback` > `concurrency` > others.
+`authz_tenancy` = `data_migration` = `api_compat` = `threat_abuse` = `privacy_compliance` > `release_rollback` > `concurrency` > `visual_design_critique` (25) > others.
 
 ### Stance notes (per role)
 

@@ -89,7 +89,8 @@ Parent edits only. Every touched path ⊆ `allowed_paths`. No drive-by cleanups,
 1. Failing case / regression now green
 2. Characterization cmds still green
 3. Blast-radius suite / relevant verify cmds green
-4. Full [multi-pass-verification.md](multi-pass-verification.md) with verify hard gate
+4. Must-not-break walkthrough (≥1 happy path + ≥2 adjacent) recorded in `done_evidence`
+5. Full [multi-pass-verification.md](multi-pass-verification.md) through Phase E (`closure: CONFIRMED`)
 
 Record runs in `verification_runs` / `events.jsonl`.
 

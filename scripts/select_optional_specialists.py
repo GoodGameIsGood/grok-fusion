@@ -17,6 +17,7 @@ PACK_SUGGESTIONS: dict[str, list[str]] = {
     "refactoring-migration": ["data_migration", "api_compat", "test_strategist"],
     "professional-planning": ["test_strategist", "api_compat", "data_migration"],
     "writing-explanation": ["docs_accuracy"],
+    "visual-ui": ["visual_design_critique", "ux_accessibility", "frontend_state"],
 }
 
 SEVERITY_RANK = {
@@ -27,6 +28,7 @@ SEVERITY_RANK = {
     "privacy_compliance": 100,
     "release_rollback": 80,
     "concurrency": 70,
+    "visual_design_critique": 25,
 }
 
 PATH_TRIGGERS: list[tuple[str, str]] = [
@@ -40,6 +42,9 @@ PATH_TRIGGERS: list[tuple[str, str]] = [
     ("dependency_supply_chain", "go.mod"),
     ("frontend_state", ".tsx"),
     ("frontend_state", ".vue"),
+    ("visual_design_critique", ".css"),
+    ("visual_design_critique", ".html"),
+    ("visual_design_critique", "landing"),
     ("dx_tooling", "scripts/"),
     ("dx_tooling", ".github/workflows"),
     ("docs_accuracy", "readme"),

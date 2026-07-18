@@ -79,7 +79,7 @@ Read [falsify-and-revise.md](falsify-and-revise.md). One revision maximum.
 
 #### P7 — Verify and answer
 
-Read [verification-gate.md](verification-gate.md). Full seven-section output. Footer: `Fusion tier: Heavy`.
+Read [verification-gate.md](verification-gate.md). Include final confirmation when the closure gate is on. Full seven-section output. Footer: `Fusion tier: Heavy`.
 
 ### MVP
 
@@ -88,24 +88,26 @@ When the router (or `quality_profile: max`) selects MVP:
 0. PR/FAQ working-backwards pass per [mvp-playbook.md](mvp-playbook.md) when product/build intent is present (before or with the Heavy spine)
 1. Full Heavy P0–P7 for the product/architecture spine (mandatory on `max` for every request, including pure Q&A)
 2. Discovery via [discovery-track.md](discovery-track.md) when modules will be touched
-3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` (including multi-pass) before the epic/wave DAG
+3. Executable plan via [planning-contract.md](planning-contract.md) must `PASS` (including multi-pass and `closure: CONFIRMED` when gate on) before the epic/wave DAG
 4. Epic/wave DAG via [epic-track.md](epic-track.md) and [mvp-playbook.md](mvp-playbook.md) when multi-step work is required
-5. Autonomous waves via [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md) when mutating
-6. Wave retros append to `lessons.json`; final epic ends with user-zero walkthrough and product-level multi-pass (5/5)
+5. Autonomous waves via [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), [long-horizon-contract.md](long-horizon-contract.md), and [recovery-track.md](recovery-track.md) when mutating — through Phase E
+6. Wave retros append to `lessons.json`; final epic ends with user-zero walkthrough and product-level multi-pass (5/5) with `closure: CONFIRMED`
 
 Footer: `Fusion tier: MVP` (on `max`, never emit Quick/Standard/Heavy).
 
 ## Implementation track
 
-If mutation was requested, read [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), and [specialist-roster.md](specialist-roster.md). For debugging pack also follow [debugging-playbook.md](debugging-playbook.md) (Repair Card + characterization before edits). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus with ≤3 optional roles).
+If mutation was requested, read [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), and [specialist-roster.md](specialist-roster.md). For debugging pack also follow [debugging-playbook.md](debugging-playbook.md) (Repair Card + characterization before edits). Only the parent edits. Then run repository-native verification and the multi-pass gate through Phase E (`done_evidence`, must-not-break walkthrough, blind `final_confirmation`, `closure: CONFIRMED`).
 
 ## Fail closed
 
 If tools, model inheritance, quorum, or schema requirements fail, say that Fusion did not run. Never return a solo answer as Fusion.
 
+Never claim done / fixed / high confidence without `closure: CONFIRMED` when the closure gate is on. Forbidden empty «всё идеально» / «багов нет» without checks when `forbid_empty_perfect` is true.
+
 When `telemetry.footer_stats` is enabled, end with:
 
-`Fusion tier: <tier> | profile=<profile> | tasks=<n> | multi_pass=<PASS|FAIL|n/a> | verify=<code|n/a>`
+`Fusion tier: <tier> | profile=<profile> | tasks=<n> | multi_pass=<PASS|FAIL|n/a> | verify=<code|n/a> | closure=<CONFIRMED|PENDING|n/a>`
 
 ## Examples
 

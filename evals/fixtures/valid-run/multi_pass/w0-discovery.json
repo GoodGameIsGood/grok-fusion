@@ -50,6 +50,33 @@
     "fix_rationale": "fixture completeness",
     "do_not_fix": []
   },
+  "done_evidence": {
+    "request_restatement": "validate discovery wave fixture",
+    "acceptance_ids": ["discovery-coverage"],
+    "verification_runs": [
+      {
+        "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run",
+        "exit_code": 0,
+        "summary": "state fixture valid"
+      }
+    ],
+    "must_not_break": [
+      {"scenario": "wave0 coverage gate", "cmd": "python3 scripts/validate_plugin.py --state evals/fixtures/valid-run", "result": "PASS"},
+      {"scenario": "owns_paths disjoint", "cmd": "static", "result": "PASS"},
+      {"scenario": "no secrets in discovery", "cmd": "static", "result": "PASS"}
+    ],
+    "repair_card_id": "w0-discovery",
+    "open_dissent": [],
+    "unknowns": []
+  },
+  "final_confirmation": {
+    "mode": "final_confirmation",
+    "verdict": "CONFIRMED",
+    "falsify_attempt": "Tried to find missing verification_runs and open merged_blockers",
+    "checks_performed": ["verification_runs exit 0", "merged_blockers empty", "panel 5 SHIP"],
+    "blockers": []
+  },
+  "closure": "CONFIRMED",
   "consensus": "PASS",
   "status": "complete",
   "task_calls_used": 12

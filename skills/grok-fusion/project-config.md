@@ -55,6 +55,14 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
     "blast_radius_discovery": true,
     "discovery_max_files_debug": 80,
     "preferred_specialists": ["test_strategist", "concurrency", "observability"]
+  },
+  "closure": {
+    "require_final_confirmation": true,
+    "require_done_evidence": true,
+    "require_must_not_break_walkthrough": true,
+    "require_blind_hunt": true,
+    "max_final_confirmation_rounds": 2,
+    "forbid_empty_perfect": true
   }
 }
 ```
@@ -81,6 +89,12 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
 | `debugging.blast_radius_discovery` | bool | Discover blast radius before edit |
 | `debugging.discovery_max_files_debug` | int | Raised discovery budget for debug |
 | `debugging.preferred_specialists` | role ids | Pin optional roles for debugging pack |
+| `closure.require_final_confirmation` | bool | Phase E / answer final confirmation required |
+| `closure.require_done_evidence` | bool | Require done_evidence pack before Phase E |
+| `closure.require_must_not_break_walkthrough` | bool | Walkthrough before mutating done |
+| `closure.require_blind_hunt` | bool | Blind reviewer for final confirmation |
+| `closure.max_final_confirmation_rounds` | int | Max Phase E repair loops |
+| `closure.forbid_empty_perfect` | bool | Ban empty “perfect” claims without checks |
 
 ## Profiles
 
