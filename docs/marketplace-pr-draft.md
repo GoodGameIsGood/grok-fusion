@@ -39,7 +39,7 @@ Add to `xai-org/plugin-marketplace` → `.grok-plugin/marketplace.json`:
 }
 ```
 
-Replace `sha` with the 40-char lowercase commit that ships v0.4.1 Grok Build packaging (run `git rev-parse HEAD` on that commit after push). Placeholder above is intentional so this file never pretends a stale pin is submit-ready.
+Pinned packaging commit: `dc0912b3e23edb29253540bc037fca138cb6982e` (v0.4.1 feature tree). Tip commits may only tweak this draft — before any marketplace PR, re-run `git rev-parse` on the tree you intend to ship and update `sha`. Draft remains **DO-NOT-SUBMIT** until E2/E3 PASS.
 
 **Before submit:**
 
