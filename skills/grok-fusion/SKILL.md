@@ -21,11 +21,13 @@ Read [project-config.md](project-config.md) and load `.grok-fusion/config.json` 
 
 ## Orchestration
 
-Use the Cursor Task tool targeting custom agent `gf-worker` for framing, candidates, judges, and `mode=freshness_critic`. Use `gf-researcher-repo` and `gf-researcher-web` for P2a evidence. Use `gf-reviewer` and `gf-auditor` for [multi-pass-verification.md](multi-pass-verification.md) on plans and mutating work. Launch all calls for one phase (or P2a/P2b sub-step) in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline. If `gf-researcher-*` is unresolved after reload, fail closed.
+Use the host Task tool (Cursor Task tool, or Grok Build `task`/`spawn_subagent` — see [runtime-contract.md](runtime-contract.md) host matrix) targeting custom agent `gf-worker` (on Grok Build prefer `grok-fusion:gf-worker`) for framing, candidates, judges, and `mode=freshness_critic`. Use `gf-researcher-repo` / `gf-researcher-web` (Grok: `grok-fusion:gf-researcher-*`) for P2a evidence. Use `gf-reviewer` and `gf-auditor` for [multi-pass-verification.md](multi-pass-verification.md) on plans and mutating work. Launch all calls for one phase (or P2a/P2b sub-step) in one parallel tool-message batch. Keep `fusion_depth=1`. Never simulate subagents inline. If `gf-researcher-*` is unresolved after reload, fail closed.
 
-For Standard, Heavy, and MVP: run one Task probe first. If the subagent model badge is not Grok, fail closed.
+For Standard, Heavy, and MVP: run one Task probe first. If host model authority is not Grok (Cursor badge / Grok visible model — self_report is weak only), fail closed.
 
 Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state follows [long-horizon-contract.md](long-horizon-contract.md).
+
+G1 auto-route: Cursor uses `rules/grok-fusion-auto.mdc`. On Grok Build, prove rules auto-fire via smoke; until then consumers may need Option C `AGENTS.md` (PARTIAL auto — do not claim FULL auto-parity).
 
 ### P0 — Preflight
 

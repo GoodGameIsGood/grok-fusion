@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "kind": "smoke-grok-build",
+  "host": "grok-build",
+  "status": "PARTIAL",
+  "at": "2026-07-18T17:35:00Z",
+  "plugin_version": "0.4.1",
+  "claim_level": "PACKAGING",
+  "grok_cli_version": "0.2.103",
+  "checks": [
+    {
+      "id": "E1",
+      "name": "install_loads_skills_agents",
+      "status": "PASS",
+      "notes": "grok plugin validate . OK; install --trust OK; inspect shows grok-fusion:gf-* agents and four plugin skills"
+    },
+    {
+      "id": "E2",
+      "name": "subagents_off_fail_closed",
+      "status": "PENDING",
+      "notes": "No authenticated live session in CI lab; re-run manually"
+    },
+    {
+      "id": "E3",
+      "name": "standard_plus_probe",
+      "status": "PENDING",
+      "notes": "Needs authenticated grok -p / TUI session for Task probe"
+    },
+    {
+      "id": "E4",
+      "name": "dual_tree_validate",
+      "status": "PASS",
+      "notes": "python3 scripts/validate_plugin.py PASS; agents/rules HARD dual-tree enforced"
+    },
+    {
+      "id": "E5",
+      "name": "claim_ladder_honored",
+      "status": "PASS",
+      "notes": "README + product receipt deny FULL until HOST_SMOKE_PASS + SD8"
+    },
+    {
+      "id": "E6",
+      "name": "marketplace_after_smoke",
+      "status": "PASS",
+      "notes": "docs/marketplace-pr-draft.md is DO-NOT-SUBMIT until E2/E3 PASS"
+    },
+    {
+      "id": "G1",
+      "name": "auto_route",
+      "status": "PARTIAL",
+      "notes": "AGENTS.md loaded by grok inspect; plugin rules present on disk; alwaysApply auto-fire not proven"
+    },
+    {
+      "id": "G2",
+      "name": "probe_authority",
+      "status": "PENDING",
+      "notes": "Live probe not run"
+    },
+    {
+      "id": "G3",
+      "name": "isolation_batching",
+      "status": "PENDING",
+      "notes": "Contract updated; live batch spawn not run"
+    },
+    {
+      "id": "agent_ids",
+      "name": "bare_or_qualified_gf_star",
+      "status": "PASS",
+      "notes": "Qualified grok-fusion:gf-* verified via grok inspect"
+    }
+  ],
+  "cursor_baseline": {
+    "status": "live_pending",
+    "artifact_path": "",
+    "at": "",
+    "notes": "FULL forbidden until Cursor smoke artifact or waiver"
+  },
+  "non_claims": [
+    "HOST_SMOKE_PASS / FULL without E2+E3 live PASS",
+    "alwaysApply rules auto-fire on Grok without G1 smoke PASS",
+    "model_family_self_report as sole probe authority",
+    "Cursor Marketplace one-click install",
+    "Live smoke covered by CI validate_plugin alone"
+  ],
+  "live_pending": true,
+  "notes": "Packaging + install/inspect verified on Grok Build 0.2.103. Complete E2/E3 with auth for HOST_SMOKE_PASS."
+}

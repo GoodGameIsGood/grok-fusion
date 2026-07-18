@@ -2,10 +2,26 @@
 
 Highest-priority runtime source of truth. If other files conflict with this document, this document wins.
 
+## Host matrix
+
+Fusion runs on Cursor and Grok Build from the same plugin tree. Behavioral parity means equivalent spawn, isolation, probe, and fail-closed — not identical UI chrome.
+
+| Concern | Cursor | Grok Build |
+|---|---|---|
+| Spawn tool | **Task tool** | `task` / `spawn_subagent` (host subagent tool; `[subagents] enabled` / `GROK_SUBAGENTS` must be on) |
+| Agent IDs | `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web` | Prefer **`grok-fusion:gf-*`** (VERIFIED on Grok Build 0.2.103 via `grok inspect`). Also try bare `gf-*` if the host resolves them. Record the working form in `evals/smoke-runbook-grok.md` |
+| Model binding | Agent frontmatter `model: inherit` | Same frontmatter (`model: inherit`); optional explicit model pin on spawn when the host exposes it |
+| Probe authority | Visible subagent **badge** (normative) + nonce/schema | Operator-visible Grok parent/subagent model signal + nonce/schema; pin when available |
+| `model_family_self_report` | Weak only | Weak only — never sole G2 authority |
+| Auto-route | `rules/grok-fusion-auto.mdc` (`alwaysApply: true`) | Prove via smoke; if plugin rules do not fire, Option C consumer `AGENTS.md` snippet (PARTIAL auto until rules smoke PASS) |
+| Smoke | `evals/smoke-runbook.md` | `evals/smoke-runbook-grok.md` |
+
+In this contract, **Task** / **Task tool** / **Task call** means the host subagent spawn surface (Cursor Task tool or Grok `task`/`spawn_subagent`). Fail closed if that surface is unavailable for Standard/Heavy/MVP.
+
 ## Invocation model
 
 - The parent agent is the only Fusion orchestrator.
-- Use the Cursor **Task tool** to invoke custom agents by name: `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, or `gf-researcher-web`.
+- Use the host **Task tool** (see host matrix) to invoke custom agents by name. On **Grok Build**, spawn **`grok-fusion:gf-worker`** (and siblings) first; fall back to bare `gf-*` only if the qualified name does not resolve. On **Cursor**, use bare `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, or `gf-researcher-web`.
 - Do not simulate subagents inline. If the Task tool is unavailable, fail closed. If `gf-researcher-*` cannot be resolved after documented reload, fail closed (no inline evidence simulation).
 - All Task calls that belong to one phase must be launched in **one tool-message batch**. Evidence phase is split into sub-steps **P2a** and **P2b**; each sub-step is one batch (same pattern as P6 falsify-then-revise). Other phases stay one-batch.
 - Every custom agent uses `model: inherit`, `readonly: true`, and `is_background: false`.
@@ -27,7 +43,9 @@ schema_ok: true
 ```
 
 3. Machine checks: the reply parses, `probe_nonce` echoes the exact nonce, `schema_ok` is true. Any mismatch, unstructured reply, or Task failure → stop: Fusion did not run.
-4. `model_family_self_report` is weak evidence only. The authoritative model check is the visible subagent badge, verified by the user per `evals/smoke-runbook.md`. If the badge is missing, Composer, Fast-only, or otherwise non-Grok, stop: Fusion did not run.
+4. `model_family_self_report` is weak evidence only. Authoritative model check by host:
+   - **Cursor:** visible subagent badge, verified per `evals/smoke-runbook.md`. Missing badge, Composer, Fast-only, or non-Grok → stop: Fusion did not run.
+   - **Grok Build:** operator-visible Grok model on parent/subagent (and spawn model pin when the host exposes it), verified per `evals/smoke-runbook-grok.md`. Missing/non-Grok authority → stop: Fusion did not run. Never treat self_report alone as authority.
 
 Quick may proceed without a probe when Task tools are unavailable, but must disclose that verification was parent-only.
 

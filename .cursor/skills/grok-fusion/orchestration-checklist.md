@@ -7,9 +7,12 @@ P0  Load project-config.md + .grok-fusion/config.json (or defaults)
     → adaptive-router.md (tier from quality_profile)
     → task-packs.md (visual UI → pack visual-ui; may load grok-design + grok-web-ui;
       AppSec-primary → pack appsec-review; load grok-security + security-playbook.md)
-    → Task probe when Standard/Heavy/MVP
+    → Host: Cursor Task tool or Grok task/spawn_subagent (see runtime-contract host matrix)
+    → Task probe when Standard/Heavy/MVP (fail closed if host subagents unavailable)
+    → Agent IDs: Cursor `gf-*` ; Grok Build prefer `grok-fusion:gf-*` (verified)
 
 P1+ Answer track: SKILL Heavy/Standard/Quick spine as selected
+    One tool-message batch per phase (P2a/P2b split); never inline-simulate gf-* roles
     P2a: gf-researcher-repo + gf-researcher-web; P2b: gf-worker freshness_critic
     Plan needed? → planning-contract.md until plan_quality + multi_pass PASS
     Debug pack? → debugging-playbook.md (Repair Card before any edit)
@@ -25,6 +28,7 @@ Multi   multi-pass-verification.md
         A step_recheck → B hunts → C gf-auditor → selection (specialist-roster.md /
         select_optional_specialists.py) → D core5 + ≤3 optional
         Inject lessons.json when lessons.inject_recurring
+        Mid-gate Task loss → blocked; do not mark PASS
 
 Close   done_evidence pack → must-not-break walkthrough → Phase E blind final_confirmation
         → closure: CONFIRMED (required before user-facing done)

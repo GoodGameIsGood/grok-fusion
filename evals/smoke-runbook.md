@@ -66,3 +66,5 @@ python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done; te
 ```
 
 Structural results (not blind benchmarks) may be recorded under `evals/results/structural-*.json`.
+
+Grok Build live/packaging smoke: see [smoke-runbook-grok.md](smoke-runbook-grok.md).

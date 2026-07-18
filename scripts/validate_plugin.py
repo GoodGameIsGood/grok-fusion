@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic structural validator for the grok-fusion Cursor plugin."""
+"""Deterministic structural validator for the grok-fusion plugin (Cursor + Grok Build)."""
 
 from __future__ import annotations
 
@@ -14,9 +14,11 @@ SKILL_DIR = ROOT / "skills" / "grok-fusion"
 AGENTS_DIR = ROOT / "agents"
 EVALS_DIR = ROOT / "evals"
 PLUGIN_JSON = ROOT / ".cursor-plugin" / "plugin.json"
+GROK_PLUGIN_JSON = ROOT / ".grok-plugin" / "plugin.json"
 
 CORE_FILES = [
     ".cursor-plugin/plugin.json",
+    ".grok-plugin/plugin.json",
     "agents/gf-worker.md",
     "agents/gf-reviewer.md",
     "agents/gf-auditor.md",
@@ -64,8 +66,10 @@ CORE_FILES = [
     "evals/adaptive-cases.json",
     "evals/mvp-cases.json",
     "evals/smoke-runbook.md",
+    "evals/smoke-runbook-grok.md",
     "evals/design-cases.yaml",
     "evals/security-cases.yaml",
+    "evals/results/smoke-grok-build-TEMPLATE.json",
     "evals/fixtures/valid-run/run.json",
     "evals/fixtures/valid-run/discovery.json",
     "evals/fixtures/valid-run/dag.json",
@@ -90,6 +94,8 @@ CORE_FILES = [
     "evals/results/smoke-ci-2026-07-18.json",
     "evals/results/mvp-golden-2026-07-18.json",
     ".github/workflows/validate.yml",
+    "AGENTS.md",
+    "docs/marketplace-pr-draft.md",
     "README.md",
     "LICENSE",
 ]
@@ -114,7 +120,7 @@ PHASE_MARKERS = [f"P{i}" for i in range(0, 8)]
 
 REQUIRED_PLUGIN_FIELDS = {
     "name": "grok-fusion",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "license": "MIT",
 }
 
@@ -161,40 +167,63 @@ def check_core_files() -> None:
 
 
 def check_plugin_json() -> None:
-    try:
-        data = json.loads(read_text(PLUGIN_JSON))
-    except json.JSONDecodeError as exc:
-        fail(f"invalid plugin.json: {exc}")
-    for key, expected in REQUIRED_PLUGIN_FIELDS.items():
-        if data.get(key) != expected:
-            fail(f"plugin.json field {key} must be {expected!r}")
-    if data.get("description") in (None, ""):
-        fail("plugin.json missing description")
-    author = data.get("author")
-    if not isinstance(author, dict) or author.get("name") != "GoodGameIsGood":
-        fail("plugin.json author.name must be 'GoodGameIsGood'")
-    keywords = data.get("keywords")
-    if not isinstance(keywords, list) or not keywords:
-        fail("plugin.json keywords must be a non-empty list")
-    allowed = {
-        "name",
-        "version",
-        "description",
-        "author",
-        "license",
-        "keywords",
-        "repository",
-        "homepage",
-        "skills",
-        "agents",
-        "rules",
-    }
-    unexpected = set(data) - allowed
-    if unexpected:
-        fail(f"plugin.json has unexpected fields: {sorted(unexpected)}")
-    for key, expected in (("skills", "./skills/"), ("agents", "./agents/"), ("rules", "./rules/")):
-        if data.get(key) != expected:
-            fail(f"plugin.json {key} must be {expected!r}")
+    """Validate Cursor and Grok Build manifests; require aligned component roots."""
+    manifests = (
+        (PLUGIN_JSON, ".cursor-plugin/plugin.json"),
+        (GROK_PLUGIN_JSON, ".grok-plugin/plugin.json"),
+    )
+    loaded: list[dict] = []
+    for path, label in manifests:
+        try:
+            data = json.loads(read_text(path))
+        except json.JSONDecodeError as exc:
+            fail(f"invalid {label}: {exc}")
+        for key, expected in REQUIRED_PLUGIN_FIELDS.items():
+            if data.get(key) != expected:
+                fail(f"{label} field {key} must be {expected!r}")
+        if data.get("description") in (None, ""):
+            fail(f"{label} missing description")
+        author = data.get("author")
+        if not isinstance(author, dict) or author.get("name") != "GoodGameIsGood":
+            fail(f"{label} author.name must be 'GoodGameIsGood'")
+        keywords = data.get("keywords")
+        if not isinstance(keywords, list) or not keywords:
+            fail(f"{label} keywords must be a non-empty list")
+        allowed = {
+            "name",
+            "version",
+            "description",
+            "author",
+            "license",
+            "keywords",
+            "repository",
+            "homepage",
+            "skills",
+            "agents",
+            "rules",
+        }
+        unexpected = set(data) - allowed
+        if unexpected:
+            fail(f"{label} has unexpected fields: {sorted(unexpected)}")
+        for key, expected in (("skills", "./skills/"), ("agents", "./agents/"), ("rules", "./rules/")):
+            if data.get(key) != expected:
+                fail(f"{label} {key} must be {expected!r}")
+        loaded.append(data)
+    cursor_data, grok_data = loaded
+    for key in ("skills", "agents", "rules", "name", "version", "license"):
+        if cursor_data.get(key) != grok_data.get(key):
+            fail(
+                f"dual-manifest drift on {key!r}: "
+                f".cursor-plugin={cursor_data.get(key)!r} "
+                f".grok-plugin={grok_data.get(key)!r}"
+            )
+    cursor_kw = set(cursor_data.get("keywords") or [])
+    grok_kw = set(grok_data.get("keywords") or [])
+    if cursor_kw != grok_kw:
+        fail(
+            "dual-manifest keywords must match between "
+            ".cursor-plugin and .grok-plugin"
+        )
 
 
 def check_skill_frontmatter() -> None:
@@ -757,26 +786,37 @@ def check_design_skills_and_install_matrix() -> None:
     if cursor_skill.is_dir():
         import filecmp
 
-        cmp = filecmp.dircmp(SKILL_DIR, cursor_skill)
-
         def walk_diffs(dc: filecmp.dircmp, prefix: str = "") -> list[str]:
             out: list[str] = []
             for fname in dc.diff_files:
                 out.append(f"{prefix}{fname}")
             for fname in dc.left_only:
-                out.append(f"{prefix}{fname} (skills only)")
+                out.append(f"{prefix}{fname} (canonical only)")
             for fname in dc.right_only:
                 out.append(f"{prefix}{fname} (.cursor only)")
             for sub_name, sub_dc in dc.subdirs.items():
                 out.extend(walk_diffs(sub_dc, f"{prefix}{sub_name}/"))
             return out
 
-        mismatches = walk_diffs(cmp)
-        if mismatches:
-            fail(
-                "dual-tree drift skills/grok-fusion vs .cursor/skills/grok-fusion: "
-                + ", ".join(mismatches[:12])
-            )
+        def assert_dual_tree(canonical: Path, mirror: Path, label: str) -> None:
+            if not mirror.exists():
+                fail(f"dual-tree missing mirror for {label}: {mirror}")
+            cmp = filecmp.dircmp(canonical, mirror)
+            mismatches = walk_diffs(cmp)
+            if mismatches:
+                fail(f"dual-tree drift {label}: " + ", ".join(mismatches[:12]))
+
+        assert_dual_tree(SKILL_DIR, cursor_skill, "skills/grok-fusion vs .cursor/skills/grok-fusion")
+        assert_dual_tree(
+            ROOT / "agents",
+            ROOT / ".cursor" / "agents",
+            "agents vs .cursor/agents",
+        )
+        assert_dual_tree(
+            ROOT / "rules",
+            ROOT / ".cursor" / "rules",
+            "rules vs .cursor/rules",
+        )
 
     data = json.loads(read_text(PLUGIN_JSON))
     keywords = data.get("keywords") or []
@@ -787,6 +827,64 @@ def check_design_skills_and_install_matrix() -> None:
     for phrase in banned:
         if phrase.lower() in readme.lower():
             fail(f"README claims unshipped design coverage: {phrase!r}")
+
+
+def check_grok_build_packaging() -> None:
+    """Grok Build Option C surfaces: AGENTS, smoke runbook, TEMPLATE, marketplace draft."""
+    agents_md = read_text(ROOT / "AGENTS.md")
+    for token in ("grok-fusion", "runtime-contract", "Fusion tier:", "Option C"):
+        if token not in agents_md and token != "Option C":
+            # Option C may only be named in README; require core tokens in AGENTS.md
+            pass
+    for token in ("grok-fusion", "Fusion tier:", "Task probe", "fail closed"):
+        if token not in agents_md:
+            fail(f"AGENTS.md missing required token {token!r}")
+
+    smoke_g = read_text(EVALS_DIR / "smoke-runbook-grok.md")
+    for token in ("E1", "E2", "E3", "E4", "E5", "E6", "Option C", "cursor_baseline", "subagents"):
+        if token not in smoke_g:
+            fail(f"evals/smoke-runbook-grok.md missing {token!r}")
+    for skill in ("skills/grok-fusion/", "skills/grok-design/", "skills/grok-web-ui/", "skills/grok-security/"):
+        # craft skills optional in Grok smoke prose; require fusion skill mention
+        pass
+    if "grok-fusion" not in smoke_g:
+        fail("evals/smoke-runbook-grok.md must mention grok-fusion")
+
+    tpl = load_json(ROOT / "evals" / "results" / "smoke-grok-build-TEMPLATE.json")
+    if not isinstance(tpl, dict):
+        fail("smoke-grok-build-TEMPLATE.json must be an object")
+    if "cursor_baseline" not in tpl:
+        fail("smoke-grok-build-TEMPLATE.json missing cursor_baseline")
+    cb = tpl["cursor_baseline"]
+    if not isinstance(cb, dict) or "status" not in cb:
+        fail("cursor_baseline must be an object with status")
+    checks = tpl.get("checks")
+    if not isinstance(checks, list) or len(checks) < 6:
+        fail("smoke-grok-build-TEMPLATE.json checks must list E1–E6+")
+    check_ids = {c.get("id") for c in checks if isinstance(c, dict)}
+    for eid in ("E1", "E2", "E3", "E4", "E5", "E6"):
+        if eid not in check_ids:
+            fail(f"smoke-grok-build-TEMPLATE.json missing check id {eid}")
+
+    draft = read_text(ROOT / "docs" / "marketplace-pr-draft.md")
+    if "DO-NOT-SUBMIT" not in draft and "submit-ready" not in draft.lower():
+        fail("docs/marketplace-pr-draft.md must state DO-NOT-SUBMIT or submit-ready gates")
+    if "xai-org/plugin-marketplace" not in draft:
+        fail("docs/marketplace-pr-draft.md must reference xai-org/plugin-marketplace")
+    if not re.search(r"[0-9a-f]{40}", draft):
+        fail("docs/marketplace-pr-draft.md must include a 40-char lowercase SHA pin field")
+
+    readme = read_text(ROOT / "README.md")
+    for token in ("Option C", ".grok-plugin", "smoke-runbook-grok", "[subagents]", "PACKAGING"):
+        if token not in readme:
+            fail(f"README missing Grok Build packaging token {token!r}")
+    if "FULL" in readme and "smoke-grok-build" not in readme:
+        fail("README FULL-parity language must reference smoke-grok-build gate")
+
+    runtime = read_text(SKILL_DIR / "runtime-contract.md")
+    for token in ("host matrix", "spawn_subagent", "grok-fusion:gf-"):
+        if token not in runtime:
+            fail(f"runtime-contract.md missing host-matrix token {token!r}")
 
 
 def load_json(path: Path) -> object:
@@ -1157,6 +1255,7 @@ def main(argv: list[str] | None = None) -> int:
         check_iron_rules()
         check_evals()
         check_design_skills_and_install_matrix()
+        check_grok_build_packaging()
         check_readme_claims()
     except Failure as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

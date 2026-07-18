@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "smoke-grok-build",
+  "host": "grok-build",
+  "status": "PENDING",
+  "at": "",
+  "plugin_version": "0.4.1",
+  "claim_level": "PACKAGING",
+  "checks": [
+    {"id": "E1", "name": "install_loads_skills_agents", "status": "PENDING", "notes": ""},
+    {"id": "E2", "name": "subagents_off_fail_closed", "status": "PENDING", "notes": ""},
+    {"id": "E3", "name": "standard_plus_probe", "status": "PENDING", "notes": ""},
+    {"id": "E4", "name": "dual_tree_validate", "status": "PENDING", "notes": ""},
+    {"id": "E5", "name": "claim_ladder_honored", "status": "PENDING", "notes": ""},
+    {"id": "E6", "name": "marketplace_after_smoke", "status": "PENDING", "notes": ""},
+    {"id": "G1", "name": "auto_route", "status": "PENDING", "notes": "rules fire or Option C AGENTS"},
+    {"id": "G2", "name": "probe_authority", "status": "PENDING", "notes": "self_report weak only"},
+    {"id": "G3", "name": "isolation_batching", "status": "PENDING", "notes": ""},
+    {"id": "agent_ids", "name": "bare_or_qualified_gf_star", "status": "PENDING", "notes": ""}
+  ],
+  "cursor_baseline": {
+    "status": "live_pending",
+    "artifact_path": "",
+    "at": "",
+    "notes": "PASS + path to Cursor smoke artifact, or live_pending (FULL forbidden), or waived with user note"
+  },
+  "non_claims": [
+    "FULL Grok↔Cursor parity without status=PASS and SD8 cursor_baseline",
+    "alwaysApply rules auto-fire on Grok without G1 smoke PASS",
+    "model_family_self_report as sole probe authority",
+    "Cursor Marketplace one-click install",
+    "Live smoke covered by CI validate_plugin alone"
+  ],
+  "live_pending": true,
+  "notes": "Copy to smoke-grok-build-YYYY-MM-DD.json after a live Grok Build session."
+}

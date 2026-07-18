@@ -2,20 +2,22 @@
 
 [![CI](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml/badge.svg)](https://github.com/GoodGameIsGood/grok-fusion/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](.cursor-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](.cursor-plugin/plugin.json)
 
-> **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor — from quick fixes to architecture, AppSec review, and resumable MVPs.
+> **One Grok. Council-grade judgment.** Adaptive deliberation in Cursor and Grok Build — from quick fixes to architecture, AppSec review, and resumable MVPs.
 
-A Cursor plugin that turns one Grok into a careful council: independent framing, live evidence (repo + web researchers), competing proposals with dual-provocation challenges, judges, self-critique, and verification — with adaptive depth so simple edits stay fast and large builds stay resumable.
+A plugin that turns one Grok into a careful council: independent framing, live evidence (repo + web researchers), competing proposals with dual-provocation challenges, judges, self-critique, and verification — with adaptive depth so simple edits stay fast and large builds stay resumable. **v0.4.1** ships the same tree for **Cursor** (`.cursor-plugin/`) and **Grok Build** (`.grok-plugin/`).
 
 **Product receipt (what ships / what is not claimed)**
 
-- Ships: adaptive tiers, same-model Task council (`gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web`), fail-closed honesty, multi-pass QA with closure gates, professional planning & debugging, AppSec craft (`grok-security` + pack `appsec-review`), resumable MVP waves (when mutating), web/UI design siblings
-- Does **not** claim: measured parity with other models, Cursor Marketplace one-click install, coverage of every design or security medium, exploit/PoC authorship, or that every MVP-labeled reply writes durable run state
+- Ships: adaptive tiers, same-model Task council (`gf-worker` / on Grok Build `grok-fusion:gf-*`), fail-closed honesty, multi-pass QA with closure gates, professional planning & debugging, AppSec craft (`grok-security` + pack `appsec-review`), resumable MVP waves (when mutating), web/UI design siblings, dual-host manifests
+- Verified packaging on Grok Build CLI `0.2.103`: `grok plugin validate` / `install --trust` / `inspect` load skills + qualified agents (see `evals/results/smoke-grok-build-2026-07-18.json`, claim `PACKAGING` / status `PARTIAL`)
+- Does **not** claim: measured parity with other models, Cursor Marketplace one-click install, **FULL** or **HOST_SMOKE_PASS** Grok↔Cursor behavioral parity until live E2/E3 smoke is recorded `PASS` and SD8 Cursor baseline is satisfied, coverage of every design or security medium, exploit/PoC authorship, or that every MVP-labeled reply writes durable run state
+- Does **not** claim: plugin `rules` `alwaysApply` auto-fires on Grok Build without recorded G1 smoke (use `AGENTS.md` / Option C snippet for PARTIAL auto)
 
 ## Contents
 
-- [Setup and update](#setup-and-update)
+- [Setup and update](#setup-and-update) (Option A Cursor · Option B project copy · **Option C Grok Build**)
 - [Strengths](#strengths)
 - [How to use it](#how-to-use-it)
 - [Tiers (what happens to your request)](#tiers-what-happens-to-your-request)
@@ -30,7 +32,7 @@ A Cursor plugin that turns one Grok into a careful council: independent framing,
 
 ## Setup and update
 
-Anyone with Cursor and a strong non-Fast **Grok** model can use either path (Task/subagents required — see [Model requirements](#model-requirements)). **Option A** installs once for all projects. **Option B** copies files into one project (ZIP works — Git is optional).
+Anyone with Cursor or **Grok Build** and a strong non-Fast **Grok** model can install (Task/subagents required — see [Model requirements](#model-requirements)). **Option A** installs once for all Cursor projects. **Option B** copies files into one Cursor project (ZIP works — Git is optional). **Option C** installs on Grok Build from the same repo.
 
 ### Option A — local plugin (recommended)
 
@@ -101,7 +103,48 @@ Download or pull the latest repo, overwrite the same paths in the project, then 
 
 Delete those copied paths from the project’s `.cursor/` folders and reload. This does **not** use `~/.cursor/plugins/...`.
 
-**Note:** Additive craft skills (`grok-design`, `grok-web-ui`, `grok-security`) live under `skills/` for plugin discovery. They are **not** dual-tree HARD-mirrored like `grok-fusion`; Option B must copy them explicitly. v0.4.0 adds AppSec craft (`grok-security` + pack `appsec-review`) alongside web/UI design craft — not every security or design medium.
+**Note:** Additive craft skills (`grok-design`, `grok-web-ui`, `grok-security`) live under `skills/` for plugin discovery. They are **not** dual-tree HARD-mirrored like `grok-fusion`; Option B must copy them explicitly. v0.4.x ships AppSec craft (`grok-security` + pack `appsec-review`) alongside web/UI design craft — not every security or design medium.
+
+### Option C — Grok Build (same repo)
+
+Requires [Grok Build](https://docs.x.ai/build/overview) with subagents enabled. Manifest: [`.grok-plugin/plugin.json`](.grok-plugin/plugin.json) (skills/agents/rules share the repo root with Cursor).
+
+```bash
+# From a local clone (recommended while developing)
+grok plugin validate .
+grok plugin install . --trust
+
+# One-off session without install
+grok --plugin-dir /path/to/grok-fusion
+
+# From GitHub (after cloning or once published)
+grok plugin install GoodGameIsGood/grok-fusion --trust
+```
+
+Enable subagents in `~/.grok/config.toml`:
+
+```toml
+[subagents]
+enabled = true
+```
+
+Then:
+
+1. Start a Grok Build session on a strong non-Fast Grok model
+2. Run `grok inspect` — confirm skills `grok-fusion` (+ craft skills) and agents **`grok-fusion:gf-worker`**, `grok-fusion:gf-reviewer`, `grok-fusion:gf-auditor`, `grok-fusion:gf-researcher-repo`, `grok-fusion:gf-researcher-web`
+3. Spawn those **qualified** agent IDs (not only bare `gf-*`) when running the council
+4. Complete the live checklist in [`evals/smoke-runbook-grok.md`](evals/smoke-runbook-grok.md) (E2/E3 need an authenticated session)
+5. **Auto-route (G1):** this repo’s [`AGENTS.md`](AGENTS.md) is loaded by Grok Build as project instructions. For other projects, if plugin rules do not auto-apply, add:
+
+```markdown
+# Grok Fusion (Option C)
+Before answering or editing: load skill grok-fusion /grok-fusion; read .grok-fusion/config.json
+(or defaults balanced); follow runtime-contract host matrix; spawn grok-fusion:gf-* agents;
+Task probe for Standard/Heavy/MVP; fail closed if subagents unavailable;
+footer Fusion tier: matching actual work.
+```
+
+**Claim level today:** **`PACKAGING`** (install/inspect verified). Not `HOST_SMOKE_PASS` / `FULL` until E2+E3 live smoke is `PASS` and SD8 Cursor baseline is set. Marketplace draft: [`docs/marketplace-pr-draft.md`](docs/marketplace-pr-draft.md) (**DO-NOT-SUBMIT** until then).
 
 ### Project config
 
@@ -137,12 +180,12 @@ Example `balanced`:
 
 ## Strengths
 
-Built for developers and founders using **Grok inside Cursor** who want stronger architecture judgment, evidence-backed answers, and a safer path from idea → MVP → working product.
+Built for developers and founders using **Grok in Cursor or Grok Build** who want stronger architecture judgment, evidence-backed answers, and a safer path from idea → MVP → working product.
 
 | Strength | In practice | How to notice |
 |---|---|---|
 | Adaptive tiers | Quick / Standard / Heavy / MVP — depth matches the task | Footer: `Fusion tier: …` |
-| Same-model council | Parallel Grok subagents via Cursor Task | Agents `gf-worker`, `gf-reviewer`, `gf-auditor`, `gf-researcher-repo`, `gf-researcher-web` |
+| Same-model council | Parallel Grok subagents via host Task tool (Cursor Task / Grok `task`) | Cursor: `gf-*`; Grok Build: `grok-fusion:gf-*` |
 | Dual-provocation | Lens 8 forces assumption_attack + lateral_analogy challenges (no extra Task) | `provocation-contract.md`; Quick skips dedicated provocation Tasks |
 | Fail closed | No silent solo answer when Task/inheritance fails | Reply says **Fusion did not run** |
 | Fresh facts | External versions/APIs checked live and dated when claimed | Dated sources on external facts — not memory guesses |
@@ -241,11 +284,12 @@ Everything else that is reversible proceeds autonomously. Checkpoint commits sta
 
 ## Model requirements
 
-- Prefer the **strongest non-Fast Grok** in Cursor  
+- Prefer the **strongest non-Fast Grok** (Cursor or Grok Build)  
 - Avoid Fast / Code Fast for Fusion runs  
-- Subagents use `model: inherit` — their badges must show **Grok**  
-- If Task tools are missing or badges fall back to another model: Fusion fails closed  
-- On some plans without Max Mode (or under team policy), inheritance can break — fix policy or enable Max Mode  
+- Subagents use `model: inherit` — Cursor: badges must show **Grok**; Grok Build: operator-visible Grok model (+ pin when available); `model_family_self_report` is weak only  
+- If host Task tools are missing (`Task` / `task` / `spawn_subagent`) or model authority is non-Grok: Fusion fails closed  
+- On some Cursor plans without Max Mode (or under team policy), inheritance can break — fix policy or enable Max Mode  
+- Grok Build: set `[subagents] enabled = true` (see Option C)  
 
 Live verification of external facts (versions, APIs, pricing) is intentional and is **not** skipped to save tokens.
 
@@ -269,8 +313,9 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 
 | Problem | Fix |
 |---|---|
-| Skill / auto rule missing | Confirm install path, enable local plugins, reload |
-| Agents missing | Copy all five agents + the auto rule, not only the skill |
+| Skill / auto rule missing | Confirm install path, enable local plugins, reload; on Grok Build see Option C AGENTS snippet |
+| Agents missing | Copy all five agents + the auto rule, not only the skill; on Grok try `grok-fusion:gf-*` |
+| Grok Build Fusion did not run | Enable `[subagents]`; run `evals/smoke-runbook-grok.md`; do not claim FULL without smoke PASS |
 | “Fusion did not run” | Check Task/subagents and Grok badges; Max Mode / team model policy |
 | Everything feels Heavy | On `balanced`/`fast`: narrow the ask or say “use Quick/Standard”. On `max`: change `quality_profile` in config |
 | MVP won’t resume | Say `Continue run <id>`; check `.grok-fusion/runs/<id>/`; restore from checkpoint |
@@ -279,7 +324,7 @@ Live verification of external facts (versions, APIs, pricing) is intentional and
 | Unexpected file edits | Ask for analysis only unless you want implementation |
 | Stuck on a gate | Approve, change scope, or abort — G0–G4 are intentional |
 
-Manual smoke checklist: [`evals/smoke-runbook.md`](evals/smoke-runbook.md).
+Manual smoke checklist: [`evals/smoke-runbook.md`](evals/smoke-runbook.md) (Cursor) · [`evals/smoke-runbook-grok.md`](evals/smoke-runbook-grok.md) (Grok Build).
 
 ---
 
@@ -293,11 +338,14 @@ python3 scripts/validate_plugin.py --state evals/fixtures/invalid-run           
 python3 scripts/validate_plugin.py --state evals/fixtures/invalid-legacy-fields # must fail
 python3 scripts/validate_plugin.py --state evals/fixtures/invalid-blocked-missing-reason # must fail
 python3 scripts/validate_plugin.py --state evals/fixtures/invalid-false-done    # must fail
+# Optional (requires Grok Build CLI): 
+#   grok plugin validate .
+#   grok plugin install . --trust && grok inspect
 ```
 
 Invalid fixtures must fail. CI: [`.github/workflows/validate.yml`](.github/workflows/validate.yml).
 
-Evaluation contracts live under [`evals/`](evals/). Structural / smoke / mvp-golden records may exist under [`evals/results/`](evals/results/); blind Fable-parity benchmarks and full live `Continue run` Cursor sessions are not claimed — this README does not claim measured parity with other models.
+Evaluation contracts live under [`evals/`](evals/). Structural / smoke / mvp-golden records may exist under [`evals/results/`](evals/results/); blind Fable-parity benchmarks and full live `Continue run` Cursor sessions are not claimed — this README does not claim measured parity with other models. Grok Build install/inspect packaging evidence: `evals/results/smoke-grok-build-2026-07-18.json` (`PARTIAL` / `PACKAGING`).
 
 ---
 

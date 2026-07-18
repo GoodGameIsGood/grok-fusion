@@ -6,6 +6,8 @@
     "name": "GoodGameIsGood"
   },
   "license": "MIT",
+  "homepage": "https://github.com/GoodGameIsGood/grok-fusion",
+  "repository": "https://github.com/GoodGameIsGood/grok-fusion",
   "keywords": [
     "grok",
     "fusion",
@@ -21,7 +23,5 @@
   ],
   "skills": "./skills/",
   "agents": "./agents/",
-  "rules": "./rules/",
-  "homepage": "https://github.com/GoodGameIsGood/grok-fusion",
-  "repository": "https://github.com/GoodGameIsGood/grok-fusion"
+  "rules": "./rules/"
 }
