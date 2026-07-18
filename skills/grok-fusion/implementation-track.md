@@ -6,25 +6,30 @@ Single-batch Standard/Heavy edits use the one-shot sequence below. MVP uses the 
 
 Acceptance for every mutating path uses [multi-pass-verification.md](multi-pass-verification.md). That contract **replaces** the legacy `2×gf-reviewer + gf-auditor` done-gate. Do not stack both.
 
+When the task pack is `debugging`, also follow [debugging-playbook.md](debugging-playbook.md): no edits until a Repair Card with `confidence: high` exists; attach the card to the contract; require `baseline_test_snapshot`; after the fix run characterization + blast-radius suite before multi-pass.
+
 ## One-shot sequence
 
 0. If planning is mandatory and no accepted plan exists, build one per [planning-contract.md](planning-contract.md) and obtain plan quality gate `PASS` (including multi-pass consensus) before any edit.
+0b. If pack is `debugging`: complete playbook steps through Repair Card approval before any edit. `confidence` below `debugging.min_fix_confidence` ⇒ no mutating.
 1. Run the selected deliberative pipeline first and produce a file-level implementation contract that cites plan step ids when a plan exists.
 2. The contract must list:
-   - exact allowed paths
+   - exact allowed paths (⊆ Repair Card `allowed_paths` when debugging)
    - invariants
    - preconditions
    - repository-native test commands
    - acceptance clauses
    - atomic steps (see multi-pass atomic-step definition)
-3. Only the parent agent edits files. `gf-worker` stays readonly.
-4. Verify every precondition before changing code.
+   - `repair_card` when debugging
+   - `baseline_test_snapshot` (required for debugging)
+3. Only the parent agent edits files. `gf-worker` stays readonly. Debugging: implement **only** `patch_intent` — no drive-by refactors.
+4. Verify every precondition before changing code. Debugging: characterization cmds green first.
 5. For each atomic step: implement, run `verify_cmd`, then Phase A `step_recheck` per [multi-pass-verification.md](multi-pass-verification.md). Record each run in `verification_runs` / `events.jsonl`.
-6. After all steps: run Phases B→ verify hard gate → C→D (double error hunt → completion quality → specialist panel) and enforce consensus math. Do not mark done if `verify_hard_gate` is on and no successful verify exists.
-7. Fix only evidence-backed defects within allowed paths, then re-enter from Error Hunt #1. Respect `max_fix_cycles` and `max_consensus_rounds`.
+6. After all steps: debugging verify ladder (failing case → characterization → blast suite), then Phases B→ verify hard gate → C→D. Do not mark done if `verify_hard_gate` is on and no successful verify exists.
+7. Fix only evidence-backed defects within allowed paths, then re-enter from Error Hunt #1. Respect `max_fix_cycles` and `max_consensus_rounds`. Debugging scope changes need a **new** Repair Card.
 8. Audit every acceptance clause as `PASS`, `FAIL`, or `UNVERIFIED` via completion_quality.
 9. Never say done while any mandatory clause is `FAIL` or `UNVERIFIED`, or while multi-pass `consensus` is not `PASS`.
-10. Record multi-pass results on `RunEnvelope.verification.multi_pass` (one-shot) or under `.grok-fusion/runs/<run-id>/multi_pass/` (MVP).
+10. Record multi-pass results on `RunEnvelope.verification.multi_pass` (one-shot) or under `.grok-fusion/runs/<run-id>/multi_pass/` (MVP). Persist `repair_card` on `RunEnvelope.verification.repair_card` or `multi_pass/<id>.json`.
 
 ## Implementation contract schema
 
@@ -47,6 +52,7 @@ baseline_test_snapshot:
 rollback_git_ref:
 migration_steps: []
 compat_checks: []
+repair_card: {}
 ```
 
 ## Wave preamble
@@ -57,19 +63,20 @@ Before every MVP wave, re-read `spine.json`, `lessons.json`, and the active wave
 
 For each ready wave in topological order:
 
-0. Confirm the wave maps to accepted plan batch/step ids from [planning-contract.md](planning-contract.md); if no accepted plan exists, build and gate it first (plan multi-pass included).
-1. Validate durable state and discovery coverage for `owns_paths`.
+0. Confirm the wave maps to accepted plan batch/step ids from [planning-contract.md](planning-contract.md); if no accepted plan exists, build and gate it first (plan multi-pass included). If pack is `debugging`, require an approved Repair Card (`confidence: high`) before edits.
+1. Validate durable state and discovery coverage for `owns_paths` (and Repair Card `blast_radius_paths` when debugging).
 2. Capture baseline tests and a checkpoint under `.grok-fusion/runs/<run-id>/checkpoints/`.
 3. Pause for any required G0–G4 safety gate before editing.
-4. Parent edits only `owns_paths`.
-5. TDD: write or extend a failing test for the wave acceptance first, implement to green, refactor; then run wave-specific unit/integration/build commands that were verified in discovery. Treat each plan step or TDD cycle as an atomic step with Phase A recheck.
+4. Parent edits only `owns_paths` (and ⊆ Repair Card `allowed_paths` when debugging).
+5. TDD: write or extend a failing test for the wave acceptance first, implement to green, refactor; then run wave-specific unit/integration/build commands that were verified in discovery. Debugging: characterization first per playbook. Treat each plan step or TDD cycle as an atomic step with Phase A recheck.
 6. After all steps are green locally, run the full multi-pass gate from [multi-pass-verification.md](multi-pass-verification.md):
-   - Ensure `verification_runs` includes successful repo-native commands (verify hard gate)
+   - Ensure `verification_runs` includes successful repo-native commands (verify hard gate); debugging also runs characterization + blast suite
    - Phase B: Error Hunt #1 then #2 (sequential Task batches)
    - merge blockers (union; empty hunt ≠ clearance)
-   - Phase C: one `gf-auditor` `completion_quality` (must see verify evidence)
+   - Phase C: one `gf-auditor` `completion_quality` (must see verify evidence + Repair Card clauses when present)
    - Before Phase D: run selection from [specialist-roster.md](specialist-roster.md); record `optional_selection`
    - Phase D: core five + ≤3 optional `gf-reviewer` `specialist_panel` in one parallel batch
+   - Persist `repair_card` on the multi_pass artifact when debugging
    - consensus per wave math (core ≥4 valid SHIP; optional veto; no `long_term_risk: high` on core)
 7. Fix evidence-backed defects for at most `max_fix_cycles` (6). Consensus panel re-entry at most `max_consensus_rounds` (5). Soft `max_task_calls` (40) → user gate, never PASS.
 8. Two identical failure fingerprints trigger rollback and a user gate.

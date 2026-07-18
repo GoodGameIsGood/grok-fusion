@@ -24,6 +24,7 @@ Use it when you want stronger architecture judgment, fewer hallucinations, and a
 | Self-critique | Devil’s-advocate pass before the answer; empty “LGTM” reviews are rejected |
 | Multi-pass QA | Core 5 specialists every round, plus on-demand specialists (20+) with recheck/improve/advise (≤3 optional per round, veto allowed) until consensus PASS |
 | Professional plans | EARS criteria, atomic ≤5-file batches, verify commands, plan quality + multi-pass — no extra prompting needed |
+| Professional debugging | Reproduce → hypotheses → falsify → characterization → blast-radius → council Repair Card → minimal fix only when confidence is high |
 | MVP mode | PR/FAQ → spine → discovery → wave DAG → TDD waves → multi-pass → resume + safety gates |
 | Fail closed | If Task/subagents or Grok inheritance fail, it says **Fusion did not run** — it will not pretend |
 

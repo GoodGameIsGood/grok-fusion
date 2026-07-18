@@ -41,6 +41,7 @@ CORE_FILES = [
     "skills/grok-fusion/project-config.md",
     "skills/grok-fusion/orchestration-checklist.md",
     "skills/grok-fusion/specialist-evidence-packs.md",
+    "skills/grok-fusion/debugging-playbook.md",
     "skills/grok-fusion/implementation-track.md",
     "skills/grok-fusion/long-horizon-contract.md",
     "skills/grok-fusion/discovery-track.md",
@@ -272,9 +273,19 @@ def check_schema_markers() -> None:
             fail(f"project-config.md missing {marker}")
     if "Read project config before tier" not in read_text(SKILL_DIR / "adaptive-router.md"):
         fail("adaptive-router.md missing Read project config before tier")
+    debug_playbook = read_text(SKILL_DIR / "debugging-playbook.md")
+    for marker in ("Repair Card", "must_not_break", "characterization", "Iron rule"):
+        if marker not in debug_playbook:
+            fail(f"debugging-playbook.md missing {marker}")
+    if "debugging-playbook.md" not in read_text(SKILL_DIR / "task-packs.md"):
+        fail("task-packs.md missing debugging-playbook.md link")
+    if "require_repair_card" not in read_text(SKILL_DIR / "project-config.md"):
+        fail("project-config.md missing require_repair_card")
     checklist = read_text(SKILL_DIR / "orchestration-checklist.md")
     if "P0" not in checklist or "multi-pass-verification.md" not in checklist:
         fail("orchestration-checklist.md missing P0→done path")
+    if "debugging-playbook.md" not in checklist:
+        fail("orchestration-checklist.md missing debugging-playbook.md")
     evidence_packs = read_text(SKILL_DIR / "specialist-evidence-packs.md")
     for role_id in (
         "api_compat",
@@ -391,12 +402,21 @@ def check_agents() -> None:
         if "description" not in data or not data["description"]:
             fail(f"{name} missing description")
     reviewer = read_text(AGENTS_DIR / "gf-reviewer.md")
-    for marker in ("specialist_panel", "scenario", "specialist-roster.md", "specialist-evidence-packs.md"):
+    for marker in (
+        "specialist_panel",
+        "scenario",
+        "specialist-roster.md",
+        "specialist-evidence-packs.md",
+        "Repair Card",
+    ):
         if marker not in reviewer:
             fail(f"gf-reviewer.md missing {marker}")
     auditor = read_text(AGENTS_DIR / "gf-auditor.md")
     if "verify_evidence" not in auditor:
         fail("gf-auditor.md missing verify_evidence")
+    for marker in ("repair_card_followed", "characterization_green", "must_not_break_checked"):
+        if marker not in auditor:
+            fail(f"gf-auditor.md missing {marker}")
 
 
 def check_forbidden_strings() -> None:

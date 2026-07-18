@@ -19,12 +19,13 @@ If validation fails, stop and report the blocker.
 
 ## Resume behavior
 
-- Reload `run.json`, `spine.json`, current wave, unresolved blockers/dissent, completed-wave summaries, `lessons.json`, and any in-progress `multi_pass/*.json`.
+- Reload `run.json`, `spine.json`, current wave, unresolved blockers/dissent, completed-wave summaries, `lessons.json`, any in-progress `multi_pass/*.json`, and the active `repair_card` when present.
 - Do not rerun Heavy unless the spine changed through gate G4.
 - Cap full Heavy reruns to one per epic.
 - Continue from the last checkpoint for a `blocked` or incomplete active wave.
 - Interrupted multi-pass: set wave/plan/epic to `blocked` if the session died mid-round; resume from recorded `phase` and `round` per [multi-pass-verification.md](multi-pass-verification.md). Never mark PASS with an incomplete panel.
 - Canonical user resume phrase: `Continue run <run_id>` (loads durable state and lessons, then resumes the active wave).
+- Debugging rollback: restore the pre-fix checkpoint; keep the Repair Card so the next attempt still follows council `patch_intent` (or revise the card via a new council round before widening scope).
 
 ## Wave summary contract
 

@@ -24,8 +24,8 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Model inherit | Subagent badges match parent Grok |
 | Fail closed | Disabling Task or forcing non-Grok fallback yields “Fusion did not run” |
 | Quick routing | Single-file rename stays Quick and finishes with low call count |
-| Standard routing | Ordinary debug/research uses Standard footer |
-| Heavy routing | Architecture/security prompts use Heavy |
+| Standard routing | Ordinary research / explain-only debug uses Standard footer |
+| Heavy routing | Architecture/security prompts and mutating debug use Heavy (or MVP under `max`) |
 | MVP resume | Creating an MVP run writes `.grok-fusion/runs/<id>/` and can resume |
 | Safety gates | Migration/breaking changes pause at G1/G2 |
 | Freshness | External library/version claims carry retrieved_at from live lookups |
@@ -36,6 +36,7 @@ Manual checks after installing the plugin. Do not claim universality until these
 | Footer telemetry | When enabled, footer includes `profile=` and `tasks=` / `multi_pass=` / `verify=` |
 | Verify hard gate | Mutating done claims include successful `verification_runs` (exit_code 0) |
 | Continue run | `Continue run <run_id>` resumes durable state and lessons |
+| Professional debugging | Mutating debug shows Repair Card + characterization before edits; no drive-by refactors |
 
 ## Commands
 

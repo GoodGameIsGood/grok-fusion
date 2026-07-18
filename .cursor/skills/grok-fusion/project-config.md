@@ -47,7 +47,15 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
     "footer_stats": true
   },
   "preferred_specialists": [],
-  "disabled_specialists": []
+  "disabled_specialists": [],
+  "debugging": {
+    "require_repair_card": true,
+    "min_fix_confidence": "high",
+    "require_characterization": true,
+    "blast_radius_discovery": true,
+    "discovery_max_files_debug": 80,
+    "preferred_specialists": ["test_strategist", "concurrency", "observability"]
+  }
 }
 ```
 
@@ -67,6 +75,12 @@ Tracked in git when present. Durable runs stay under `.grok-fusion/runs/` (local
 | `telemetry.footer_stats` | bool | Extend Fusion footer with profile/stats |
 | `preferred_specialists` | role ids | Prefer when triggers tie |
 | `disabled_specialists` | role ids | Never select |
+| `debugging.require_repair_card` | bool | Mutating debug needs Repair Card |
+| `debugging.min_fix_confidence` | `high` \| `medium` \| `low` | Minimum card confidence to edit |
+| `debugging.require_characterization` | bool | Characterization before fix |
+| `debugging.blast_radius_discovery` | bool | Discover blast radius before edit |
+| `debugging.discovery_max_files_debug` | int | Raised discovery budget for debug |
+| `debugging.preferred_specialists` | role ids | Pin optional roles for debugging pack |
 
 ## Profiles
 

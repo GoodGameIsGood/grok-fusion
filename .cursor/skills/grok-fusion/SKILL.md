@@ -31,7 +31,7 @@ Never write a Quick/Standard/Heavy `RunEnvelope` to disk. MVP durable state foll
 
 - Preserve the original query verbatim.
 - Read project config before tier ([project-config.md](project-config.md)); choose tier from [adaptive-router.md](adaptive-router.md).
-- Classify task pack from [task-packs.md](task-packs.md).
+- Classify task pack from [task-packs.md](task-packs.md). If pack is `debugging`, read [debugging-playbook.md](debugging-playbook.md) before any edit.
 - If planning is mandatory per [planning-contract.md](planning-contract.md), select `professional-planning` and do not edit until plan quality gate and multi-pass consensus are `PASS`.
 - Choose `answer track` unless the user explicitly requested mutation or an MVP/build path.
 - Confirm Task/custom subagents for Standard/Heavy/MVP; otherwise fail closed.
@@ -97,7 +97,7 @@ Footer: `Fusion tier: MVP` (on `max`, never emit Quick/Standard/Heavy).
 
 ## Implementation track
 
-If mutation was requested, read [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), and [specialist-roster.md](specialist-roster.md). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus with ≤3 optional roles).
+If mutation was requested, read [implementation-track.md](implementation-track.md), [multi-pass-verification.md](multi-pass-verification.md), and [specialist-roster.md](specialist-roster.md). For debugging pack also follow [debugging-playbook.md](debugging-playbook.md) (Repair Card + characterization before edits). Only the parent edits. Then run repository-native verification and the multi-pass gate (per-step recheck, double error hunt, completion quality, specialist consensus with ≤3 optional roles).
 
 ## Fail closed
 

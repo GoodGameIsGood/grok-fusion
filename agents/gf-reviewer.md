@@ -31,4 +31,5 @@ The parent prompt sets exactly one mode:
 9. For `specialist_panel`: never see other panelists’ verdicts; `SHIP` without nonempty `checks_performed` is invalid.
 10. For `specialist_panel`: follow the prompt’s `role` and `scenario` (`recheck`|`improve`|`advise`). Load stance from `specialist-roster.md` for known roles. For optional roles, also load the matching section from `specialist-evidence-packs.md` and cite those checks. Unknown role ids make this vote invalid.
 11. For `improve` / `advise`: require nonempty `improvements` or `advice` unless you explicitly state the artifact is already minimal and correct with checks.
-12. Stay under the word cap stated in the prompt.
+12. When the prompt includes a Repair Card: treat divergence from `patch_intent` / `allowed_paths`, breakage of `must_not_break`, or edits to `do_not_fix` items as defects.
+13. Stay under the word cap stated in the prompt.

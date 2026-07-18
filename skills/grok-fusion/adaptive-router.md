@@ -52,9 +52,11 @@ Output: direct answer plus `Fusion tier: Quick`.
 Use when (and profile is not `max`):
 
 - moderate ambiguity
-- ordinary debugging, research, comparison, or 2–8 file changes
+- research, comparison, or 2–8 file changes that are **not** mutating debug
+- explain-only debugging (no edits requested)
 - not an architecture/security/migration decision
 - not a multi-wave MVP
+- not mutating bug/flake/incident fixes (those escalate to Heavy)
 
 Pipeline:
 
@@ -77,6 +79,7 @@ Use when any is true (and profile is not `max`):
 - migration or destructive data change
 - cross-module / high-stakes decision
 - large brownfield refactor or framework/library migration in one batch
+- **mutating debugging** (bugs, flakes, incidents) — follow [debugging-playbook.md](debugging-playbook.md) and require a Repair Card
 - user explicitly asks for deep analysis or `/grok-fusion` Heavy behavior
 - `answer_track.require_heavy_spine` is true for this answer-track request
 

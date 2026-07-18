@@ -10,9 +10,11 @@ P0  Load project-config.md + .grok-fusion/config.json (or defaults)
 
 P1+ Answer track: SKILL Heavy/Standard/Quick spine as selected
     Plan needed? → planning-contract.md until plan_quality + multi_pass PASS
+    Debug pack? → debugging-playbook.md (Repair Card before any edit)
     Mutating? → implementation-track.md (parent edits only)
 
 Verify  Run verify_cmd; record verification_runs (verify hard gate)
+        Debug: characterization + blast-radius suite before multi-pass
 
 Multi   multi-pass-verification.md
         A step_recheck → B hunts → C gf-auditor → selection (specialist-roster.md /
@@ -33,6 +35,7 @@ Resume  Continue run <run_id> → recovery-track.md
 | Runtime / parallelism | [runtime-contract.md](runtime-contract.md) |
 | Freshness | [freshness-contract.md](freshness-contract.md) |
 | Planning | [planning-contract.md](planning-contract.md) |
+| Debugging | [debugging-playbook.md](debugging-playbook.md) |
 | Implementation | [implementation-track.md](implementation-track.md) |
 | Multi-pass | [multi-pass-verification.md](multi-pass-verification.md) |
 | Specialists | [specialist-roster.md](specialist-roster.md), [specialist-evidence-packs.md](specialist-evidence-packs.md) |

@@ -24,6 +24,10 @@ The parent prompt sets mode `completion_quality` (default for wave/plan/epic acc
 6. Do not edit files and do not invent APIs, tests, or paths absent from the contract, diff, plan, or state files.
 7. When scoring a plan, verify `success_definition` and EARS coverage, atomic batches, and verify commands.
 8. For mutating waves/one-shots: require `verification_runs` evidence with at least one `exit_code: 0`, or an explicit justified `n/a` from the plan/contract. Missing verify evidence → `audit_result: FAIL`.
+9. For debugging pack / when a Repair Card is present, score these mandatory clauses:
+   - `repair_card_followed` — diff matches `patch_intent` and stays inside `allowed_paths`
+   - `characterization_green` — characterization/baseline cmds passed (or justified `n/a`)
+   - `must_not_break_checked` — must-not-break scenarios were verified or explicitly risk-accepted
 
 ## Output schema
 
@@ -37,5 +41,8 @@ clause_scores:
 scope_drift_findings: []
 premature_completion_risk: high|medium|low
 verify_evidence: present|missing|n_a_justified
+repair_card_followed: PASS|FAIL|UNVERIFIED|n_a
+characterization_green: PASS|FAIL|UNVERIFIED|n_a
+must_not_break_checked: PASS|FAIL|UNVERIFIED|n_a
 audit_result: PASS|FAIL
 ```

@@ -21,19 +21,23 @@ Forbidden default: greenfield rewrite
 
 ## debugging
 
-Use for bugs, flakes, incidents, and unexpected behavior.
+Use for bugs, flakes, incidents, and unexpected behavior. Follow [debugging-playbook.md](debugging-playbook.md).
 
 Pipeline emphasis:
 
 1. Reproduce or define a falsifiable observation
-2. Produce competing root-cause hypotheses
-3. Falsify weak hypotheses
-4. Apply the minimal fix
-5. Add or run a regression check
+2. Preserve goals / must-not-break scenarios
+3. Produce competing root-cause hypotheses (≥3) and falsify weak ones
+4. Characterization / baseline before any edit
+5. Blast-radius discovery; council **Repair Card** with `confidence: high`
+6. Apply only the approved minimal `patch_intent` (no drive-by refactors)
+7. Verify ladder + multi-pass; rollback on fingerprint loops
 
 Preferred lenses: failure-and-security, implementation-realist, persona-free wildcard
 
 Suggested optional specialists: `test_strategist`, `concurrency`, `observability`
+
+Forbidden: mutating without Repair Card when config requires it; opportunistic refactors during a bugfix
 
 ## research
 

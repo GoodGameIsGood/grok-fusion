@@ -26,5 +26,13 @@
     "footer_stats": true
   },
   "preferred_specialists": [],
-  "disabled_specialists": []
+  "disabled_specialists": [],
+  "debugging": {
+    "require_repair_card": true,
+    "min_fix_confidence": "high",
+    "require_characterization": true,
+    "blast_radius_discovery": true,
+    "discovery_max_files_debug": 80,
+    "preferred_specialists": ["test_strategist", "concurrency", "observability"]
+  }
 }

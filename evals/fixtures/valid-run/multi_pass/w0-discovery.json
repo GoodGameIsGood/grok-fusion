@@ -36,6 +36,20 @@
     "selected": [{"role": "test_strategist", "scenario": "recheck"}],
     "dropped_by_cap": []
   },
+  "repair_card": {
+    "mode": "repair_card",
+    "observation": "discovery verify commands missing",
+    "primary_cause": "commands not recorded in discovery",
+    "rejected_hypotheses": ["wrong owns_paths"],
+    "must_not_break": ["wave0 coverage gate"],
+    "characterization_cmds": ["python3 scripts/validate_plugin.py --state evals/fixtures/valid-run"],
+    "blast_radius_paths": ["evals/fixtures/valid-run/discovery.json"],
+    "allowed_paths": ["evals/fixtures/valid-run/discovery.json"],
+    "patch_intent": ["record verified commands"],
+    "confidence": "high",
+    "fix_rationale": "fixture completeness",
+    "do_not_fix": []
+  },
   "consensus": "PASS",
   "status": "complete",
   "task_calls_used": 12

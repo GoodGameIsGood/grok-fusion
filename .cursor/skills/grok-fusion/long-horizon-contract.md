@@ -179,7 +179,7 @@ Per-wave, plan, and epic multi-pass artifacts. Schema and consensus rules: [mult
 multi_pass/<wave-or-plan-or-epic-id>.json
 ```
 
-Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `verification_runs`, `consensus`, `status`, `task_calls_used`.
+Required fields: `schema_version`, `id`, `phase`, `round`, `merged_blockers`, `panel`, `optional_panel`, `verification_runs`, `consensus`, `status`, `task_calls_used`. When debugging: also persist `repair_card` on the multi_pass artifact and/or `RunEnvelope.verification.repair_card`.
 
 ## Spine lock
 

@@ -69,7 +69,7 @@ checks_performed: []
 
 ## Phase B — Double error hunt
 
-1. `gf-reviewer` `mode=error_hunt` pass #1 — bugs, regressions, silent failures. For plans: adversarial holes (ungrounded paths, missing verify, non-atomic steps). Fold devil’s-advocate pressure into pass #1 (or one dedicated `gf-worker` falsifier immediately before the panel — not a sixth pass after the panel).
+1. `gf-reviewer` `mode=error_hunt` pass #1 — bugs, regressions, silent failures. For plans: adversarial holes (ungrounded paths, missing verify, non-atomic steps). For **debugging** pack: also attack wrong-cause fixes, breakage of `must_not_break`, and scope beyond the Repair Card `patch_intent` / `allowed_paths`. Fold devil’s-advocate pressure into pass #1 (or one dedicated `gf-worker` falsifier immediately before the panel — not a sixth pass after the panel).
 2. Independent `gf-reviewer` `mode=error_hunt` pass #2 — **must not receive #1 findings** (anti-anchoring).
 3. Parent merges findings.
 
@@ -124,7 +124,7 @@ Parent runs the selection algorithm in `specialist-roster.md` before this phase 
 
 ### Optional roles
 
-Select ≤3 from the optional roster in `specialist-roster.md` using pack suggestions and risk triggers (G1/G2/G3, path patterns). Default `scenario: recheck`.
+Select ≤3 from the optional roster in `specialist-roster.md` using pack suggestions and risk triggers (G1/G2/G3, path patterns). Default `scenario: recheck`. For pack `debugging`, prefer `test_strategist`, `concurrency`, and `observability` (pinned by `select_optional_specialists.py` unless G1/G2 forces higher-severity roles).
 
 ### Docs-only mutating roles
 
@@ -244,13 +244,16 @@ Interrupted multi-pass ⇒ wave/plan `blocked`, not partial PASS. Resume via `re
     "selected": [],
     "dropped_by_cap": []
   },
+  "repair_card": {},
   "consensus": "PASS|FAIL|IN_PROGRESS",
   "status": "in_progress|blocked|complete",
   "task_calls_used": 0
 }
 ```
 
-One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelope.verification.multi_pass` object; do not invent on-disk MVP state.
+One-shot mutating (non-MVP): record the same fields on the in-memory `RunEnvelope.verification.multi_pass` object (and `RunEnvelope.verification.repair_card` when debugging); do not invent on-disk MVP state.
+
+When a Repair Card is present: any evidence that the diff diverges from `patch_intent` or `allowed_paths` ⇒ consensus FAIL (auditor clause `repair_card_followed`).
 
 ## Done predicates
 

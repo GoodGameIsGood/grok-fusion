@@ -70,3 +70,12 @@ For repositories too large to read fully, discovery is budgeted and ranked:
 5. Use dependency edges and test locations to pick the next read, not alphabetical order.
 6. When the budget is spent, list remaining gaps in `unknowns_queue` instead of guessing.
 7. Ungrounded paths in plans (not present in discovery coverage or evidence) → plan quality FAIL.
+
+## Debug blast-radius mode
+
+When pack is `debugging` and `debugging.blast_radius_discovery` is true:
+
+1. Use `debugging.discovery_max_files_debug` (default 80) as `read_budget.max_files` instead of the normal discovery cap.
+2. Ranked reads: failure site → callers → tests → contracts/APIs → adjacent modules.
+3. Build a symbol/path map of the blast radius before any edit; list it on the Repair Card as `blast_radius_paths`.
+4. Do not edit paths that remain `UNREAD` in coverage targets.

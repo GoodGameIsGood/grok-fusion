@@ -72,6 +72,7 @@ def select(
 ) -> dict:
     triggers: list[str] = []
     ordered: list[str] = []
+    security_gates = {g.strip().upper() for g in gates if g.strip().upper() in GATE_ROLES}
 
     def add(role: str, trigger: str) -> None:
         if role in disabled:
@@ -86,22 +87,48 @@ def select(
         if gate in GATE_ROLES:
             add(GATE_ROLES[gate], gate)
 
-    for role in PACK_SUGGESTIONS.get(pack, []):
-        add(role, f"pack:{pack}")
+    # Debugging pack: pin preferred debug specialists ahead of generic severity
+    # when no G1/G2/security-class gate is forcing higher-priority roles alone.
+    debug_preferred = ["test_strategist", "concurrency", "observability"]
+    if pack == "debugging" and not (security_gates & {"G1", "G2"}):
+        for role in debug_preferred:
+            add(role, "pack:debugging:pinned")
+        for role in preferred:
+            add(role, f"preferred:{role}")
+    else:
+        for role in PACK_SUGGESTIONS.get(pack, []):
+            add(role, f"pack:{pack}")
+        for role in preferred:
+            if role not in disabled and role not in ordered:
+                ordered.append(role)
+                triggers.append(f"preferred:{role}")
 
-    path_blob = " ".join(p.lower() for p in paths)
-    for role, needle in PATH_TRIGGERS:
-        if needle in path_blob:
-            add(role, f"path:{needle}")
+    if pack != "debugging" or (security_gates & {"G1", "G2"}):
+        path_blob = " ".join(p.lower() for p in paths)
+        for role, needle in PATH_TRIGGERS:
+            if needle in path_blob:
+                add(role, f"path:{needle}")
+        if pack == "debugging":
+            for role in debug_preferred:
+                add(role, "pack:debugging")
+    else:
+        path_blob = " ".join(p.lower() for p in paths)
+        for role, needle in PATH_TRIGGERS:
+            if needle in path_blob:
+                add(role, f"path:{needle}")
 
-    for role in preferred:
-        if role not in disabled and role not in ordered:
-            ordered.append(role)
-            triggers.append(f"preferred:{role}")
+    if pack == "debugging" and not (security_gates & {"G1", "G2"}):
+        # Keep pin order: debug preferred first, then others by severity.
+        pinned = [r for r in debug_preferred if r in ordered]
+        rest = [r for r in ordered if r not in pinned]
+        indexed = list(enumerate(rest))
+        indexed.sort(key=lambda item: (-rank(item[1]), item[0]))
+        ordered = pinned + [role for _, role in indexed]
+    else:
+        indexed = list(enumerate(ordered))
+        indexed.sort(key=lambda item: (-rank(item[1]), item[0]))
+        ordered = [role for _, role in indexed]
 
-    indexed = list(enumerate(ordered))
-    indexed.sort(key=lambda item: (-rank(item[1]), item[0]))
-    ordered = [role for _, role in indexed]
     selected_roles = ordered[: max(0, max_optional)]
     dropped = ordered[max(0, max_optional) :]
 
